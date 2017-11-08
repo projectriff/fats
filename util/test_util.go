@@ -4,7 +4,6 @@ import (
 	"os"
 	"math/rand"
 	"os/exec"
-	"github.com/onsi/ginkgo"
 	"bytes"
 	"strings"
 	"time"
@@ -68,15 +67,16 @@ func KubectlFromKafkaPod(topic string) string {
 	outBuffer := bytes.NewBufferString("")
 	cmd := exec.Command("kubectl", "-n", TEST_CONFIG.Namespace, "exec", TEST_CONFIG.KafkaPodName, "--", "/opt/kafka/bin/kafka-console-consumer.sh", "--bootstrap-server", "localhost:9092", "--topic", topic, "--from-beginning", "--max-messages", "1")
 	cmd.Stdout = outBuffer
-	cmd.Stderr = ginkgo.GinkgoWriter
+	cmd.Stderr = os.Stderr
 
 	if err := cmd.Start(); err != nil {
 		panic("Kubectl Kafka start failed")
+		cmd.Stderr.Write(outBuffer.Bytes())
 	}
 	timer := time.AfterFunc(time.Duration(TEST_CONFIG.MessageRTTimeout)*time.Second, func() {
 		cmd.Process.Kill()
 		panic("Kubectl Kafka timed out")
-
+		cmd.Stderr.Write(outBuffer.Bytes())
 	})
 	err := cmd.Wait()
 	timer.Stop()
@@ -92,10 +92,11 @@ func DockerTagAndPush(functionName string, imageName string) {
 	outBuffer := bytes.NewBufferString("")
 	dockerCmd := exec.Command("docker", "images", "-f", "reference="+functionName, "--format", "{{.ID}}")
 	dockerCmd.Stdout = outBuffer
-	dockerCmd.Stderr = ginkgo.GinkgoWriter
+	dockerCmd.Stderr = os.Stderr
 	err := dockerCmd.Run()
 	if err != nil {
 		panic("Docker image list failed")
+		dockerCmd.Stderr.Write(outBuffer.Bytes())
 	}
 
 	runSafely("Docker Tag", "/", "docker", "tag", strings.TrimSpace(outBuffer.String()), imageName)
@@ -110,8 +111,8 @@ func MvnCleanPackage(directory string) {
 func runSafely(description string, directory string, command string, args ...string) {
 	cmd := exec.Command(command, args...)
 	cmd.Dir = directory
-	cmd.Stdout = ginkgo.GinkgoWriter
-	cmd.Stderr = ginkgo.GinkgoWriter
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	if err != nil {
 		panic(description + " failed in directory " + directory)
