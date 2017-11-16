@@ -1,10 +1,11 @@
 package sample_function_test
 
 import (
-	. "github.com/onsi/ginkgo"
-	"github.com/pivotal-cf/pfs-system-test/util"
 	"path"
+
+	. "github.com/onsi/ginkgo"
 	"github.com/onsi/gomega"
+	"github.com/pivotal-cf/pfs-system-test/util"
 )
 
 var _ = Describe("SampleFunctionTest", func() {
@@ -19,20 +20,25 @@ var _ = Describe("SampleFunctionTest", func() {
 				inputTopicName := util.RandStringShort()
 				outputTopicName := util.RandStringShort()
 				imageName := util.TEST_CONFIG.DockerOrg + "/" + functionName
+				workloadFileSource := path.Join(functionDir, "greeter.yaml")
+				workloadFileTarget := path.Join(functionDir, functionName+".yaml")
 
 				util.MvnCleanPackage(functionDir)
 				util.DockerBuild(functionDir, imageName)
 				util.DockerPush(imageName)
-				util.CLI("/", "topics-create", "-t", inputTopicName, "-ns", util.TEST_CONFIG.Namespace)
-				util.CLI("/", "topics-create", "-t", outputTopicName, "-ns", util.TEST_CONFIG.Namespace)
-				util.CLI("/", "-n", functionName, "push", "-i", inputTopicName, "-o", outputTopicName, "-ns", util.TEST_CONFIG.Namespace, "-m", imageName)
+				util.CopyAndReplace(workloadFileSource, workloadFileTarget, "name: greeter", "name: "+functionName)
+				util.CopyAndReplace(workloadFileTarget, workloadFileTarget, "name: names", "name: "+inputTopicName)
+				util.CopyAndReplace(workloadFileTarget, workloadFileTarget, "name: greetings", "name: "+outputTopicName)
+				util.CopyAndReplace(workloadFileTarget, workloadFileTarget, "input: names", "input: "+inputTopicName)
+				util.CopyAndReplace(workloadFileTarget, workloadFileTarget, "output: greetings", "output: "+outputTopicName)
+				util.CopyAndReplace(workloadFileTarget, workloadFileTarget, "image: sk8s/greeter:v0001", "image: "+imageName)
+				util.KubectlApply(workloadFileTarget, util.TEST_CONFIG.Namespace)
 				util.SendMessageToGateway(inputTopicName, "World")
 
 				outputMessage := util.KubectlFromKafkaPod(outputTopicName)
-				gomega.Expect(outputMessage).To(gomega.MatchRegexp(`(?s:
-.*contentType"application/octet-stream"spanId.*
-spanTraceId.*spanParentSpanId.*
-spanSampled.*spanName"` + inputTopicName + `:output.*Hello World.*)`))
+				gomega.Expect(outputMessage).To(gomega.MatchRegexp(`(?s:.*Hello World.*)`))
+
+				util.DeleteFile(workloadFileTarget)
 			})
 		})
 	})

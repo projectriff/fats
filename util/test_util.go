@@ -1,19 +1,19 @@
 package util
 
 import (
-	"os"
-	"math/rand"
-	"os/exec"
 	"bytes"
+	"io/ioutil"
+	"math/rand"
+	"os"
+	"os/exec"
+	"strconv"
 	"strings"
 	"time"
-	"strconv"
 )
 
 var TEST_CONFIG = InitSystemTestConfig()
 
 type SystemTestConfig struct {
-	CLIPath          string
 	Namespace        string
 	KafkaPodName     string
 	HTTPGatewayURL   string
@@ -27,7 +27,6 @@ type SystemTestConfig struct {
 func InitSystemTestConfig() SystemTestConfig {
 
 	return SystemTestConfig{
-		CLIPath:          ensureEnv("SYS_TEST_CLI_PATH"),
 		BaseDir:          ensureEnv("SYS_TEST_BASE_DIR"),
 		Namespace:        ensureEnv("SYS_TEST_NS"),
 		KafkaPodName:     ensureEnv("SYS_TEST_KAFKA_POD_NAME"),
@@ -39,14 +38,14 @@ func InitSystemTestConfig() SystemTestConfig {
 	}
 }
 
-func ensureEnv(varName string) (string) {
+func ensureEnv(varName string) string {
 	varValue := os.Getenv(varName)
 	if varValue == "" {
 		panic("Expected [" + varName + "] environment variable to be set")
 	}
 	return varValue
 }
-func ensureEnvInt(varName string) (int) {
+func ensureEnvInt(varName string) int {
 	varValue := ensureEnv(varName)
 	intValue, err := strconv.Atoi(varValue)
 	if err != nil {
@@ -55,12 +54,25 @@ func ensureEnvInt(varName string) (int) {
 	return intValue
 }
 
-func CLI(directory string, args ...string) {
-	runSafely("FaaS CLI", directory, TEST_CONFIG.CLIPath, args...)
-}
-
 func SendMessageToGateway(topic string, message string) {
 	runSafely("Curl", "/", "curl", "-H'Content-Type:text/plain'", "-d", message, TEST_CONFIG.HTTPGatewayURL+"/messages/"+topic)
+}
+
+func DeleteFile(path string) {
+	os.Remove(path)
+}
+
+func CopyAndReplace(sourceFile string, destinationFile string, token string, value string) {
+	fileBytes, readErr := ioutil.ReadFile(sourceFile)
+	if readErr != nil {
+		panic("Failed to read file [" + sourceFile + "]" + readErr.Error())
+	}
+	sourceString := string(fileBytes)
+	replacedString := strings.Replace(sourceString, token, value, -1)
+	writeErr := ioutil.WriteFile(destinationFile, []byte(replacedString), os.ModePerm)
+	if readErr != nil {
+		panic("Failed to write file [" + destinationFile + "]" + writeErr.Error())
+	}
 }
 
 func KubectlApply(workloadYamlPath string, namespace string) {
