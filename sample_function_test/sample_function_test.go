@@ -24,6 +24,8 @@ var _ = Describe("SampleFunctionTest", func() {
 				workloadFileTarget := path.Join(functionDir, functionName+".yaml")
 
 				util.MvnCleanPackage(functionDir)
+				util.CopyAndReplace(path.Join(functionDir, "Dockerfile"), path.Join(functionDir, "Dockerfile"), "sk8s/java-function-invoker:0.0.1-SNAPSHOT", "sk8s/java-function-invoker:"+util.TEST_CONFIG.JavaInvokerVersion)
+
 				util.DockerBuild(functionDir, imageName)
 				util.DockerPush(imageName)
 				util.CopyAndReplace(workloadFileSource, workloadFileTarget, "name: greeter", "name: "+functionName)
@@ -32,7 +34,7 @@ var _ = Describe("SampleFunctionTest", func() {
 				util.CopyAndReplace(workloadFileTarget, workloadFileTarget, "input: names", "input: "+inputTopicName)
 				util.CopyAndReplace(workloadFileTarget, workloadFileTarget, "output: greetings", "output: "+outputTopicName)
 				util.CopyAndReplace(workloadFileTarget, workloadFileTarget, "image: sk8s/greeter:v0001", "image: "+imageName)
-				util.CopyAndReplace(path.Join(functionDir, "Dockerfile"), path.Join(functionDir, "Dockerfile"), "sk8s/java-function-invoker:0.0.1-SNAPSHOT", "sk8s/java-function-invoker:"+util.TEST_CONFIG.JavaInvokerVersion)
+
 				util.KubectlApply(workloadFileTarget, util.TEST_CONFIG.Namespace)
 				util.SendMessageToGateway(inputTopicName, "World")
 
