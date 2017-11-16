@@ -13,7 +13,7 @@ var _ = Describe("SampleFunctionTest", func() {
 		Context("deploy sample uppercase java function", func() {
 
 			It("builds and deploys", func() {
-				functionDir := path.Join(util.TEST_CONFIG.BaseDir, "sample_functions", "java", "uppercase")
+				functionDir := path.Join(util.TEST_CONFIG.BaseDir, "samples", "java", "greeter")
 
 				functionName := util.RandStringShort()
 				inputTopicName := util.RandStringShort()
@@ -21,18 +21,18 @@ var _ = Describe("SampleFunctionTest", func() {
 				imageName := util.TEST_CONFIG.DockerOrg + "/" + functionName
 
 				util.MvnCleanPackage(functionDir)
-				util.CLI(functionDir, "-n", functionName, "build")
-				util.DockerTagAndPush(functionName, imageName)
+				util.DockerBuild(functionDir, imageName)
+				util.DockerPush(imageName)
 				util.CLI("/", "topics-create", "-t", inputTopicName, "-ns", util.TEST_CONFIG.Namespace)
 				util.CLI("/", "topics-create", "-t", outputTopicName, "-ns", util.TEST_CONFIG.Namespace)
 				util.CLI("/", "-n", functionName, "push", "-i", inputTopicName, "-o", outputTopicName, "-ns", util.TEST_CONFIG.Namespace, "-m", imageName)
-				util.SendMessageToGateway(inputTopicName, "hello")
+				util.SendMessageToGateway(inputTopicName, "World")
 
 				outputMessage := util.KubectlFromKafkaPod(outputTopicName)
 				gomega.Expect(outputMessage).To(gomega.MatchRegexp(`(?s:
-.* contentType"application/octet-stream"spanId.*
+.*contentType"application/octet-stream"spanId.*
 spanTraceId.*spanParentSpanId.*
-spanSampled.*spanName"` + inputTopicName + `:output.*HELLO.*)`))
+spanSampled.*spanName"` + inputTopicName + `:output.*Hello World.*)`))
 			})
 		})
 	})

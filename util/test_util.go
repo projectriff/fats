@@ -62,6 +62,11 @@ func CLI(directory string, args ...string) {
 func SendMessageToGateway(topic string, message string) {
 	runSafely("Curl", "/", "curl", "-H'Content-Type:text/plain'", "-d", message, TEST_CONFIG.HTTPGatewayURL+"/messages/"+topic)
 }
+
+func KubectlApply(workloadYamlPath string, namespace string) {
+	runSafely("Kubectl Apply Function Workload", "/", "kubectl", "apply", "-n", namespace, "-f", workloadYamlPath)
+}
+
 func KubectlFromKafkaPod(topic string) string {
 
 	outBuffer := bytes.NewBufferString("")
@@ -85,6 +90,15 @@ func KubectlFromKafkaPod(topic string) string {
 		panic("Kubectl Kafka failed")
 	}
 	return outBuffer.String()
+}
+
+func DockerBuild(contextDirectory string, imageName string) {
+	runSafely("Docker Build", "/", "docker", "build", contextDirectory, "-t", imageName)
+}
+
+func DockerPush(imageName string) {
+	runSafely("Docker Login", "/", "docker", "login", "-u", TEST_CONFIG.DockerUsername, "-p", TEST_CONFIG.DockerPassword)
+	runSafely("Docker Push", "/", "docker", "push", imageName)
 }
 
 func DockerTagAndPush(functionName string, imageName string) {
