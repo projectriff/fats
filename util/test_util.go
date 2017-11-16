@@ -14,14 +14,15 @@ import (
 var TEST_CONFIG = InitSystemTestConfig()
 
 type SystemTestConfig struct {
-	Namespace        string
-	KafkaPodName     string
-	HTTPGatewayURL   string
-	DockerOrg        string
-	DockerUsername   string
-	DockerPassword   string
-	BaseDir          string
-	MessageRTTimeout int
+	JavaInvokerVersion string
+	Namespace          string
+	KafkaPodName       string
+	HTTPGatewayURL     string
+	DockerOrg          string
+	DockerUsername     string
+	DockerPassword     string
+	BaseDir            string
+	MessageRTTimeout   int
 }
 
 func InitSystemTestConfig() SystemTestConfig {
