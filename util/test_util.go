@@ -133,7 +133,7 @@ func DockerTagAndPush(functionName string, imageName string) {
 }
 
 func MvnCleanPackage(directory string) {
-	runSafely("Maven Build", directory, "mvn", "clean", "package", "-Djava.version=1.8", "-D=maven.compiler.source=1.8", "-Dmaven.compiler.target=1.8")
+	runSafely("Maven Build", directory, "./mvnw", "clean", "package")
 }
 
 func runSafely(description string, directory string, command string, args ...string) {
