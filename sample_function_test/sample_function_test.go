@@ -41,6 +41,7 @@ var _ = Describe("SampleFunctionTest", func() {
 				outputMessage := util.KubectlFromKafkaPod(outputTopicName)
 				gomega.Expect(outputMessage).To(gomega.MatchRegexp(`(?s:.*Hello World.*)`))
 
+				util.KubectlDelete(workloadFileTarget, util.TEST_CONFIG.Namespace)
 				util.DeleteFile(workloadFileTarget)
 			})
 		})

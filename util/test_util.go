@@ -78,7 +78,11 @@ func CopyAndReplace(sourceFile string, destinationFile string, token string, val
 }
 
 func KubectlApply(workloadYamlPath string, namespace string) {
-	runSafely("Kubectl Apply Function Workload", "/", "kubectl", "apply", "-n", namespace, "-f", workloadYamlPath)
+	runSafely("Kubectl Apply Workload", "/", "kubectl", "apply", "-n", namespace, "-f", workloadYamlPath)
+}
+
+func KubectlDelete(workloadYamlPath string, namespace string) {
+	runSafely("Kubectl Delete Workload", "/", "kubectl", "delete", "-n", namespace, "-f", workloadYamlPath)
 }
 
 func KubectlFromKafkaPod(topic string) string {
