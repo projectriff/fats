@@ -24,7 +24,7 @@ var _ = Describe("SampleFunctionTest", func() {
 				workloadFileTarget := path.Join(functionDir, functionName+".yaml")
 
 				util.MvnCleanPackage(functionDir)
-				util.CopyAndReplace(path.Join(functionDir, "Dockerfile"), path.Join(functionDir, "Dockerfile"), "projectriff/java-function-invoker:0.0.1-SNAPSHOT", "riffci/java-function-invoker:"+util.TEST_CONFIG.JavaInvokerVersion)
+				util.CopyAndReplace(path.Join(functionDir, "Dockerfile"), path.Join(functionDir, "Dockerfile"), "java-function-invoker:0.0.1-SNAPSHOT", "java-function-invoker:"+util.TEST_CONFIG.JavaInvokerVersion)
 
 				util.DockerBuild(functionDir, imageName)
 				util.DockerPush(imageName)
