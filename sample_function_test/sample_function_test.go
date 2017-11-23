@@ -33,7 +33,7 @@ var _ = Describe("SampleFunctionTest", func() {
 				util.CopyAndReplace(workloadFileTarget, workloadFileTarget, "name: greetings", "name: "+outputTopicName)
 				util.CopyAndReplace(workloadFileTarget, workloadFileTarget, "input: names", "input: "+inputTopicName)
 				util.CopyAndReplace(workloadFileTarget, workloadFileTarget, "output: greetings", "output: "+outputTopicName)
-				util.CopyAndReplace(workloadFileTarget, workloadFileTarget, "image: sk8s/greeter:v0001", "image: "+imageName)
+				util.CopyAndReplace(workloadFileTarget, workloadFileTarget, "image: projectriff/greeter:v0001", "image: "+imageName)
 
 				util.KubectlApply(workloadFileTarget, util.TEST_CONFIG.Namespace)
 				util.SendMessageToGateway(inputTopicName, "World")
