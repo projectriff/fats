@@ -24,7 +24,7 @@ var _ = Describe("SampleFunctionTest", func() {
 				workloadFileTarget := path.Join(functionDir, functionName+".yaml")
 
 				util.MvnCleanPackage(functionDir)
-				util.CopyAndReplace(path.Join(functionDir, "Dockerfile"), path.Join(functionDir, "Dockerfile"), "java-function-invoker:0.0.1-SNAPSHOT", "java-function-invoker:"+util.TEST_CONFIG.JavaInvokerVersion)
+				util.CopyAndReplace(path.Join(functionDir, "Dockerfile"), path.Join(functionDir, "Dockerfile"), "java-function-invoker:.*", "java-function-invoker:"+util.TEST_CONFIG.JavaInvokerVersion)
 
 				util.DockerBuild(functionDir, imageName)
 				util.DockerPush(imageName)
@@ -40,6 +40,36 @@ var _ = Describe("SampleFunctionTest", func() {
 
 				outputMessage := util.KubectlFromKafkaPod(outputTopicName)
 				gomega.Expect(outputMessage).To(gomega.MatchRegexp(`(?s:.*Hello World.*)`))
+
+				util.KubectlDelete(workloadFileTarget, util.TEST_CONFIG.Namespace)
+				util.DeleteFile(workloadFileTarget)
+			})
+		})
+
+		Context("deploy sample square node function", func() {
+
+			It("builds and deploys", func() {
+				functionDir := path.Join(util.TEST_CONFIG.BaseDir, "samples", "node", "square")
+
+				functionName := util.RandStringShort()
+				inputTopicName := util.RandStringShort()
+				imageName := util.TEST_CONFIG.DockerOrg + "/" + functionName
+				workloadFileSource := path.Join(functionDir, "square.yaml")
+				workloadFileTarget := path.Join(functionDir, functionName+".yaml")
+
+				util.CopyAndReplace(path.Join(functionDir, "Dockerfile"), path.Join(functionDir, "Dockerfile"), "node-function-invoker:.*", "node-function-invoker:"+util.TEST_CONFIG.NodeInvokerVersion)
+
+				util.DockerBuild(functionDir, imageName)
+				util.DockerPush(imageName)
+				util.CopyAndReplace(workloadFileSource, workloadFileTarget, "name: square", "name: "+functionName)
+				util.CopyAndReplace(workloadFileTarget, workloadFileTarget, "name: numbers", "name: "+inputTopicName)
+				util.CopyAndReplace(workloadFileTarget, workloadFileTarget, "input: numbers", "input: "+inputTopicName)
+				util.CopyAndReplace(workloadFileTarget, workloadFileTarget, "image: projectriff/square:v0001", "image: "+imageName)
+
+				util.KubectlApply(workloadFileTarget, util.TEST_CONFIG.Namespace)
+				reply := util.SendRequestToGateway(inputTopicName, "12")
+
+				gomega.Expect(reply).To(gomega.MatchRegexp(`(?s:.*144.*)`))
 
 				util.KubectlDelete(workloadFileTarget, util.TEST_CONFIG.Namespace)
 				util.DeleteFile(workloadFileTarget)

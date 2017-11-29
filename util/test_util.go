@@ -9,12 +9,14 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"regexp"
 )
 
 var TEST_CONFIG = InitSystemTestConfig()
 
 type SystemTestConfig struct {
 	JavaInvokerVersion string
+	NodeInvokerVersion string
 	Namespace          string
 	KafkaPodName       string
 	HTTPGatewayURL     string
@@ -29,6 +31,7 @@ func InitSystemTestConfig() SystemTestConfig {
 
 	return SystemTestConfig{
 		JavaInvokerVersion: ensureEnv("SYS_TEST_JAVA_INVOKER_VERSION"),
+		NodeInvokerVersion: ensureEnv("SYS_TEST_NODE_INVOKER_VERSION"),
 		BaseDir:            ensureEnv("SYS_TEST_BASE_DIR"),
 		Namespace:          ensureEnv("SYS_TEST_NS"),
 		KafkaPodName:       ensureEnv("SYS_TEST_KAFKA_POD_NAME"),
@@ -60,17 +63,33 @@ func SendMessageToGateway(topic string, message string) {
 	runSafely("Curl", "/", "curl", "-d", message, "-H", "Content-Type:text/plain", TEST_CONFIG.HTTPGatewayURL+"/messages/"+topic)
 }
 
+func SendRequestToGateway(topic string, message string) string {
+
+	outBuffer := bytes.NewBufferString("")
+	cmd := exec.Command("curl", "-d", message, "-H", "Content-Type:text/plain", TEST_CONFIG.HTTPGatewayURL+"/requests/"+topic)
+	cmd.Stdout = outBuffer
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
+	if err != nil {
+		panic("Curl for requests failed")
+		cmd.Stderr.Write(outBuffer.Bytes())
+	}
+
+	return outBuffer.String()
+}
+
 func DeleteFile(path string) {
 	os.Remove(path)
 }
 
-func CopyAndReplace(sourceFile string, destinationFile string, token string, value string) {
+func CopyAndReplace(sourceFile string, destinationFile string, regexToMatch string, value string) {
 	fileBytes, readErr := ioutil.ReadFile(sourceFile)
 	if readErr != nil {
 		panic("Failed to read file [" + sourceFile + "]" + readErr.Error())
 	}
 	sourceString := string(fileBytes)
-	replacedString := strings.Replace(sourceString, token, value, -1)
+	regex := regexp.MustCompile(regexToMatch)
+	replacedString := string(regex.ReplaceAll([]byte(sourceString), []byte(value)))
 	writeErr := ioutil.WriteFile(destinationFile, []byte(replacedString), os.ModePerm)
 	if readErr != nil {
 		panic("Failed to write file [" + destinationFile + "]" + writeErr.Error())
