@@ -11,7 +11,7 @@ import (
 var _ = Describe("SampleFunctionTest", func() {
 	Describe("SampleFunctionTest", func() {
 
-		Context("deploy sample uppercase java function", func() {
+		Context("deploy sample greeter java function", func() {
 
 			It("builds and deploys", func() {
 				functionDir := path.Join(util.TEST_CONFIG.BaseDir, "samples", "java", "greeter")
