@@ -57,7 +57,7 @@ func ensureEnvInt(varName string) int {
 }
 
 func SendMessageToGateway(topic string, message string) {
-	runSafely("Curl", "/", "curl", "-H", "'Content-Type:text/plain'", "-d", message, TEST_CONFIG.HTTPGatewayURL+"/messages/"+topic)
+	runSafely("Curl", "/", "curl", "-d", message, "-H", "'Content-Type: text/plain'", TEST_CONFIG.HTTPGatewayURL+"/messages/"+topic)
 }
 
 func DeleteFile(path string) {
