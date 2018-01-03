@@ -15,6 +15,8 @@ export SYS_TEST_DOCKER_PASSWORD=<docker-password>
 export SYS_TEST_MSG_RT_TIMEOUT_SEC=<message-timeout-seconds>
 export SYS_TEST_JAVA_INVOKER_VERSION=<version-of-java-invoker-image>
 export SYS_TEST_NODE_INVOKER_VERSION=<version-of-node-invoker-image>
+export SYS_TEST_PYTHON2_INVOKER_VERSION=<version-of-python2-invoker-image>
+export SYS_TEST_SHELL_INVOKER_VERSION=<version-of-shell-invoker-image>
 ```
 
 Invoke `test.sh`
