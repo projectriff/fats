@@ -19,7 +19,7 @@ var _ = Describe("SampleFunctionTest", func() {
 				functionName := util.RandStringShort()
 				inputTopicName := util.RandStringShort()
 				outputTopicName := util.RandStringShort()
-				imageName := util.TEST_CONFIG.DockerOrg + "/" + functionName
+				imageName := util.TEST_CONFIG.DockerOrg + "/testjavagreeter:" + functionName
 				workloadFileSource := path.Join(functionDir, "greeter.yaml")
 				workloadFileTarget := path.Join(functionDir, functionName+".yaml")
 
@@ -54,7 +54,7 @@ var _ = Describe("SampleFunctionTest", func() {
 
 				functionName := util.RandStringShort()
 				inputTopicName := util.RandStringShort()
-				imageName := util.TEST_CONFIG.DockerOrg + "/" + functionName
+				imageName := util.TEST_CONFIG.DockerOrg + "/testnodesquare:" + functionName
 				workloadFileSource := path.Join(functionDir, "square.yaml")
 				workloadFileTarget := path.Join(functionDir, functionName+".yaml")
 
@@ -84,7 +84,7 @@ var _ = Describe("SampleFunctionTest", func() {
 
 				functionName := util.RandStringShort()
 				inputTopicName := util.RandStringShort()
-				imageName := util.TEST_CONFIG.DockerOrg + "/" + functionName
+				imageName := util.TEST_CONFIG.DockerOrg + "/testpythonupper:" + functionName
 				workloadFileSource := path.Join(functionDir, "uppercase.yaml")
 				workloadFileTarget := path.Join(functionDir, functionName+".yaml")
 
@@ -117,7 +117,7 @@ var _ = Describe("SampleFunctionTest", func() {
 
 				functionName := util.RandStringShort()
 				inputTopicName := util.RandStringShort()
-				imageName := util.TEST_CONFIG.DockerOrg + "/" + functionName
+				imageName := util.TEST_CONFIG.DockerOrg + "/testshellecho:" + functionName
 				topicWorkloadFileSource := path.Join(functionDir, "greetings-topic.yaml")
 				topicWorkloadFileTarget := path.Join(functionDir, functionName+"-topic.yaml")
 				fnWorkloadFileSource := path.Join(functionDir, "echo-function.yaml")
