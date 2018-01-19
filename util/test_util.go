@@ -108,6 +108,10 @@ func KubectlDelete(workloadYamlPath string, namespace string) {
 	runSafely("Kubectl Delete Workload", "/", "kubectl", "delete", "-n", namespace, "-f", workloadYamlPath)
 }
 
+func KubectlDeleteFunction(functionName string, namespace string) {
+	tryToRun("Delete function: " + functionName, "/", "kubectl", "delete", "-n", namespace, "function", functionName)
+}
+
 func KubectlFromKafkaPod(topic string) string {
 
 	outBuffer := bytes.NewBufferString("")
@@ -131,6 +135,18 @@ func KubectlFromKafkaPod(topic string) string {
 		panic("Kubectl Kafka failed")
 	}
 	return outBuffer.String()
+}
+
+func RiffInit(baseDirectory string, contextDirectory string, fnName string, inputTopic string, artifactPath string, dockerUser string, dockerVersion string, riffInvokerVersion string) {
+	runSafely("riff Init", baseDirectory, "./riff", "init", "-f", contextDirectory, "-n", fnName, "-i", inputTopic, "-a", artifactPath, "-u", dockerUser, "-v", dockerVersion, "--riff-version", riffInvokerVersion, "--force")
+}
+
+func RiffInitJava(baseDirectory string, contextDirectory string, fnName string, inputTopic string, outputTopic string, artifactPath string, className string, dockerUser string, dockerVersion string, riffInvokerVersion string) {
+	runSafely("riff Init", baseDirectory, "./riff", "init", "-f", contextDirectory, "-n", fnName, "-i", inputTopic, "-o", outputTopic, "-a", artifactPath, "--handler", className, "--protocol", "pipes", "-u", dockerUser, "-v", dockerVersion, "--riff-version", riffInvokerVersion, "--force")
+}
+
+func RiffInitPy(baseDirectory string, contextDirectory string, fnName string, inputTopic string, artifactPath string, handler string, dockerUser string, dockerVersion string, riffInvokerVersion string) {
+	runSafely("riff Init", baseDirectory, "./riff", "init", "-f", contextDirectory, "-n", fnName, "-i", inputTopic, "-a", artifactPath, "--handler", handler, "-u", dockerUser, "-v", dockerVersion, "--riff-version", riffInvokerVersion, "--force")
 }
 
 func DockerBuild(contextDirectory string, imageName string) {
@@ -175,6 +191,17 @@ func runSafely(description string, directory string, command string, args ...str
 	err := cmd.Run()
 	if err != nil {
 		panic(description + " failed in directory " + directory)
+	}
+}
+
+func tryToRun(description string, directory string, command string, args ...string) {
+	cmd := exec.Command(command, args...)
+	cmd.Dir = directory
+	cmd.Stdout = nil
+	cmd.Stderr = nil
+	err := cmd.Run()
+	if err != nil {
+		println(description + " - not found")
 	}
 }
 
