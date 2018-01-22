@@ -20,7 +20,6 @@ var _ = Describe("SampleFunctionTest", func() {
 				functionName := "sys-test-greeter"
 				inputTopicName := util.RandStringShort()
 				outputTopicName := util.RandStringShort()
-				imageName := util.TEST_CONFIG.DockerOrg + "/"+functionName+":"+dockerTag
 				fnWorkloadFile := path.Join(functionDir, functionName+"-function.yaml")
 				topicWorkloadFile := path.Join(functionDir, functionName+"-topics.yaml")
 
@@ -31,12 +30,12 @@ var _ = Describe("SampleFunctionTest", func() {
 
 				util.RiffInitJava(util.TEST_CONFIG.BaseDir, functionDir, functionName, inputTopicName, outputTopicName, "target/greeter-1.0.0.jar", "functions.Greeter", util.TEST_CONFIG.DockerOrg, dockerTag, util.TEST_CONFIG.JavaInvokerVersion)
 
-				util.DockerBuild(functionDir, imageName)
-				util.DockerPush(imageName)
+				util.RiffBuildAndPush(util.TEST_CONFIG.BaseDir, functionDir,functionName, util.TEST_CONFIG.DockerOrg, dockerTag)
 
 				util.KubectlApply(fnWorkloadFile, util.TEST_CONFIG.Namespace)
 				util.KubectlApply(topicWorkloadFile, util.TEST_CONFIG.Namespace)
-				util.SendMessageToGateway(inputTopicName, "World")
+
+				util.RiffPublishMessage(util.TEST_CONFIG.BaseDir, inputTopicName, "World")
 
 				outputMessage := util.KubectlFromKafkaPod(outputTopicName)
 				gomega.Expect(outputMessage).To(gomega.MatchRegexp(`(?s:.*Hello World.*)`))
@@ -56,7 +55,6 @@ var _ = Describe("SampleFunctionTest", func() {
 				dockerTag := util.RandStringShort()
 				functionName := "sys-test-square"
 				inputTopicName := util.RandStringShort()
-				imageName := util.TEST_CONFIG.DockerOrg + "/"+functionName+":"+dockerTag
 				fnWorkloadFile := path.Join(functionDir, functionName+"-function.yaml")
 				topicWorkloadFile := path.Join(functionDir, functionName+"-topics.yaml")
 
@@ -65,12 +63,11 @@ var _ = Describe("SampleFunctionTest", func() {
 
 				util.RiffInit(util.TEST_CONFIG.BaseDir, functionDir, functionName, inputTopicName, "square.js", util.TEST_CONFIG.DockerOrg, dockerTag, util.TEST_CONFIG.NodeInvokerVersion)
 
-				util.DockerBuild(functionDir, imageName)
-				util.DockerPush(imageName)
+				util.RiffBuildAndPush(util.TEST_CONFIG.BaseDir, functionDir,functionName, util.TEST_CONFIG.DockerOrg, dockerTag)
 
 				util.KubectlApply(fnWorkloadFile, util.TEST_CONFIG.Namespace)
 				util.KubectlApply(topicWorkloadFile, util.TEST_CONFIG.Namespace)
-				reply := util.SendRequestToGateway(inputTopicName, "12")
+				reply := util.RiffPublishMessageWithReply(util.TEST_CONFIG.BaseDir, inputTopicName, "12")
 
 				gomega.Expect(reply).To(gomega.MatchRegexp(`(?s:.*144.*)`))
 
@@ -89,7 +86,6 @@ var _ = Describe("SampleFunctionTest", func() {
 				dockerTag := util.RandStringShort()
 				functionName := "sys-test-sentiments"
 				inputTopicName := util.RandStringShort()
-				imageName := util.TEST_CONFIG.DockerOrg + "/"+functionName+":"+dockerTag
 				fnWorkloadFile := path.Join(functionDir, functionName+"-function.yaml")
 				topicWorkloadFile := path.Join(functionDir, functionName+"-topics.yaml")
 
@@ -98,13 +94,12 @@ var _ = Describe("SampleFunctionTest", func() {
 
 				util.RiffInitPy(util.TEST_CONFIG.BaseDir, functionDir, functionName, inputTopicName, "sentiment_service.py", "process", util.TEST_CONFIG.DockerOrg, dockerTag, util.TEST_CONFIG.Python2InvokerVersion)
 
-				util.DockerBuild(functionDir, imageName)
-				util.DockerPush(imageName)
+				util.RiffBuildAndPush(util.TEST_CONFIG.BaseDir, functionDir,functionName, util.TEST_CONFIG.DockerOrg, dockerTag)
 
 				util.KubectlApply(fnWorkloadFile, util.TEST_CONFIG.Namespace)
 				util.KubectlApply(topicWorkloadFile, util.TEST_CONFIG.Namespace)
 
-				reply := util.SendRequestToGateway(inputTopicName, "[{\"text\":\"happy happy happy\"},{\"text\":\"sad sad sad\"}]")
+				reply := util.RiffPublishMessageWithReply(util.TEST_CONFIG.BaseDir, inputTopicName, "[{\"text\":\"happy happy happy\"},{\"text\":\"sad sad sad\"}]")
 
 				gomega.Expect(reply).To(gomega.MatchRegexp(`(?s:.*happy happy happy.*)`))
 				gomega.Expect(reply).To(gomega.MatchRegexp(`(?s:.*sad sad sad.*)`))
@@ -124,7 +119,6 @@ var _ = Describe("SampleFunctionTest", func() {
 				dockerTag := util.RandStringShort()
 				functionName := "sys-test-echo"
 				inputTopicName := util.RandStringShort()
-				imageName := util.TEST_CONFIG.DockerOrg + "/"+functionName+":"+dockerTag
 				fnWorkloadFile := path.Join(functionDir, functionName+"-function.yaml")
 				topicWorkloadFile := path.Join(functionDir, functionName+"-topics.yaml")
 
@@ -133,12 +127,12 @@ var _ = Describe("SampleFunctionTest", func() {
 
 				util.RiffInit(util.TEST_CONFIG.BaseDir, functionDir, functionName, inputTopicName, "echo.sh", util.TEST_CONFIG.DockerOrg, dockerTag, util.TEST_CONFIG.ShellInvokerVersion)
 
-				util.DockerBuild(functionDir, imageName)
-				util.DockerPush(imageName)
+				util.RiffBuildAndPush(util.TEST_CONFIG.BaseDir, functionDir,functionName, util.TEST_CONFIG.DockerOrg, dockerTag)
 
 				util.KubectlApply(topicWorkloadFile, util.TEST_CONFIG.Namespace)
 				util.KubectlApply(fnWorkloadFile, util.TEST_CONFIG.Namespace)
-				reply := util.SendRequestToGateway(inputTopicName, "fooo")
+
+				reply := util.RiffPublishMessageWithReply(util.TEST_CONFIG.BaseDir, inputTopicName, "fooo")
 
 				gomega.Expect(reply).To(gomega.MatchRegexp(`(?s:.*fooo.*)`))
 

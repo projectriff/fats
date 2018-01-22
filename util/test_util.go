@@ -2,13 +2,10 @@ package util
 
 import (
 	"bytes"
-	"io/ioutil"
 	"math/rand"
 	"os"
 	"os/exec"
-	"regexp"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -63,41 +60,8 @@ func ensureEnvInt(varName string) int {
 	return intValue
 }
 
-func SendMessageToGateway(topic string, message string) {
-	runSafely("Curl", "/", "curl", "-d", message, "-H", "Content-Type:text/plain", TEST_CONFIG.HTTPGatewayURL+"/messages/"+topic)
-}
-
-func SendRequestToGateway(topic string, message string) string {
-
-	outBuffer := bytes.NewBufferString("")
-	cmd := exec.Command("curl", "-d", message, "-H", "Content-Type:text/plain", TEST_CONFIG.HTTPGatewayURL+"/requests/"+topic)
-	cmd.Stdout = outBuffer
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
-	if err != nil {
-		panic("Curl for requests failed")
-		cmd.Stderr.Write(outBuffer.Bytes())
-	}
-
-	return outBuffer.String()
-}
-
 func DeleteFile(path string) {
 	os.Remove(path)
-}
-
-func CopyAndReplace(sourceFile string, destinationFile string, regexToMatch string, value string) {
-	fileBytes, readErr := ioutil.ReadFile(sourceFile)
-	if readErr != nil {
-		panic("Failed to read file [" + sourceFile + "]" + readErr.Error())
-	}
-	sourceString := string(fileBytes)
-	regex := regexp.MustCompile(regexToMatch)
-	replacedString := string(regex.ReplaceAll([]byte(sourceString), []byte(value)))
-	writeErr := ioutil.WriteFile(destinationFile, []byte(replacedString), os.ModePerm)
-	if readErr != nil {
-		panic("Failed to write file [" + destinationFile + "]" + writeErr.Error())
-	}
 }
 
 func KubectlApply(workloadYamlPath string, namespace string) {
@@ -149,30 +113,26 @@ func RiffInitPy(baseDirectory string, contextDirectory string, fnName string, in
 	runSafely("riff Init", baseDirectory, "./riff", "init", "-f", contextDirectory, "-n", fnName, "-i", inputTopic, "-a", artifactPath, "--handler", handler, "-u", dockerUser, "-v", dockerVersion, "--riff-version", riffInvokerVersion, "--force")
 }
 
-func DockerBuild(contextDirectory string, imageName string) {
-	runSafely("Docker Build", "/", "docker", "build", contextDirectory, "-t", imageName)
+func RiffBuildAndPush(baseDirectory string, contextDirectory string, fnName string, dockerUser string, dockerVersion string) {
+	runSafely("riff Build", baseDirectory, "./riff", "build", "-n", fnName, "-f", contextDirectory, "-u", dockerUser, "-v", dockerVersion, "--push")
 }
 
-func DockerPush(imageName string) {
-	runSafely("Docker Login", "/", "docker", "login", "-u", TEST_CONFIG.DockerUsername, "-p", TEST_CONFIG.DockerPassword)
-	runSafely("Docker Push", "/", "docker", "push", imageName)
+func RiffPublishMessage(baseDirectory string, topic string, message string) {
+	runSafely("riff Publish", baseDirectory, "./riff", "publish", "-d", message, "-i", topic)
 }
 
-func DockerTagAndPush(functionName string, imageName string) {
-
+func RiffPublishMessageWithReply(baseDirectory string, topic string, message string) string {
 	outBuffer := bytes.NewBufferString("")
-	dockerCmd := exec.Command("docker", "images", "-f", "reference="+functionName, "--format", "{{.ID}}")
-	dockerCmd.Stdout = outBuffer
-	dockerCmd.Stderr = os.Stderr
-	err := dockerCmd.Run()
+	cmd := exec.Command("./riff", "publish", "-d", message, "-i", topic, "--reply")
+	cmd.Dir = baseDirectory
+	cmd.Stdout = outBuffer
+	cmd.Stderr = os.Stderr
+	err := cmd.Run()
 	if err != nil {
-		panic("Docker image list failed")
-		dockerCmd.Stderr.Write(outBuffer.Bytes())
+		panic("riff Publish with reply failed")
+		cmd.Stderr.Write(outBuffer.Bytes())
 	}
-
-	runSafely("Docker Tag", "/", "docker", "tag", strings.TrimSpace(outBuffer.String()), imageName)
-	runSafely("Docker Login", "/", "docker", "login", "-u", TEST_CONFIG.DockerUsername, "-p", TEST_CONFIG.DockerPassword)
-	runSafely("Docker Push", "/", "docker", "push", imageName)
+	return outBuffer.String()
 }
 
 func MvnCleanPackage(directory string) {
@@ -209,10 +169,6 @@ const letters = "abcdefghijklmnopqrstuvwxyz"
 
 func RandStringShort() string {
 	return randString(8)
-}
-
-func RandStringLong() string {
-	return randString(24)
 }
 
 func randString(n int) string {
