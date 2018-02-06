@@ -24,6 +24,7 @@ type SystemTestConfig struct {
 	DockerPassword        string
 	BaseDir               string
 	MessageRTTimeout      int
+	RiffNamespace         string
 }
 
 func InitSystemTestConfig() SystemTestConfig {
@@ -41,6 +42,7 @@ func InitSystemTestConfig() SystemTestConfig {
 		DockerUsername:        ensureEnv("SYS_TEST_DOCKER_USERNAME"),
 		DockerPassword:        ensureEnv("SYS_TEST_DOCKER_PASSWORD"),
 		MessageRTTimeout:      ensureEnvInt("SYS_TEST_MSG_RT_TIMEOUT_SEC"),
+		RiffNamespace:         ensureEnv("SYS_RIFF_NS"),
 	}
 }
 
@@ -79,7 +81,7 @@ func KubectlDeleteFunction(functionName string, namespace string) {
 func KubectlFromKafkaPod(topic string) string {
 
 	outBuffer := bytes.NewBufferString("")
-	cmd := exec.Command("kubectl", "-n", TEST_CONFIG.Namespace, "exec", TEST_CONFIG.KafkaPodName, "--", "/opt/kafka/bin/kafka-console-consumer.sh", "--bootstrap-server", "localhost:9092", "--topic", topic, "--from-beginning", "--max-messages", "1")
+	cmd := exec.Command("kubectl", "-n", TEST_CONFIG.RiffNamespace, "exec", TEST_CONFIG.KafkaPodName, "--", "/opt/kafka/bin/kafka-console-consumer.sh", "--bootstrap-server", "localhost:9092", "--topic", topic, "--from-beginning", "--max-messages", "1")
 	cmd.Stdout = outBuffer
 	cmd.Stderr = os.Stderr
 
