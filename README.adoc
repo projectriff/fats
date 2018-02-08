@@ -17,6 +17,7 @@ export SYS_TEST_JAVA_INVOKER_VERSION=<version-of-java-invoker-image>
 export SYS_TEST_NODE_INVOKER_VERSION=<version-of-node-invoker-image>
 export SYS_TEST_PYTHON2_INVOKER_VERSION=<version-of-python2-invoker-image>
 export SYS_TEST_SHELL_INVOKER_VERSION=<version-of-shell-invoker-image>
+export SYS_RIFF_NS=<k8s-ns-where-riff-kafka-is-installed>
 ```
 
 Invoke `test.sh`
