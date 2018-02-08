@@ -1,6 +1,6 @@
-# FaaS Acceptance Test Suite (FATS) for Riff
+= FaaS Acceptance Test Suite (FATS) for riff image:https://ci.projectriff.io/api/v1/teams/main/pipelines/riff/jobs/run-faas-acceptance-tests-gke/badge[Acceptance Tests Status, link=https://ci.projectriff.io/teams/main/pipelines/riff/jobs/run-faas-acceptance-tests-gke/builds/latest]
 
-To run this test, ensure a working PFS (`sk8s`) deployment exists in a k8s cluster.
+To run this test, ensure a working https://github.com/projectriff/riff/blob/master/Development-Helm-install.adoc[riff deployment] exists in a k8s cluster.
 
 Set up the following environment variables:
 
