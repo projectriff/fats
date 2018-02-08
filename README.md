@@ -1,4 +1,4 @@
-# PFS System Test Codebase
+# FaaS Acceptance Test Suite (FATS) for Riff
 
 To run this test, ensure a working PFS (`sk8s`) deployment exists in a k8s cluster.
 
