@@ -5,7 +5,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	"github.com/onsi/gomega"
-	"github.com/pivotal-cf/pfs-system-test/util"
+	"github.com/projectriff/fats/util"
 )
 
 var _ = Describe("SampleFunctionTest", func() {
