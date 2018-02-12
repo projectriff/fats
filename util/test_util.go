@@ -2,6 +2,7 @@ package util
 
 import (
 	"bytes"
+	"fmt"
 	"math/rand"
 	"os"
 	"os/exec"
@@ -57,6 +58,7 @@ func ensureEnvInt(varName string) int {
 	varValue := ensureEnv(varName)
 	intValue, err := strconv.Atoi(varValue)
 	if err != nil {
+		fmt.Println(err)
 		panic("Couldn't parse [" + varName + "/" + varValue + "] as integer")
 	}
 	return intValue
@@ -75,7 +77,7 @@ func KubectlDelete(workloadYamlPath string, namespace string) {
 }
 
 func KubectlDeleteFunction(functionName string, namespace string) {
-	tryToRun("Delete function: " + functionName, "/", "kubectl", "delete", "-n", namespace, "function", functionName)
+	tryToRun("Delete function: "+functionName, "/", "kubectl", "delete", "-n", namespace, "function", functionName)
 }
 
 func KubectlFromKafkaPod(topic string) string {
@@ -86,18 +88,22 @@ func KubectlFromKafkaPod(topic string) string {
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Start(); err != nil {
-		panic("Kubectl Kafka start failed")
+		fmt.Println(err)
 		cmd.Stderr.Write(outBuffer.Bytes())
+
+		panic("Kubectl Kafka start failed")
 	}
 	timer := time.AfterFunc(time.Duration(TEST_CONFIG.MessageRTTimeout)*time.Second, func() {
 		cmd.Process.Kill()
-		panic("Kubectl Kafka timed out")
 		cmd.Stderr.Write(outBuffer.Bytes())
+
+		panic("Kubectl Kafka timed out")
 	})
 	err := cmd.Wait()
 	timer.Stop()
 
 	if err != nil {
+		fmt.Println(err)
 		panic("Kubectl Kafka failed")
 	}
 	return outBuffer.String()
@@ -132,8 +138,9 @@ func RiffPublishMessageWithReply(baseDirectory string, topic string, message str
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	if err != nil {
-		panic("riff Publish with reply failed")
+		fmt.Println(err)
 		cmd.Stderr.Write(outBuffer.Bytes())
+		panic("riff Publish with reply failed")
 	}
 	return outBuffer.String()
 }
@@ -153,6 +160,7 @@ func runSafely(description string, directory string, command string, args ...str
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	if err != nil {
+		fmt.Println(err)
 		panic(description + " failed in directory " + directory)
 	}
 }
@@ -164,6 +172,7 @@ func tryToRun(description string, directory string, command string, args ...stri
 	cmd.Stderr = nil
 	err := cmd.Run()
 	if err != nil {
+		fmt.Println(err)
 		println(description + " - not found")
 	}
 }
