@@ -158,11 +158,14 @@ func Run(directory string, command string, args ...string) {
 }
 
 func runSafely(description string, directory string, command string, args ...string) {
+	fmt.Println("Running " + description)
+
 	cmd := exec.Command(command, args...)
 	cmd.Dir = directory
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err := cmd.Run()
+
+	var output []byte
+	output, err := cmd.CombinedOutput()
+	fmt.Println(string(output))
 	if err != nil {
 		fmt.Println(err)
 		panic(description + " failed in directory " + directory)
