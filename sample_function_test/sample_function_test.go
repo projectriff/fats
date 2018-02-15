@@ -30,7 +30,7 @@ var _ = Describe("SampleFunctionTest", func() {
 
 				util.RiffInitJava(util.TEST_CONFIG.BaseDir, functionDir, functionName, inputTopicName, outputTopicName, "target/greeter-1.0.0.jar", "functions.Greeter", util.TEST_CONFIG.DockerOrg, dockerTag, util.TEST_CONFIG.JavaInvokerVersion)
 
-				util.RiffBuildAndPush(util.TEST_CONFIG.BaseDir, functionDir,functionName, util.TEST_CONFIG.DockerOrg, dockerTag)
+				util.RiffBuildAndPush(util.TEST_CONFIG.BaseDir, functionDir, functionName, util.TEST_CONFIG.DockerOrg, dockerTag)
 
 				util.KubectlApply(fnWorkloadFile, util.TEST_CONFIG.Namespace)
 				util.KubectlApply(topicWorkloadFile, util.TEST_CONFIG.Namespace)
@@ -83,7 +83,7 @@ var _ = Describe("SampleFunctionTest", func() {
 
 				util.RiffInitPy(util.TEST_CONFIG.BaseDir, functionDir, functionName, inputTopicName, "sentiment_service.py", "process", util.TEST_CONFIG.DockerOrg, dockerTag, util.TEST_CONFIG.Python2InvokerVersion)
 
-				util.RiffBuildAndPush(util.TEST_CONFIG.BaseDir, functionDir,functionName, util.TEST_CONFIG.DockerOrg, dockerTag)
+				util.RiffBuildAndPush(util.TEST_CONFIG.BaseDir, functionDir, functionName, util.TEST_CONFIG.DockerOrg, dockerTag)
 
 				util.KubectlApply(fnWorkloadFile, util.TEST_CONFIG.Namespace)
 				util.KubectlApply(topicWorkloadFile, util.TEST_CONFIG.Namespace)
@@ -116,7 +116,7 @@ var _ = Describe("SampleFunctionTest", func() {
 
 				util.RiffInit(util.TEST_CONFIG.BaseDir, functionDir, functionName, inputTopicName, "echo.sh", util.TEST_CONFIG.DockerOrg, dockerTag, util.TEST_CONFIG.ShellInvokerVersion)
 
-				util.RiffBuildAndPush(util.TEST_CONFIG.BaseDir, functionDir,functionName, util.TEST_CONFIG.DockerOrg, dockerTag)
+				util.RiffBuildAndPush(util.TEST_CONFIG.BaseDir, functionDir, functionName, util.TEST_CONFIG.DockerOrg, dockerTag)
 
 				util.KubectlApply(topicWorkloadFile, util.TEST_CONFIG.Namespace)
 				util.KubectlApply(fnWorkloadFile, util.TEST_CONFIG.Namespace)
