@@ -110,7 +110,7 @@ func KubectlFromKafkaPod(topic string) string {
 }
 
 func RiffInit(baseDirectory string, contextDirectory string, fnName string, inputTopic string, artifactPath string, dockerUser string, dockerVersion string, riffInvokerVersion string) {
-	runSafely("riff Init", baseDirectory, "./riff", "init", "-f", contextDirectory, "-n", fnName, "-i", inputTopic, "-a", artifactPath, "-u", dockerUser, "-v", dockerVersion, "--riff-version", riffInvokerVersion, "--force", "--namespace", TEST_CONFIG.Namespace)
+	runSafely("riff Init", baseDirectory, "./riff", "init", "-f", contextDirectory, "-n", fnName, "-i", inputTopic, "-a", artifactPath, "-u", dockerUser, "-v", dockerVersion, "--version", riffInvokerVersion, "--force", "--namespace", TEST_CONFIG.Namespace)
 }
 
 func RiffInitJava(baseDirectory string, contextDirectory string, fnName string, inputTopic string, outputTopic string, artifactPath string, className string, dockerUser string, dockerVersion string, riffInvokerVersion string) {
@@ -124,6 +124,10 @@ func RiffInitPy(baseDirectory string, contextDirectory string, fnName string, in
 func RiffBuildAndPush(baseDirectory string, contextDirectory string, fnName string, dockerUser string, dockerVersion string) {
 	runSafely("Docker Login", "/", "docker", "login", "-u", TEST_CONFIG.DockerUsername, "-p", TEST_CONFIG.DockerPassword)
 	runSafely("riff Build", baseDirectory, "./riff", "build", "-n", fnName, "-f", contextDirectory, "-u", dockerUser, "-v", dockerVersion, "--push", "--namespace", TEST_CONFIG.Namespace)
+}
+
+func RiffApply(baseDirectory string, contextDirectory string) {
+	runSafely("riff apply", baseDirectory, "./riff", "apply", "--filename", contextDirectory)
 }
 
 func RiffPublishMessage(baseDirectory string, topic string, message string) {

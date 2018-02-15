@@ -53,28 +53,17 @@ var _ = Describe("SampleFunctionTest", func() {
 				functionDir := path.Join(util.TEST_CONFIG.BaseDir, "samples", "node", "square")
 
 				dockerTag := util.RandStringShort()
-				functionName := "sys-test-square"
-				inputTopicName := util.RandStringShort()
-				fnWorkloadFile := path.Join(functionDir, functionName+"-function.yaml")
-				topicWorkloadFile := path.Join(functionDir, functionName+"-topics.yaml")
+				functionName := "node-sample-image"
+				inputTopicName := functionName
 
 				// just in case there is already a function with the same name
 				util.KubectlDeleteFunction(functionName, util.TEST_CONFIG.Namespace)
 
 				util.RiffInit(util.TEST_CONFIG.BaseDir, functionDir, functionName, inputTopicName, "square.js", util.TEST_CONFIG.DockerOrg, dockerTag, util.TEST_CONFIG.NodeInvokerVersion)
+				util.RiffApply(util.TEST_CONFIG.BaseDir, functionDir)
 
-				util.RiffBuildAndPush(util.TEST_CONFIG.BaseDir, functionDir,functionName, util.TEST_CONFIG.DockerOrg, dockerTag)
-
-				util.KubectlApply(fnWorkloadFile, util.TEST_CONFIG.Namespace)
-				util.KubectlApply(topicWorkloadFile, util.TEST_CONFIG.Namespace)
 				reply := util.RiffPublishMessageWithReply(util.TEST_CONFIG.BaseDir, inputTopicName, "12")
-
 				gomega.Expect(reply).To(gomega.MatchRegexp(`(?s:.*144.*)`))
-
-				util.KubectlDelete(fnWorkloadFile, util.TEST_CONFIG.Namespace)
-				util.KubectlDelete(topicWorkloadFile, util.TEST_CONFIG.Namespace)
-				util.DeleteFile(fnWorkloadFile)
-				util.DeleteFile(topicWorkloadFile)
 			})
 		})
 

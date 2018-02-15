@@ -20,6 +20,10 @@
 #  name = "github.com/x/y"
 #  version = "2.4.0"
 
+required = [
+  "golang.org/x/crypto/ssh/terminal",
+  "github.com/onsi/ginkgo/ginkgo"
+]
 
 [[constraint]]
   name = "github.com/onsi/ginkgo"
