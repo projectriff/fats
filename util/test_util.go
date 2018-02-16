@@ -110,7 +110,17 @@ func KubectlFromKafkaPod(topic string) string {
 }
 
 func RiffInit(baseDirectory string, contextDirectory string, fnName string, inputTopic string, artifactPath string, dockerUser string, dockerVersion string, riffInvokerVersion string) {
-	runSafely("riff Init", baseDirectory, "./riff", "init", "-f", contextDirectory, "-n", fnName, "-i", inputTopic, "-a", artifactPath, "-u", dockerUser, "-v", dockerVersion, "--version", riffInvokerVersion, "--force", "--namespace", TEST_CONFIG.Namespace)
+	runSafely("riff Init", baseDirectory,
+		"./riff", "init", "node",
+		"-f", contextDirectory,
+		"-n", fnName,
+		"-i", inputTopic,
+		"-a", artifactPath,
+		"-u", dockerUser,
+		"-v", dockerVersion,
+		"--useraccount", "riffci",
+		"--version", riffInvokerVersion,
+		"--force")
 }
 
 func RiffInitJava(baseDirectory string, contextDirectory string, fnName string, inputTopic string, outputTopic string, artifactPath string, className string, dockerUser string, dockerVersion string, riffInvokerVersion string) {
@@ -127,7 +137,7 @@ func RiffBuildAndPush(baseDirectory string, contextDirectory string, fnName stri
 }
 
 func RiffApply(baseDirectory string, contextDirectory string) {
-	runSafely("riff apply", baseDirectory, "./riff", "apply", "--filename", contextDirectory)
+	runSafely("riff apply", baseDirectory, "./riff", "apply", "--filepath", contextDirectory, "--namespace", TEST_CONFIG.Namespace)
 }
 
 func RiffPublishMessage(baseDirectory string, topic string, message string) {
@@ -136,7 +146,7 @@ func RiffPublishMessage(baseDirectory string, topic string, message string) {
 
 func RiffPublishMessageWithReply(baseDirectory string, topic string, message string) string {
 	outBuffer := bytes.NewBufferString("")
-	cmd := exec.Command("./riff", "publish", "-d", message, "-i", topic, "--reply", "--namespace", TEST_CONFIG.Namespace)
+	cmd := exec.Command("./riff", "publish", "--data", message, "--input", topic, "--reply", "--namespace", TEST_CONFIG.Namespace)
 	cmd.Dir = baseDirectory
 	cmd.Stdout = outBuffer
 	cmd.Stderr = os.Stderr
