@@ -111,7 +111,7 @@ func KubectlFromKafkaPod(topic string) string {
 
 func RiffInit(baseDirectory string, contextDirectory string, fnName string, inputTopic string, artifactPath string, dockerUser string, dockerVersion string, riffInvokerVersion string) {
 	runSafely("riff Init", baseDirectory,
-		"./riff", "init", "node",
+		"riff", "init", "node",
 		"-f", contextDirectory,
 		"-n", fnName,
 		"-i", inputTopic,
@@ -124,29 +124,29 @@ func RiffInit(baseDirectory string, contextDirectory string, fnName string, inpu
 }
 
 func RiffInitJava(baseDirectory string, contextDirectory string, fnName string, inputTopic string, outputTopic string, artifactPath string, className string, dockerUser string, dockerVersion string, riffInvokerVersion string) {
-	runSafely("riff Init", baseDirectory, "./riff", "init", "-f", contextDirectory, "-n", fnName, "-i", inputTopic, "-o", outputTopic, "-a", artifactPath, "--handler", className, "--protocol", "pipes", "-u", dockerUser, "-v", dockerVersion, "--riff-version", riffInvokerVersion, "--force", "--namespace", TEST_CONFIG.Namespace)
+	runSafely("riff Init", baseDirectory, "riff", "init", "-f", contextDirectory, "-n", fnName, "-i", inputTopic, "-o", outputTopic, "-a", artifactPath, "--handler", className, "--protocol", "pipes", "-u", dockerUser, "-v", dockerVersion, "--riff-version", riffInvokerVersion, "--force", "--namespace", TEST_CONFIG.Namespace)
 }
 
 func RiffInitPy(baseDirectory string, contextDirectory string, fnName string, inputTopic string, artifactPath string, handler string, dockerUser string, dockerVersion string, riffInvokerVersion string) {
-	runSafely("riff Init", baseDirectory, "./riff", "init", "-f", contextDirectory, "-n", fnName, "-i", inputTopic, "-a", artifactPath, "--handler", handler, "-u", dockerUser, "-v", dockerVersion, "--riff-version", riffInvokerVersion, "--force", "--namespace", TEST_CONFIG.Namespace)
+	runSafely("riff Init", baseDirectory, "riff", "init", "-f", contextDirectory, "-n", fnName, "-i", inputTopic, "-a", artifactPath, "--handler", handler, "-u", dockerUser, "-v", dockerVersion, "--riff-version", riffInvokerVersion, "--force", "--namespace", TEST_CONFIG.Namespace)
 }
 
 func RiffBuildAndPush(baseDirectory string, contextDirectory string, fnName string, dockerUser string, dockerVersion string) {
 	runSafely("Docker Login", "/", "docker", "login", "-u", TEST_CONFIG.DockerUsername, "-p", TEST_CONFIG.DockerPassword)
-	runSafely("riff Build", baseDirectory, "./riff", "build", "-n", fnName, "-f", contextDirectory, "-u", dockerUser, "-v", dockerVersion, "--push", "--namespace", TEST_CONFIG.Namespace)
+	runSafely("riff Build", baseDirectory, "riff", "build", "-n", fnName, "-f", contextDirectory, "-u", dockerUser, "-v", dockerVersion, "--push", "--namespace", TEST_CONFIG.Namespace)
 }
 
 func RiffApply(baseDirectory string, contextDirectory string) {
-	runSafely("riff apply", baseDirectory, "./riff", "apply", "--filepath", contextDirectory, "--namespace", TEST_CONFIG.Namespace)
+	runSafely("riff apply", baseDirectory, "riff", "apply", "--filepath", contextDirectory, "--namespace", TEST_CONFIG.Namespace)
 }
 
 func RiffPublishMessage(baseDirectory string, topic string, message string) {
-	runSafely("riff Publish", baseDirectory, "./riff", "publish", "-d", message, "-i", topic, "--namespace", TEST_CONFIG.Namespace)
+	runSafely("riff Publish", baseDirectory, "riff", "publish", "-d", message, "-i", topic, "--namespace", TEST_CONFIG.Namespace)
 }
 
 func RiffPublishMessageWithReply(baseDirectory string, topic string, message string) string {
 	outBuffer := bytes.NewBufferString("")
-	cmd := exec.Command("./riff", "publish", "--data", message, "--input", topic, "--reply", "--namespace", TEST_CONFIG.Namespace)
+	cmd := exec.Command("riff", "publish", "--data", message, "--input", topic, "--reply", "--namespace", TEST_CONFIG.Namespace)
 	cmd.Dir = baseDirectory
 	cmd.Stdout = outBuffer
 	cmd.Stderr = os.Stderr
