@@ -109,16 +109,14 @@ func KubectlFromKafkaPod(topic string) string {
 	return outBuffer.String()
 }
 
-func RiffInit(baseDirectory string, contextDirectory string, fnName string, inputTopic string, artifactPath string, dockerUser string, dockerVersion string, riffInvokerVersion string) {
+func RiffInit(baseDirectory string, contextDirectory string, languageName string, fnName string, inputTopic string, artifactPath string, dockerUser string, riffInvokerVersion string) {
 	runSafely("riff Init", baseDirectory,
-		"riff", "init", "node",
+		"riff", "init", languageName,
 		"-f", contextDirectory,
 		"-n", fnName,
 		"-i", inputTopic,
 		"-a", artifactPath,
-		"-u", dockerUser,
-		"-v", dockerVersion,
-		"--useraccount", "riffci",
+		"--useraccount", dockerUser,
 		"--version", riffInvokerVersion,
 		"--force")
 }
