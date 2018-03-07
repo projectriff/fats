@@ -9,8 +9,8 @@ Travis will:
 - deploy, invoke and delete functions for:
     - java
     - node
+    - python2
     - shell
-    - python2 (pending support in riff)
 - deletes GKE cluster
 
 Attempts are made to cleanup all Google Cloud resources that are
