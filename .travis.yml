@@ -1,0 +1,19 @@
+sudo: required
+language: go
+go:
+  - "1.9"
+env:
+  global:
+    - CLUSTER_NAME="ci-${TRAVIS_REPO_SLUG////-}-${TRAVIS_JOB_NUMBER//./-}-${TRAVIS_BUILD_ID}"
+install: true
+before_script:
+  - ./install_kubectl.sh
+  - ./install_gke.sh
+  - ./install_helm.sh
+script:
+  - ./install_riff.sh
+  - riff version
+  - kubectl get deployments --namespace riff-system
+  - ./functions/run.sh
+after_script:
+  - ./cleanup-gke.sh
