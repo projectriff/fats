@@ -1,4 +1,4 @@
-# FaaS Acceptance Test Suite (FATS) for riff [![Build Status](https://travis-ci.org/projectriff/fats.svg?branch=travis)](https://travis-ci.org/projectriff/fats)
+# FaaS Acceptance Test Suite (FATS) for riff [![Build Status](https://travis-ci.org/projectriff/fats.svg?branch=master)](https://travis-ci.org/projectriff/fats)
 
 Uses travis-ci to run acceptance tests
 
