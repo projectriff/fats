@@ -1,8 +1,5 @@
 #!/bin/bash
 
-set -o errexit
-set -o nounset
-set -o pipefail
+source ./util.sh
 
-gcloud container clusters delete $1 --quiet
-rm client-secret.json
+gcloud container clusters delete $CLUSTER_NAME --quiet

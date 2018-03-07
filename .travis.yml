@@ -1,26 +1,19 @@
 sudo: required
-
 language: go
 go:
   - "1.9"
-
 env:
   global:
-    - CHANGE_MINIKUBE_NONE_USER=true
     - CLUSTER_NAME="ci-${TRAVIS_REPO_SLUG////-}-${TRAVIS_JOB_NUMBER//./-}-${TRAVIS_BUILD_ID}"
-
 install: true
-
 before_script:
-  - ./install_kubectl.sh v1.9.2
-  - ./install_gke.sh $CLUSTER_NAME
-  - ./install_helm.sh v2.8.1
-
+  - ./install_kubectl.sh
+  - ./install_gke.sh
+  - ./install_helm.sh
 script:
-  - ./install_riff.sh master
+  - ./install_riff.sh
   - riff version
-  - kubectl get deployments -L app=riff
-  - ./functions/run.sh $CLUSTER_NAME
-
+  - kubectl get deployments --namespace riff-system
+  - ./functions/run.sh
 after_script:
-  - ./cleanup-gke.sh $CLUSTER_NAME
+  - ./cleanup-gke.sh
