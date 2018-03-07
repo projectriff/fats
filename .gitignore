@@ -1,0 +1,6 @@
+projectriff*
+*-function.yaml
+*-topics.yaml
+Dockerfile
+.dockerignore
+*.out

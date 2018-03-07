@@ -1,0 +1,1 @@
+java --artifact target/fats-uppercase-java.jar --handler functions.Uppercase
