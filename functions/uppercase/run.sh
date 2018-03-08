@@ -32,7 +32,7 @@ for invoker in java node python2 shell; do
         actual_data=`cat $function_name.out | tail -1`
 
         riff delete --all --name $function_name
-        gcloud container images delete "${useraccount}/${function_name}:${function_version}" --quiet
+        gcloud container images delete "${useraccount}/${function_name}:${function_version}"
 
         if [ "$actual_data" != "$expected_data" ]; then
             echo "Function did not produce expected result";

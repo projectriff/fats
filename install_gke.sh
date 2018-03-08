@@ -10,6 +10,7 @@ rm client-secret.json
 
 gcloud config set project cf-spring-pfs-eng
 gcloud config set compute/zone us-central1-a
+gcloud config set disable_prompts True
 
 gcloud container clusters create $CLUSTER_NAME
 gcloud container clusters get-credentials $CLUSTER_NAME
