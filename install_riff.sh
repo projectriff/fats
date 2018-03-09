@@ -7,7 +7,6 @@ riff_home="`go env GOPATH`/src/github.com/projectriff/riff"
 riff_version=`cat ${riff_home}/VERSION`
 
 echo "riffVersion: $riff_version" > ~/.riff.yaml
-echo "publishNamespace: riff-system" >> ~/.riff.yaml
 
 kubectl create namespace riff-system
 
