@@ -16,6 +16,7 @@ script:
 - kubectl get deployments --namespace riff-system
 - "./functions/run.sh"
 after_script:
+- "./cleanup-riff.sh"
 - "./cleanup-gke.sh"
 notifications:
   slack:
