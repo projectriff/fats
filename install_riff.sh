@@ -15,7 +15,9 @@ helm repo add projectriff https://riff-charts.storage.googleapis.com
 helm repo update
 
 helm install --name transport --namespace riff-system projectriff/kafka
+helm install --name control --namespace riff-system --version $riff_version projectriff/riff
 
+# kafka health checks
 until kube_ready \
   'pods' \
   'riff-system' \
@@ -32,8 +34,28 @@ until kube_ready \
   'Ready=True' \
 ; do sleep 1; done
 
-helm install --name control --namespace riff-system --version $riff_version projectriff/riff
-
+# riff health checks
+until kube_ready \
+  'pods' \
+  'riff-system' \
+  'app=riff,component=function-controller' \
+  '{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}' \
+  'Ready=True' \
+; do sleep 1; done
+until kube_ready \
+  'pods' \
+  'riff-system' \
+  'app=riff,component=topic-controller' \
+  '{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}' \
+  'Ready=True' \
+; do sleep 1; done
+until kube_ready \
+  'pods' \
+  'riff-system' \
+  'app=riff,component=http-gateway' \
+  '{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}' \
+  'Ready=True' \
+; do sleep 1; done
 until kube_ready \
   'services' \
   'riff-system' \
