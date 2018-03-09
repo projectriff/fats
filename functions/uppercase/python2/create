@@ -1,1 +1,1 @@
-python --artifact fats-uppercase-python2.py --handler toUpperCase --protocol grpc
+python --artifact fats-uppercase-python2.py --handler toUpperCase
