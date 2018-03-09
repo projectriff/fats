@@ -4,16 +4,17 @@ source ./util.sh
 
 go get github.com/projectriff/riff
 riff_home="`go env GOPATH`/src/github.com/projectriff/riff"
+riff_version=`cat ${riff_home}/VERSION`
 
-echo "riffVersion: `cat ${riff_home}/VERSION`" > ~/.riff.yaml
+echo "riffVersion: $riff_version" > ~/.riff.yaml
 echo "publishNamespace: riff-system" >> ~/.riff.yaml
 
 kubectl create namespace riff-system
 
-helm install \
-  --name transport \
-  --namespace riff-system \
-  ${riff_home}/helm-charts/kafka
+helm repo add projectriff https://riff-charts.storage.googleapis.com
+helm repo update
+
+helm install --name transport --namespace riff-system projectriff/kafka
 
 until kube_ready \
   'pods' \
@@ -31,11 +32,7 @@ until kube_ready \
   'Ready=True' \
 ; do sleep 1; done
 
-helm install \
-  --name control \
-  --namespace riff-system \
-  --values ${riff_home}/helm/values-snapshot.yaml \
-  ${riff_home}/helm-charts/riff
+helm install --name control --namespace riff-system --version $riff_version projectriff/riff
 
 until kube_ready \
   'services' \
