@@ -17,17 +17,17 @@ for invoker in java node python2 shell; do
       args=`cat create`
     fi
 
-    riff create $args \
-      --useraccount $useraccount \
-      --name $function_name \
-      --version $function_version \
-      --push
-
     kail --label "function=$function_name" > $function_name.logs &
     kail_function_pid=$!
 
     kail --label app=riff --ns riff-system > $function_name.controller.logs &
     kail_controller_pid=$!
+
+    riff create $args \
+      --useraccount $useraccount \
+      --name $function_name \
+      --version $function_version \
+      --push
 
     riff publish \
       --input $function_name \
