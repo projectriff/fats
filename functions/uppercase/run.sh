@@ -5,40 +5,54 @@ function=`basename $dir`
 
 # TODO enable python2 after projectriff/python2-function-invoker#1
 for invoker in java node python2 shell; do
-    echo $invoker
-    pushd $dir/$invoker
-        function_name="fats-$function-$invoker"
-        function_version="${CLUSTER_NAME}"
-        useraccount="gcr.io/`gcloud config get-value project`"
-        input_data="hello"
+  echo $invoker
+  pushd $dir/$invoker
+    function_name="fats-$function-$invoker"
+    function_version="${CLUSTER_NAME}"
+    useraccount="gcr.io/`gcloud config get-value project`"
+    input_data="hello"
 
-        args=""
-        if [ -e 'create' ]; then
-            args=`cat create`
-        fi
+    args=""
+    if [ -e 'create' ]; then
+      args=`cat create`
+    fi
 
-        riff create $args \
-          --useraccount $useraccount \
-          --name $function_name \
-          --version $function_version \
-          --push
-        riff publish \
-          --input $function_name \
-          --data $input_data \
-          --reply \
-          | tee $function_name.out
+    riff create $args \
+      --useraccount $useraccount \
+      --name $function_name \
+      --version $function_version \
+      --push
 
-        expected_data="HELLO"
-        actual_data=`cat $function_name.out | tail -1`
+    kail --label "function=$function_name" > $function_name.logs &
+    kail_function_pid=$!
 
-        riff delete --all --name $function_name
-        gcloud container images delete "${useraccount}/${function_name}:${function_version}"
+    kail --label app=riff --ns riff-system > $function_name.controller.logs &
+    kail_controller_pid=$!
 
-        if [ "$actual_data" != "$expected_data" ]; then
-            echo "Function did not produce expected result";
-            echo "   expected: $expected_data"
-            echo "   actual: $actual_data"
-            exit 1
-        fi
-    popd
+    riff publish \
+      --input $function_name \
+      --data $input_data \
+      --reply \
+      | tee $function_name.out
+
+    expected_data="HELLO"
+    actual_data=`cat $function_name.out | tail -1`
+
+    kill $kail_function_pid $kail_controller_pid
+    riff delete --all --name $function_name
+    gcloud container images delete "${useraccount}/${function_name}:${function_version}"
+
+    if [ "$actual_data" != "$expected_data" ]; then
+      echo -e "Function Logs:"
+      cat $function_name.logs
+      echo -e ""
+      echo -e "Controller Logs:"
+      cat $function_name.controller.logs
+      echo -e ""
+      echo -e "${RED}Function did not produce expected result${NC}";
+      echo -e "   expected: $expected_data"
+      echo -e "   actual: $actual_data"
+      exit 1
+    fi
+  popd
 done

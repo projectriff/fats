@@ -4,6 +4,9 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
 kube_ready() {
   resource=$1
   namespace=$2
