@@ -1,1 +1,0 @@
-python --artifact fats-uppercase-python2.py --handler toUpperCase

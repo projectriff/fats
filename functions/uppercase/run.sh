@@ -3,8 +3,7 @@
 dir=`dirname "${BASH_SOURCE[0]}"`
 function=`basename $dir`
 
-# TODO enable python2 after projectriff/python2-function-invoker#1
-for invoker in java node python2 shell; do
+for invoker in java node python3 shell; do
   echo $invoker
   pushd $dir/$invoker
     function_name="fats-$function-$invoker"
