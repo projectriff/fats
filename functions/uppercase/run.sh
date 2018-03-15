@@ -3,8 +3,7 @@
 dir=`dirname "${BASH_SOURCE[0]}"`
 function=`basename $dir`
 
-for invoker in go java node python3 shell; do
-  echo $invoker
+for invoker in command go java node python3; do
   pushd $dir/$invoker
     function_name="fats-$function-$invoker"
     function_version="${CLUSTER_NAME}"
