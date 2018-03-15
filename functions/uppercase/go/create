@@ -1,0 +1,1 @@
+go --artifact fats-uppercase-go.so --handler ToUpper
