@@ -40,8 +40,8 @@ for invoker in command go java node python3; do
 
     kill $kail_function_pid $kail_controller_pid
     riff delete --all --name $function_name
-    gcloud container images delete "${useraccount}/${function_name}:${function_version}"
     kubectl delete invokers --all
+    gcloud container images delete "${useraccount}/${function_name}:${function_version}"
 
     if [ "$actual_data" != "$expected_data" ]; then
       echo -e "Function Logs:"
