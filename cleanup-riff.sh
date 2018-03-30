@@ -2,5 +2,4 @@
 
 source ./util.sh
 
-helm delete --purge control
-helm delete --purge transport
+helm delete --purge projectriff

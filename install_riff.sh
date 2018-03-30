@@ -13,8 +13,7 @@ kubectl create namespace riff-system
 helm repo add projectriff https://riff-charts.storage.googleapis.com
 helm repo update
 
-helm install --name transport --namespace riff-system projectriff/kafka
-helm install --name control --namespace riff-system --version $riff_version projectriff/riff
+helm install --name projectriff --namespace riff-system --version $riff_version projectriff/riff --set kafka.create=true
 
 # kafka health checks
 until kube_ready \
