@@ -1,1 +1,1 @@
-java --artifact fats-uppercase-java.jar --handler functions.Uppercase
+--artifact fats-uppercase-java.jar --handler functions.Uppercase

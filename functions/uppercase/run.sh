@@ -23,7 +23,7 @@ for invoker in command go java node python3; do
 
     kubectl apply -f "https://github.com/projectriff/$invoker-function-invoker/raw/master/$invoker-invoker.yaml"
 
-    riff create $args \
+    riff create $invoker $args \
       --useraccount $useraccount \
       --name $function_name \
       --version $function_version \

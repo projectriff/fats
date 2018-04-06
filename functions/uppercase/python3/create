@@ -1,1 +1,1 @@
-python3 --artifact fats-uppercase-python3.py --handler toUpperCase
+--artifact fats-uppercase-python3.py --handler toUpperCase
