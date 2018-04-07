@@ -21,7 +21,7 @@ for invoker in command go java node python3; do
     kail --label app=riff --ns riff-system > $function_name.controller.logs &
     kail_controller_pid=$!
 
-    kubectl apply -f "https://github.com/projectriff/$invoker-function-invoker/raw/master/$invoker-invoker.yaml"
+    riff invokers apply -f "https://github.com/projectriff/$invoker-function-invoker/raw/master/$invoker-invoker.yaml"
 
     riff create $invoker $args \
       --useraccount $useraccount \
@@ -40,7 +40,7 @@ for invoker in command go java node python3; do
 
     kill $kail_function_pid $kail_controller_pid
     riff delete --all --name $function_name
-    kubectl delete invokers --all
+    riff invokers delete $invoker
     gcloud container images delete "${useraccount}/${function_name}:${function_version}"
 
     if [ "$actual_data" != "$expected_data" ]; then
