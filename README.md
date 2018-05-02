@@ -7,10 +7,11 @@ Travis will:
 - create a GKE cluster
 - install riff into GKE via helm
 - deploy, invoke and delete functions for:
+    - command
+    - go
     - java
     - node
-    - python2
-    - shell
+    - python3
 - deletes GKE cluster
 
 Attempts are made to cleanup all Google Cloud resources that are
