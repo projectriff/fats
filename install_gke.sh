@@ -27,3 +27,7 @@ rm client-secret.json
 gcloud container clusters create --num-nodes 2 $CLUSTER_NAME
 gcloud container clusters get-credentials $CLUSTER_NAME
 docker-credential-gcr configure-docker
+
+kubectl create clusterrolebinding cluster-admin-binding \
+  --clusterrole=cluster-admin \
+  --user=$(gcloud config get-value core/account)
