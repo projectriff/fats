@@ -8,6 +8,7 @@ riff system install
 riff namespace init default --secret gcr-creds
 
 # health checks
+echo "Checking for ready pods"
 until kube_ready \
   'pods' \
   'istio-system' \
