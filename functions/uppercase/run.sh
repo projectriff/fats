@@ -35,6 +35,8 @@ for invoker in java node; do
       '{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}' \
       'Ready=True' \
     ; do sleep 1; done
+    # TODO reduce/eliminate this sleep
+    sleep 10
 
     # invoke function
     riff service invoke $function_name -- \
