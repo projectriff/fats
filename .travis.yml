@@ -9,14 +9,13 @@ install: true
 before_script:
 - "./install_kubectl.sh"
 - "./install_gke.sh"
-- "./install_helm.sh"
+- "./install_gcr_helper.sh"
 script:
 - "./install_riff.sh"
 - riff version
-- kubectl get deployments --namespace riff-system
+- kubectl get deployments --all-namespaces
 - "./functions/run.sh"
 after_script:
-- "./cleanup-riff.sh"
 - "./cleanup-gke.sh"
 notifications:
   slack:

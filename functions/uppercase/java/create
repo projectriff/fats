@@ -1,1 +1,1 @@
---artifact fats-uppercase-java.jar --handler functions.Uppercase
+--git-repo https://github.com/projectriff-samples/fats-uppercase-java.git --handler functions.Uppercase
