@@ -3,11 +3,12 @@
 dir=`dirname "${BASH_SOURCE[0]}"`
 function=`basename $dir`
 
-for invoker in command java node python3; do
+for invoker in java node; do
   pushd $dir/$invoker
     function_name="fats-$function-$invoker"
     function_version="${CLUSTER_NAME}"
     useraccount="gcr.io/`gcloud config get-value project`"
+    image="${useraccount}/${function_name}:${function_version}"
     input_data="hello"
 
     args=""
@@ -21,27 +22,32 @@ for invoker in command java node python3; do
     kail --ns knative-serving > $function_name.controller.logs &
     kail_controller_pid=$!
 
-    # riff invokers apply -f "https://github.com/projectriff/$invoker-function-invoker/raw/master/$invoker-invoker.yaml"
+    # create function
+    riff function create $invoker $function_name $args \
+      --image $image
 
-    # riff create $invoker $args \
-    #   --useraccount $useraccount \
-    #   --name $function_name \
-    #   --version $function_version \
-    #   --push
+    # wait for function to build and deploy
+    until kube_ready \
+      'pods' \
+      'default' \
+      "serving.knative.dev/configuration=${function_name}" \
+      '{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}' \
+      'Ready=True' \
+    ; do sleep 1; done
 
-    # riff publish \
-    #   --input $function_name \
-    #   --data $input_data \
-    #   --reply \
-    #   | tee $function_name.out
+    # invoke function
+    riff service invoke $function_name -- \
+      -H "Content-Type: text/plain" \
+      -d $input_data \
+      | tee $function_name.out
 
     expected_data="HELLO"
     actual_data=`cat $function_name.out | tail -1`
 
+    # cleanup resources
     kill $kail_function_pid $kail_controller_pid
-    # riff delete --all --name $function_name
-    # riff invokers delete $invoker
-    # gcloud container images delete "${useraccount}/${function_name}:${function_version}"
+    riff service delete $function_name
+    gcloud container images delete $image
 
     if [ "$actual_data" != "$expected_data" ]; then
       echo -e "Function Logs:"
