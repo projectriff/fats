@@ -18,30 +18,30 @@ for invoker in command java node python3; do
     kail --label "function=$function_name" > $function_name.logs &
     kail_function_pid=$!
 
-    kail --label app=riff --ns riff-system > $function_name.controller.logs &
+    kail --ns knative-serving > $function_name.controller.logs &
     kail_controller_pid=$!
 
-    riff invokers apply -f "https://github.com/projectriff/$invoker-function-invoker/raw/master/$invoker-invoker.yaml"
+    # riff invokers apply -f "https://github.com/projectriff/$invoker-function-invoker/raw/master/$invoker-invoker.yaml"
 
-    riff create $invoker $args \
-      --useraccount $useraccount \
-      --name $function_name \
-      --version $function_version \
-      --push
+    # riff create $invoker $args \
+    #   --useraccount $useraccount \
+    #   --name $function_name \
+    #   --version $function_version \
+    #   --push
 
-    riff publish \
-      --input $function_name \
-      --data $input_data \
-      --reply \
-      | tee $function_name.out
+    # riff publish \
+    #   --input $function_name \
+    #   --data $input_data \
+    #   --reply \
+    #   | tee $function_name.out
 
     expected_data="HELLO"
     actual_data=`cat $function_name.out | tail -1`
 
     kill $kail_function_pid $kail_controller_pid
-    riff delete --all --name $function_name
-    riff invokers delete $invoker
-    gcloud container images delete "${useraccount}/${function_name}:${function_version}"
+    # riff delete --all --name $function_name
+    # riff invokers delete $invoker
+    # gcloud container images delete "${useraccount}/${function_name}:${function_version}"
 
     if [ "$actual_data" != "$expected_data" ]; then
       echo -e "Function Logs:"

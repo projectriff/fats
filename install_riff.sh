@@ -3,61 +3,43 @@
 source ./util.sh
 
 go get github.com/projectriff/riff
-riff_home="`go env GOPATH`/src/github.com/projectriff/riff"
-riff_version=`cat ${riff_home}/VERSION`
 
-echo "riffVersion: latest" > ~/.riff.yaml
+riff system install
+riff namespace init default --secret gcr-creds
 
-kubectl create namespace riff-system
-
-helm repo add projectriff https://riff-charts.storage.googleapis.com
-helm repo update
-
-helm install --name projectriff --namespace riff-system --version $riff_version projectriff/riff --set kafka.create=true
-
-# kafka health checks
+# health checks
 until kube_ready \
   'pods' \
-  'riff-system' \
-  'app=kafka,component=zookeeper' \
-  '{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}' \
-  'Ready=True' \
-; do sleep 1; done
-sleep 5
-until kube_ready \
-  'pods' \
-  'riff-system' \
-  'app=kafka,component=kafka-broker' \
-  '{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}' \
-  'Ready=True' \
-; do sleep 1; done
-
-# riff health checks
-until kube_ready \
-  'pods' \
-  'riff-system' \
-  'app=riff,component=function-controller' \
+  'istio-system' \
+  'knative=ingressgateway' \
   '{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}' \
   'Ready=True' \
 ; do sleep 1; done
 until kube_ready \
   'pods' \
-  'riff-system' \
-  'app=riff,component=topic-controller' \
+  'knative-serving' \
+  'app=controller' \
   '{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}' \
   'Ready=True' \
 ; do sleep 1; done
 until kube_ready \
   'pods' \
-  'riff-system' \
-  'app=riff,component=http-gateway' \
+  'knative-build' \
+  'app=build-controller' \
   '{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}' \
   'Ready=True' \
 ; do sleep 1; done
 until kube_ready \
-  'services' \
-  'riff-system' \
-  'app=riff,component=http-gateway' \
-  '{.items[0].status.loadBalancer.ingress[0].ip}' \
-  '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b' \
+  'pods' \
+  'knative-eventing' \
+  'app=eventing-controller' \
+  '{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}' \
+  'Ready=True' \
+; do sleep 1; done
+until kube_ready \
+  'pods' \
+  'knative-eventing' \
+  'clusterBus=stub' \
+  '{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}' \
+  'Ready=True' \
 ; do sleep 1; done
