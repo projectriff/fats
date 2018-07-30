@@ -27,6 +27,7 @@ for invoker in java node; do
       --image $image
 
     # wait for function to build and deploy
+    echo "Waiting for function to become ready"
     until kube_ready \
       'pods' \
       'default' \
@@ -39,7 +40,7 @@ for invoker in java node; do
     riff service invoke $function_name -- \
       -H "Content-Type: text/plain" \
       -d $input_data \
-      | tee $function_name.out
+      -v | tee $function_name.out
 
     expected_data="HELLO"
     actual_data=`cat $function_name.out | tail -1`
