@@ -3,7 +3,7 @@
 dir=`dirname "${BASH_SOURCE[0]}"`
 function=`basename $dir`
 
-for invoker in java node; do
+for invoker in command java node; do
   pushd $dir/$invoker
     function_name="fats-$function-$invoker"
     function_version="${CLUSTER_NAME}"
