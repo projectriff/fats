@@ -5,7 +5,7 @@ source ./util.sh
 go get github.com/projectriff/riff
 
 # create auth secret
-cat <<EOF | kubectl $KUBECTL_FLAGS apply -f - 2>&3
+cat <<EOF | kubectl apply -f - 2>&3
 apiVersion: v1
 kind: Secret
 metadata:
