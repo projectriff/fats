@@ -1,0 +1,1 @@
+-artifact target/echo-headers-1.0.0.jar --handler io.projectriff.fats.EchoHeaders \
