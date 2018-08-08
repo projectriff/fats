@@ -4,8 +4,8 @@ source ./util.sh
 
 go get github.com/projectriff/riff
 
-# create auth secret
-cat <<EOF | kubectl apply -f - 2>&3
+echo "Create auth secret"
+cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Secret
 metadata:
@@ -18,7 +18,7 @@ metadata:
 type: kubernetes.io/basic-auth
 data:
   username: $(echo -n "_json_key" | openssl base64 -a -A) # Should be X2pzb25fa2V5
-  password: $GCLOUD_CLIENT_SECRET
+  password: $(echo $GCLOUD_CLIENT_SECRET)
 EOF
 
 riff system install
