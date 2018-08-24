@@ -1,3 +1,3 @@
 #!/bin/bash
 
-source ./cleanup-$1.sh
+source ./cleanup_$1.sh

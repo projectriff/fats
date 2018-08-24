@@ -1,3 +1,3 @@
 #!/bin/bash
 
-source ./install-$1.sh
+source ./install_$1.sh

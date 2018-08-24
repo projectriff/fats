@@ -5,5 +5,6 @@ export SYSTEM_INSTALL_FLAGS=""
 
 fats_delete_image() {
   image=$1
+
   gcloud container images delete $image
 }

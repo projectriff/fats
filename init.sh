@@ -1,3 +1,3 @@
 #!/bin/bash
 
-source ./init-$1.sh
+source ./init_$1.sh
