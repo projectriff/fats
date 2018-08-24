@@ -33,3 +33,20 @@ gcloud container clusters create $CLUSTER_NAME \
 kubectl create clusterrolebinding cluster-admin-binding \
   --clusterrole=cluster-admin \
   --user=$(gcloud config get-value core/account)
+
+echo "Create auth secret"
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: push-credentials
+  annotations:
+    build.knative.dev/docker-0: https://us.gcr.io
+    build.knative.dev/docker-1: https://gcr.io
+    build.knative.dev/docker-2: https://eu.gcr.io
+    build.knative.dev/docker-3: https://asia.gcr.io
+type: kubernetes.io/basic-auth
+data:
+  username: $(echo -n "_json_key" | openssl base64 -a -A) # Should be X2pzb25fa2V5
+  password: $(echo $GCLOUD_CLIENT_SECRET)
+EOF
