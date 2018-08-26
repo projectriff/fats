@@ -15,15 +15,11 @@ else
     chmod +x minikube && sudo mv minikube /usr/local/bin/
 fi
 
-
-# Make root mounted as rshared to fix kube-dns issues.
-sudo mount --make-rshared /
-
 # TODO make vm driver configurable
 sudo minikube start --memory=8192 --cpus=4 \
   --kubernetes-version=v1.10.0 \
   --vm-driver=none \
-  --bootstrapper=kubeadm \
+  --bootstrapper=localkube \
   --extra-config=controller-manager.cluster-signing-cert-file="/var/lib/localkube/certs/ca.crt" \
   --extra-config=controller-manager.cluster-signing-key-file="/var/lib/localkube/certs/ca.key" \
   --extra-config=apiserver.admission-control="LimitRanger,NamespaceExists,NamespaceLifecycle,ResourceQuota,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook"
