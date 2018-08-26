@@ -15,7 +15,9 @@ else
     chmod +x minikube && sudo mv minikube /usr/local/bin/
 fi
 
-# TODO make vm driver configurable
+# Make root mounted as rshared to fix kube-dns issues.
+sudo mount --make-rshared /
+
 sudo minikube start --memory=8192 --cpus=4 \
   --kubernetes-version=v1.10.0 \
   --vm-driver=none \
@@ -30,18 +32,3 @@ minikube update-context
 # Wait for Kubernetes to be up and ready.
 JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}'; \
   until kubectl get nodes -o jsonpath="$JSONPATH" 2>&1 | grep -q "Ready=True"; do sleep 1; done
-
-
-echo "Create auth secret"
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Secret
-metadata:
-  name: push-credentials
-  annotations:
-    build.knative.dev/docker-0: https://index.docker.io/v1/
-type: kubernetes.io/basic-auth
-data:
-  username: $(echo -n "$DOCKER_USERNAME" | openssl base64 -a -A)
-  password: $(echo -n "$DOCKER_PASSWORD" | openssl base64 -a -A)
-EOF
