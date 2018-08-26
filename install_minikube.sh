@@ -2,6 +2,8 @@
 
 source ./util.sh
 
+# inspired by https://github.com/LiliC/travis-minikube/blob/minikube-26-kube-1.10/.travis.yml
+
 export CHANGE_MINIKUBE_NONE_USER=true
 
 # install minikube if needed
@@ -13,6 +15,10 @@ else
     chmod +x minikube && sudo mv minikube /usr/local/bin/
 fi
 
+
+# Make root mounted as rshared to fix kube-dns issues.
+sudo mount --make-rshared /
+
 # TODO make vm driver configurable
 sudo minikube start --memory=8192 --cpus=4 \
   --kubernetes-version=v1.10.0 \
@@ -22,6 +28,7 @@ sudo minikube start --memory=8192 --cpus=4 \
   --extra-config=controller-manager.cluster-signing-key-file="/var/lib/localkube/certs/ca.key" \
   --extra-config=apiserver.admission-control="LimitRanger,NamespaceExists,NamespaceLifecycle,ResourceQuota,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook"
 
+# Fix the kubectl context, as it's often stale.
 minikube update-context
 
 echo "Create auth secret"
