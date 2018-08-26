@@ -8,6 +8,7 @@ fats_delete_image() {
   repo=${image[0]}
   tag=${image[1]}
 
+  echo "Delete image ${repo}:${tag}"
   TOKEN=`curl -s -H "Content-Type: application/json" -X POST -d '{"username": "'${DOCKER_USERNAME}'", "password": "'${DOCKER_PASSWORD}'"}' https://hub.docker.com/v2/users/login/ | jq -r .token`
   curl "https://hub.docker.com/v2/repositories/${repo}/tags/${tag}/" -X DELETE -H "Authorization: JWT ${TOKEN}"
 }
