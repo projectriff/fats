@@ -28,11 +28,8 @@ for invoker in command jar java java-local node; do
 
     # create function
     fats_echo "Creating $function_name as $invoker:"
-    riff function create $invoker $function_name $args --image $image
-
-    # wait for function to build and deploy
-    fats_echo "Waiting for $function_name to become ready:"
-    wait_kservice_ready "${function_name}" 'default'
+    riff function create $invoker $function_name $args --image $image --verbose
+    # TODO reduce/eliminate this sleep
     sleep 5
 
     # invoke function
