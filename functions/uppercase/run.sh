@@ -7,8 +7,7 @@ for invoker in command java node; do
   pushd $dir/$invoker
     function_name="fats-$function-$invoker"
     function_version="${CLUSTER_NAME}"
-    useraccount="gcr.io/`gcloud config get-value project`"
-    image="${useraccount}/${function_name}:${function_version}"
+    image="${USER_ACCOUNT}/${function_name}:${function_version}"
     input_data="hello"
 
     args=""
@@ -50,7 +49,7 @@ for invoker in command java node; do
     # cleanup resources
     kill $kail_function_pid $kail_controller_pid
     riff service delete $function_name
-    gcloud container images delete $image
+    fats_delete_image $image
 
     if [ "$actual_data" != "$expected_data" ]; then
       echo -e "Function Logs:"

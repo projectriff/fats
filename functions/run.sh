@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source ./util.sh
+source ./init.sh $CLUSTER
 
 dir=`dirname "${BASH_SOURCE[0]}"`
 
