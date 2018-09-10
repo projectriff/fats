@@ -1,7 +1,7 @@
 sudo: required
 language: go
 go:
-- '1.10'
+- '1.11'
 env:
   global:
   - CLUSTER_NAME="fats-${TRAVIS_JOB_NUMBER//./-}"
