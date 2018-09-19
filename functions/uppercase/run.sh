@@ -48,6 +48,9 @@ for runtime in command java java-buildpack java-buildpack-local node; do
       -d $input_data \
       -v | tee $function_name.out
 
+    # add a new line after invoke, but without impacting the curl output
+    echo ""
+
     expected_data="HELLO"
     actual_data=`cat $function_name.out | tail -1`
 
