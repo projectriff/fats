@@ -3,7 +3,7 @@
 dir=`dirname "${BASH_SOURCE[0]}"`
 function=`basename $dir`
 
-for runtime in command java node; do
+for runtime in command java java-buildpack java-buildpack-local node; do
   pushd $dir/$runtime
     function_name="fats-$function-$runtime"
     function_version="${CLUSTER_NAME}"
