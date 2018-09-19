@@ -22,6 +22,8 @@ echo $GCLOUD_CLIENT_SECRET | base64 --decode > client-secret.json
 gcloud auth activate-service-account --key-file client-secret.json
 rm client-secret.json
 
+gcloud auth configure-docker
+
 gcloud container clusters create $CLUSTER_NAME \
   --cluster-version=latest \
   --machine-type=n1-standard-4 \
