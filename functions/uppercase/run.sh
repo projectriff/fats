@@ -3,16 +3,21 @@
 dir=`dirname "${BASH_SOURCE[0]}"`
 function=`basename $dir`
 
-for invoker in command java node; do
-  pushd $dir/$invoker
-    function_name="fats-$function-$invoker"
+for runtime in command java java-buildpack java-buildpack-local node; do
+  pushd $dir/$runtime
+    function_name="fats-$function-$runtime"
     function_version="${CLUSTER_NAME}"
     image="${USER_ACCOUNT}/${function_name}:${function_version}"
     input_data="hello"
 
     args=""
-    if [ -e 'create' ]; then
-      args=`cat create`
+    if [ -e '.fats/create' ]; then
+      args=`cat .fats/create`
+    fi
+
+    if [ -e '.fats/runtime' ]; then
+      # overwrite runtime
+      runtime=`cat .fats/runtime`
     fi
 
     kail --label "function=$function_name" > $function_name.logs &
@@ -22,7 +27,7 @@ for invoker in command java node; do
     kail_controller_pid=$!
 
     # create function
-    riff function create $invoker $function_name $args \
+    riff function create $runtime $function_name $args \
       --image $image
 
     # wait for function to build and deploy
@@ -42,6 +47,9 @@ for invoker in command java node; do
       -H "Content-Type: text/plain" \
       -d $input_data \
       -v | tee $function_name.out
+
+    # add a new line after invoke, but without impacting the curl output
+    echo ""
 
     expected_data="HELLO"
     actual_data=`cat $function_name.out | tail -1`

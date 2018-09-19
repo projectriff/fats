@@ -3,6 +3,8 @@
 export USER_ACCOUNT="${DOCKER_USERNAME}"
 export SYSTEM_INSTALL_FLAGS="--node-port"
 
+docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+
 fats_delete_image() {
   IFS=':' read -r -a image <<< "$1"
   repo=${image[0]}
