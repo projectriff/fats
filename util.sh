@@ -5,6 +5,7 @@ set -o nounset
 set -o pipefail
 
 RED='\033[0;31m'
+BLUE='\e[104m'
 NC='\033[0m' # No Color
 
 kube_ready() {
@@ -13,16 +14,19 @@ kube_ready() {
   jsonpath=$4
   pattern=$5
 
-if [[ $3 = *"="* ]]; then
-  label=$3
+  if [[ $3 = *"="* ]]; then
+    label=$3
 
-  kubectl get $resource --namespace $namespace -l $label \
-    -o jsonpath="$jsonpath" 2>&1 | grep -qE $pattern
-else
-  name=$3
+    kubectl get $resource --namespace $namespace -l $label \
+      -o jsonpath="$jsonpath" 2>&1 | grep -qE $pattern
+  else
+    name=$3
 
-  kubectl get $resource --namespace $namespace $name \
-    -o jsonpath="$jsonpath" 2>&1 | grep -qE $pattern
-fi
+    kubectl get $resource --namespace $namespace $name \
+      -o jsonpath="$jsonpath" 2>&1 | grep -qE $pattern
+  fi
+}
 
+fats_echo() {
+  echo -e "$BLUE[`date -u +%Y-%m-%dT%H:%M:%SZ`]$NC $@"
 }

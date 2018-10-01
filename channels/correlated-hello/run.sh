@@ -1,74 +1,78 @@
 #!/bin/bash
+
+service_name=$1
+
 function="hello"
-date="date -u +%Y-%m-%dT%H:%M:%SZ"
+invoker="node"
 
-for invoker in node; do
-  pushd "functions/$function/$invoker"
-    service_name='correlator'
-    function_name="fats-$function-$invoker"
-    function_version="${CLUSTER_NAME}"
-    image="${USER_ACCOUNT}/${function_name}:${function_version}"
-    input_data="riff"
+pushd "functions/$function/$invoker"
+  function_name="fats-$function-$invoker"
+  function_version="${CLUSTER_NAME}"
+  image="${USER_ACCOUNT}/${function_name}:${function_version}"
+  input_data="riff"
 
-    args=""
-    if [ -e 'create' ]; then
-      args=`cat create`
-    fi
+  args=""
+  if [ -e '.fats/create' ]; then
+    args=`cat .fats/create`
+  fi
 
-    kail --label "function=$function_name" > $function_name.logs &
-    kail_function_pid=$!
+  if [ -e '.fats/invoker' ]; then
+    # overwrite invoker
+    invoker=`cat .fats/invoker`
+  fi
 
-    kail --ns knative-serving > $function_name.controller.logs &
-    kail_controller_pid=$!
+  kail --label "function=$function_name" > $function_name.logs &
+  kail_function_pid=$!
 
-    riff function create $invoker $function_name $args --image $image --wait --verbose
-    riff service create $service_name --image projectriff/correlator:fats
-    riff channel create names --cluster-bus stub
-    riff channel create hellonames --cluster-bus stub
-    riff subscription create --subscriber $function_name --channel names --reply-to hellonames
-    riff subscription create --subscriber correlator --channel hellonames
+  kail --ns knative-serving > $function_name.controller.logs &
+  kail_controller_pid=$!
 
-    # wait for service to deploy
-    echo "[`$date`] Waiting for $service_name to become ready:"
-     until kube_ready \
-      'services.serving.knative.dev' \
-      'default' \
-      "${service_name}" \
-      ';{range @.status.conditions[*]}{@.type}={@.status};{end}' \
-      ';Ready=True;' \
-    ; do sleep 1; done
-    sleep 5
+  riff channel create names --cluster-bus stub
+  riff channel create replies --cluster-bus stub
+  riff subscription create $function_name --channel names --subscriber $function_name --reply-to replies
+  riff subscription create $service_name --channel replies --subscriber $service_name
 
-    riff service invoke $service_name /names --text -- \
-      -H "knative-blocking-request: true" \
-      -w'\n' \
-      -d $input_data | tee $function_name.out
+  riff function create $invoker $function_name $args --image $image
 
-    expected_data_prefix="hello riff from"
-    actual_data=`cat $function_name.out | tail -1`
+  # wait for function to build and deploy
+  fats_echo "Waiting for $function_name to become ready:"
+   until kube_ready \
+    'services.serving.knative.dev' \
+    'default' \
+    "${function_name}" \
+    ';{range @.status.conditions[*]}{@.type}={@.status};{end}' \
+    ';Ready=True;' \
+  ; do sleep 1; done
+  sleep 5
 
-    kill $kail_function_pid $kail_controller_pid
-    riff subscription delete $function_name
-    riff subscription delete $service_name
-    riff channel delete names
-    riff channel delete hellonames
-    riff service delete $function_name
-    riff service delete correlator
+  riff service invoke $service_name /names --text -- \
+    -H "knative-blocking-request: true" \
+    -w'\n' \
+    -d $input_data | tee $function_name.out
 
-    fats_delete_image $image
+  expected_data_prefix="hello riff from"
+  actual_data=`cat $function_name.out | tail -1`
 
-    if [[ "$actual_data" != $expected_data_prefix* ]]; then
-      echo -e "Function Logs:"
-      cat $function_name.logs
-      echo -e ""
-      echo -e "Controller Logs:"
-      cat $function_name.controller.logs
-      echo -e ""
-      echo -e "${RED}Function did not produce expected result${NC}";
-      echo -e "   expected prefix: $expected_data_prefix"
-      echo -e "   actual data: $actual_data"
-      exit 1
-    fi
+  kill $kail_function_pid $kail_controller_pid
+  riff subscription delete $function_name
+  riff subscription delete $service_name
+  riff channel delete names
+  riff channel delete replies
+  riff service delete $function_name
 
-  popd
-done
+  fats_delete_image $image
+
+  if [[ "$actual_data" != $expected_data_prefix* ]]; then
+    fats_echo "Function Logs:"
+    cat $function_name.logs
+    echo ""
+    fats_echo "Controller Logs:"
+    cat $function_name.controller.logs
+    echo ""
+    fats_echo "${RED}Function did not produce expected result${NC}";
+    echo "   expected prefix: $expected_data_prefix"
+    echo "   actual data: $actual_data"
+    exit 1
+  fi
+
+popd
