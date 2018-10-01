@@ -12,8 +12,13 @@ pushd "functions/$function/$invoker"
   input_data="riff"
 
   args=""
-  if [ -e 'create' ]; then
-    args=`cat create`
+  if [ -e '.fats/create' ]; then
+    args=`cat .fats/create`
+  fi
+
+  if [ -e '.fats/invoker' ]; then
+    # overwrite invoker
+    invoker=`cat .fats/invoker`
   fi
 
   kail --label "function=$function_name" > $function_name.logs &
