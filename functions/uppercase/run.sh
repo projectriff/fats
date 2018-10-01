@@ -32,14 +32,7 @@ for invoker in command jar java java-local node; do
 
     # wait for function to build and deploy
     fats_echo "Waiting for $function_name to become ready:"
-     until kube_ready \
-      'services.serving.knative.dev' \
-      'default' \
-      "${function_name}" \
-      ';{range @.status.conditions[*]}{@.type}={@.status};{end}' \
-      ';Ready=True;' \
-    ; do sleep 1; done
-    sleep 5
+    until kservice_ready "${function_name}" 'default'; do sleep 1; done
 
     # invoke function
     fats_echo "Invoking $function_name:"
