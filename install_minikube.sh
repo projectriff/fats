@@ -6,12 +6,13 @@ source ./util.sh
 
 export CHANGE_MINIKUBE_NONE_USER=true
 
+VERSION='v0.28.2'
 # install minikube if needed
 if hash minikube 2>/dev/null; then
   echo "Skipping minikube install"
 else
   echo "Installing minikube"
-  curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && \
+  curl -Lo minikube https://storage.googleapis.com/minikube/releases/$VERSION/minikube-linux-amd64 && \
     chmod +x minikube && sudo mv minikube /usr/local/bin/
 fi
 
