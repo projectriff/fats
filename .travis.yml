@@ -14,6 +14,7 @@ script:
 - riff version
 - kubectl get deployments --all-namespaces
 - "./functions/run.sh"
+- "./channels/run.sh"
 - "./cleanup.sh riff"
 after_script:
 - "./cleanup.sh $CLUSTER"

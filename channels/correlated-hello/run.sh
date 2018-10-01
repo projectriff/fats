@@ -1,12 +1,9 @@
 #!/bin/bash
-
-dir=`dirname "${BASH_SOURCE[0]}"`
-function=`basename $dir`
+function="hello"
 date="date -u +%Y-%m-%dT%H:%M:%SZ"
 
 for invoker in node; do
-
-  pushd $dir/$invoker
+  pushd "functions/$function/$invoker"
     service_name='correlator'
     function_name="fats-$function-$invoker"
     function_version="${CLUSTER_NAME}"
@@ -25,7 +22,7 @@ for invoker in node; do
     kail_controller_pid=$!
 
     riff function create $invoker $function_name $args --image $image --wait --verbose
-    riff service create $service_name --image projectriff/correlator:s1p2018
+    riff service create $service_name --image projectriff/correlator:fats
     riff channel create names --cluster-bus stub
     riff channel create hellonames --cluster-bus stub
     riff subscription create --subscriber $function_name --channel names --reply-to hellonames
