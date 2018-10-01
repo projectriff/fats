@@ -17,7 +17,7 @@ pod_query_ready() {
     "$nameapce" \
     "$label" \
     '{range .items[*]}{@.metadata.name};{range @.status.conditions[*]}{@.type}={@.status};{end}{end}' \
-    ';Ready=True;' \
+    ';Ready=True;'
 }
 
 kservice_ready() {
