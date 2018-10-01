@@ -58,7 +58,7 @@ pushd "functions/$function/$invoker"
   riff subscription delete $function_name
   riff subscription delete $service_name
   riff channel delete names
-  riff channel delete hellonames
+  riff channel delete replies
   riff service delete $function_name
 
   fats_delete_image $image
