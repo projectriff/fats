@@ -1,13 +1,12 @@
 #!/bin/bash
 
-date="date -u +%Y-%m-%dT%H:%M:%SZ"
 service_name='correlator'
 
 # install correlator
 riff service create $service_name --image projectriff/correlator:fats
 
 # wait for correlator to deploy
-echo "[`$date`] Waiting for $service_name to become ready:"
+fats_echo "Waiting for $service_name to become ready:"
   until kube_ready \
   'services.serving.knative.dev' \
   'default' \

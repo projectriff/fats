@@ -2,7 +2,6 @@
 
 dir=`dirname "${BASH_SOURCE[0]}"`
 function=`basename $dir`
-date="date -u +%Y-%m-%dT%H:%M:%SZ"
 
 for invoker in command jar java java-local node; do
   pushd $dir/$invoker
@@ -28,11 +27,11 @@ for invoker in command jar java java-local node; do
     kail_controller_pid=$!
 
     # create function
-    echo "[`$date`] Creating $function_name as $invoker:"
+    fats_echo "Creating $function_name as $invoker:"
     riff function create $invoker $function_name $args --image $image
 
     # wait for function to build and deploy
-    echo "[`$date`] Waiting for $function_name to become ready:"
+    fats_echo "Waiting for $function_name to become ready:"
      until kube_ready \
       'services.serving.knative.dev' \
       'default' \
@@ -43,7 +42,7 @@ for invoker in command jar java java-local node; do
     sleep 5
 
     # invoke function
-    echo "[`$date`] Invoking $function_name:"
+    fats_echo "Invoking $function_name:"
     riff service invoke $function_name -- \
       -H "Content-Type: text/plain" \
       -d $input_data \
@@ -61,15 +60,15 @@ for invoker in command jar java java-local node; do
     fats_delete_image $image
 
     if [ "$actual_data" != "$expected_data" ]; then
-      echo -e "Function Logs:"
+      fats_echo "Function Logs:"
       cat $function_name.logs
-      echo -e ""
-      echo -e "Controller Logs:"
+      echo ""
+      fats_echo "Controller Logs:"
       cat $function_name.controller.logs
-      echo -e ""
-      echo -e "[`$date`] ${RED}Function did not produce expected result${NC}:";
-      echo -e "   expected: $expected_data"
-      echo -e "   actual: $actual_data"
+      echo ""
+      fats_echo "${RED}Function did not produce expected result${NC}:";
+      echo "   expected: $expected_data"
+      echo "   actual: $actual_data"
       exit 1
     fi
   popd

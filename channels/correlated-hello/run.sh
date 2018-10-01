@@ -4,7 +4,6 @@ service_name=$1
 
 function="hello"
 invoker="node"
-date="date -u +%Y-%m-%dT%H:%M:%SZ"
 
 pushd "functions/$function/$invoker"
   function_name="fats-$function-$invoker"
@@ -36,7 +35,7 @@ pushd "functions/$function/$invoker"
   riff function create $invoker $function_name $args --image $image
 
   # wait for function to build and deploy
-  echo "[`$date`] Waiting for $function_name to become ready:"
+  fats_echo "Waiting for $function_name to become ready:"
    until kube_ready \
     'services.serving.knative.dev' \
     'default' \
@@ -64,15 +63,15 @@ pushd "functions/$function/$invoker"
   fats_delete_image $image
 
   if [[ "$actual_data" != $expected_data_prefix* ]]; then
-    echo -e "Function Logs:"
+    fats_echo "Function Logs:"
     cat $function_name.logs
-    echo -e ""
-    echo -e "Controller Logs:"
+    echo ""
+    fats_echo "Controller Logs:"
     cat $function_name.controller.logs
-    echo -e ""
-    echo -e "${RED}Function did not produce expected result${NC}";
-    echo -e "   expected prefix: $expected_data_prefix"
-    echo -e "   actual data: $actual_data"
+    echo ""
+    fats_echo "${RED}Function did not produce expected result${NC}";
+    echo "   expected prefix: $expected_data_prefix"
+    echo "   actual data: $actual_data"
     exit 1
   fi
 
