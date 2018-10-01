@@ -4,6 +4,7 @@ service_name=$1
 
 function="hello"
 invoker="node"
+date="date -u +%Y-%m-%dT%H:%M:%SZ"
 
 pushd "functions/$function/$invoker"
   function_name="fats-$function-$invoker"
@@ -27,11 +28,23 @@ pushd "functions/$function/$invoker"
   kail --ns knative-serving > $function_name.controller.logs &
   kail_controller_pid=$!
 
-  riff function create $invoker $function_name $args --image $image --wait --verbose
   riff channel create names --cluster-bus stub
-  riff channel create hellonames --cluster-bus stub
-  riff subscription create $function_name --subscriber $function_name --channel names --reply-to hellonames
-  riff subscription create $service_name --subscriber $service_name --channel hellonames
+  riff channel create replies --cluster-bus stub
+  riff subscription create $function_name --channel names --subscriber $function_name --reply-to replies
+  riff subscription create $service_name --channel replies --subscriber $service_name
+
+  riff function create $invoker $function_name $args --image $image
+
+  # wait for function to build and deploy
+  echo "[`$date`] Waiting for $function_name to become ready:"
+   until kube_ready \
+    'services.serving.knative.dev' \
+    'default' \
+    "${function_name}" \
+    ';{range @.status.conditions[*]}{@.type}={@.status};{end}' \
+    ';Ready=True;' \
+  ; do sleep 1; done
+  sleep 5
 
   riff service invoke $service_name /names --text -- \
     -H "knative-blocking-request: true" \
