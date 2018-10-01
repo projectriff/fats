@@ -27,22 +27,20 @@ pushd "functions/$function/$invoker"
   kail --ns knative-serving > $function_name.controller.logs &
   kail_controller_pid=$!
 
+  riff function create $invoker $function_name $args --image $image
   riff channel create names --cluster-bus stub
   riff channel create replies --cluster-bus stub
   riff subscription create $function_name --channel names --subscriber $function_name --reply-to replies
   riff subscription create $service_name --channel replies --subscriber $service_name
 
-  riff function create $invoker $function_name $args --image $image
-
   # wait for function to build and deploy
-  fats_echo "Waiting for $function_name to become ready:"
-   until kube_ready \
-    'services.serving.knative.dev' \
-    'default' \
-    "${function_name}" \
-    ';{range @.status.conditions[*]}{@.type}={@.status};{end}' \
-    ';Ready=True;' \
-  ; do sleep 1; done
+  fats_echo "Waiting for $function_name, channels and subscriptions to become ready:"
+  wait_kservice_ready "${function_name}" 'default'
+  wait_channel_ready 'names' 'default'
+  wait_channel_ready 'replies' 'default'
+  # TODO uncomment once subscriptions have a ready condition
+  #wait_subscription_ready "$function_name" 'default'
+  #wait_subscription_ready "$service_name" 'default'
   sleep 5
 
   riff service invoke $service_name /names --text -- \
