@@ -14,7 +14,7 @@ pod_query_ready() {
 
   kube_ready \
     'pods' \
-    "$nameapce" \
+    "$namespace" \
     "$label" \
     '{range .items[*]}{@.metadata.name};{range @.status.conditions[*]}{@.type}={@.status};{end}{end}' \
     ';Ready=True;'
