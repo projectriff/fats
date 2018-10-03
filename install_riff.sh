@@ -11,8 +11,8 @@ riff namespace init default --secret push-credentials
 
 # health checks
 echo "Checking for ready pods"
-until pod_query_ready 'knative=ingressgateway' 'istio-system'; do sleep 1; done
-until pod_query_ready 'app=controller' 'knative-serving'; do sleep 1; done
-until pod_query_ready 'app=build-controller' 'knative-build'; do sleep 1; done
-until pod_query_ready 'app=eventing-controller' 'knative-eventing'; do sleep 1; done
-until pod_query_ready 'clusterBus=stub' 'knative-eventing'; do sleep 1; done
+wait_pod_selector_ready 'knative=ingressgateway' 'istio-system'
+wait_pod_selector_ready 'app=controller' 'knative-serving'
+wait_pod_selector_ready 'app=build-controller' 'knative-build'
+wait_pod_selector_ready 'app=eventing-controller' 'knative-eventing'
+wait_pod_selector_ready 'clusterBus=stub' 'knative-eventing'

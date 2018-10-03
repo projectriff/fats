@@ -7,7 +7,7 @@ riff service create $service_name --image projectriff/correlator:fats
 
 # wait for correlator to deploy
 fats_echo "Waiting for $service_name to become ready:"
-until kservice_ready "${service_name}" 'default'; do sleep 1; done
+wait_kservice_ready "${service_name}" 'default'
 
 for test in correlated-hello; do
   dir=`dirname "${BASH_SOURCE[0]}"`

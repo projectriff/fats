@@ -8,11 +8,11 @@ RED='\033[0;31m'
 BLUE='\e[104m'
 NC='\033[0m' # No Color
 
-pod_query_ready() {
+wait_pod_selector_ready() {
   label=$1
   namespace=$2
 
-  kube_ready \
+  wait_kube_ready \
     'pods' \
     "$namespace" \
     "$label" \
@@ -20,33 +20,33 @@ pod_query_ready() {
     ';Ready=True;'
 }
 
-kservice_ready() {
+wait_kservice_ready() {
   name=$1
   namespace=$2
 
-  knative_ready 'services.serving.knative.dev' "$name" "$namespace"
+  wait_knative_ready 'services.serving.knative.dev' "$name" "$namespace"
 }
 
-channel_ready() {
+wait_channel_ready() {
   name=$1
   namespace=$2
 
-  knative_ready 'channel.channels.knative.dev' "$name" "$namespace"
+  wait_knative_ready 'channel.channels.knative.dev' "$name" "$namespace"
 }
 
-subscription_ready() {
+wait_subscription_ready() {
   name=$1
   namespace=$2
 
-  knative_ready 'subscription.channels.knative.dev' "$name" "$namespace"
+  wait_knative_ready 'subscription.channels.knative.dev' "$name" "$namespace"
 }
 
-knative_ready() {
+wait_knative_ready() {
   type=$1
   name=$2
   namespace=$3
 
-  kube_ready \
+  wait_kube_ready \
     "$type" \
     "$namespace" \
     "$name" \
@@ -54,23 +54,28 @@ knative_ready() {
     ';Ready=True;'
 }
 
-kube_ready() {
+wait_kube_ready() {
   type=$1
   namespace=$2
   jsonpath=$4
   pattern=$5
 
   if [[ $3 = *"="* ]]; then
-    label=$3
+    selector=$3
 
     # TODO look for all resources to be ready, not just one
-    kubectl get $type --namespace $namespace -l $label \
-      -o jsonpath="$jsonpath" 2>&1 | grep -qE $pattern
+    until kubectl get $type --namespace $namespace -l $selector \
+      -o jsonpath="$jsonpath" 2>&1 | grep -qE $pattern; \
+      do sleep 1; \
+    done
+
   else
     name=$3
 
-    kubectl get $type --namespace $namespace $name \
-      -o jsonpath="$jsonpath" 2>&1 | grep -qE $pattern
+    until kubectl get $type --namespace $namespace $name \
+      -o jsonpath="$jsonpath" 2>&1 | grep -qE $pattern; \
+      do sleep 1; \
+    done
   fi
 }
 

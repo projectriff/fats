@@ -32,7 +32,7 @@ for invoker in command jar java java-local node; do
 
     # wait for function to build and deploy
     fats_echo "Waiting for $function_name to become ready:"
-    until kservice_ready "${function_name}" 'default'; do sleep 1; done
+    wait_kservice_ready "${function_name}" 'default'
     sleep 5
 
     # invoke function
