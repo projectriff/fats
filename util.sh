@@ -1,5 +1,13 @@
 #!/bin/bash
 
+set -x
+
+if [[ "$OS_NAME" == "windows" ]]; then
+  sudo() {
+    $@
+  }
+fi
+
 set -o errexit
 set -o nounset
 set -o pipefail

@@ -2,9 +2,16 @@ sudo: required
 language: go
 go:
 - '1.11'
+os:
+ - windows
+ - linux
 env:
   global:
   - CLUSTER_NAME="fats-${TRAVIS_JOB_NUMBER//./-}"
+  - OS_NAME="$TRAVIS_OS_NAME"
+  matrix:
+  - CLUSTER=gke
+  - CLUSTER=minikube
 install: true
 before_script:
 - "./install.sh kubectl"
@@ -17,10 +24,6 @@ script:
 - "./cleanup.sh riff"
 after_script:
 - "./cleanup.sh $CLUSTER"
-matrix:
-  include:
-  - env: CLUSTER=gke
-  - env: CLUSTER=minikube
 notifications:
   slack:
     secure: LQyAV8UPIA5e2uewVdqHNG9LoCW5t+k5l69vhdFYnj9zE3qWFSWcDwRHfH+rmhnP9vRbuBJUdlIf1hpV82Dq4LIv4iMWwKKcTr1ch6EYvK7mOsY9l0/ZfHBVKna36D44GypEfFmIkWKIrTFxhJfQ5ccsSdFeATHAMzVR8GZTQFcFh+F86ZoWp6Qu6cH7MgutwHfd4XFayqeCUPGIEj/O8vYmfauSNKuoKEYDu0bDZrbBYMn+ftJ0EwoYnTGS7lR4NRU2TKw4VXypi7ojxOfqTyXoJ7cz5e4aTj2kAoHa9rHourh5HDPfU1RD9p7mBwTG2LztagFeIkqGC/NO+D3CjEdyJIGm432g7fNbroma4OPEzJVVOABll1Y3k5AuBLC3j5+bix7HNtXZi4UCJ8bTXQPZvW+yeTLNafh7dgwKuxbQY5MFQyBDo4C8BGcehWbA2d1JylnFhW2Lexee8gPYhJ0hM2gXaSNIcGgvw1Ac0cmfZOA85/b81WWZLIbgesLA+j7e+OW8J3Qb7zDcnJtALr363rW3UO0i6ZrCwL0dqPNoQxig2aim/aCvf4GNVx0c/V80C3NCqpytjhViRljenCPQR3GKwyk3W75OcJcnrIvurVkzqPmpSvzfb2/RFC6oI5FdiYJxvDaweK1It9VzfqPy5j4EeTLzC9ieED88p5s=

@@ -12,12 +12,22 @@ if hash minikube 2>/dev/null; then
   echo "Skipping minikube install"
 else
   echo "Installing minikube"
-  curl -Lo minikube https://storage.googleapis.com/minikube/releases/$VERSION/minikube-linux-amd64 && \
-    chmod +x minikube && sudo mv minikube /usr/local/bin/
+  if [[ "$OS_NAME" == "windows" ]]; then
+    # switch to choco install once we build against the latest version
+    url="https://storage.googleapis.com/minikube/releases/$VERSION/minikube-windows-amd64.exe"
+    destination="/usr/bin"
+  else
+    url="https://storage.googleapis.com/minikube/releases/$VERSION/minikube-linux-amd64"
+    destination="/usr/local/bin"
+  fi
+  curl -Lo minikube $url && chmod +x minikube && sudo mv minikube $destination
 fi
 
-# Make root mounted as rshared to fix kube-dns issues.
-sudo mount --make-rshared /
+
+if [[ "$OS_NAME" != "windows" ]]; then
+  # Make root mounted as rshared to fix kube-dns issues.
+  sudo mount --make-rshared /
+fi
 
 sudo minikube start --memory=8192 --cpus=4 \
   --kubernetes-version=v1.10.0 \
