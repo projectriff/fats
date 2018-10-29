@@ -20,7 +20,7 @@ for invoker in command jar java java-local node; do
       invoker=`cat .fats/invoker`
     fi
 
-    kail --label "function=$function_name" > $function_name.logs &
+    kail --ns $NAMESPACE --label "function=$function_name" > $function_name.logs &
     kail_function_pid=$!
 
     kail --ns knative-serving > $function_name.controller.logs &
@@ -28,13 +28,13 @@ for invoker in command jar java java-local node; do
 
     # create function
     fats_echo "Creating $function_name as $invoker:"
-    riff function create $invoker $function_name $args --image $image --verbose
+    riff function create $invoker $function_name $args --image $image --namespace $NAMESPACE --verbose
     # TODO reduce/eliminate this sleep
     sleep 5
 
     # invoke function
     fats_echo "Invoking $function_name:"
-    riff service invoke $function_name -- \
+    riff service invoke $function_name --namespace $NAMESPACE -- \
       -H "Content-Type: text/plain" \
       -d $input_data \
       -v | tee $function_name.out
@@ -47,7 +47,7 @@ for invoker in command jar java java-local node; do
 
     # cleanup resources
     kill $kail_function_pid $kail_controller_pid
-    riff service delete $function_name
+    riff service delete $function_name --namespace $NAMESPACE
     fats_delete_image $image
 
     if [ "$actual_data" != "$expected_data" ]; then

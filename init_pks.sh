@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Use GCR as a container registry
+
 export USER_ACCOUNT="gcr.io/`gcloud config get-value project`"
 export SYSTEM_INSTALL_FLAGS=""
 
