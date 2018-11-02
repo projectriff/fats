@@ -4,3 +4,4 @@ Dockerfile
 .dockerignore
 *.out
 .DS_Store
+.project
