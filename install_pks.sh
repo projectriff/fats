@@ -31,4 +31,5 @@ export NAMESPACE=$CLUSTER_NAME
 export CLUSTER_NAME=fats
 
 pks get-credentials ${TS_G_ENV}-${CLUSTER_NAME}
+kubectl create namespace $NAMESPACE
 kubectl config set-context --current --namespace $NAMESPACE
