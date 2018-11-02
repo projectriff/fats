@@ -6,8 +6,8 @@ source ./init.sh $CLUSTER
 go get github.com/projectriff/riff
 
 riff system install $SYSTEM_INSTALL_FLAGS
-fats_create_push_credentials default
-riff namespace init default --secret push-credentials
+fats_create_push_credentials $NAMESPACE
+riff namespace init $NAMESPACE --secret push-credentials
 
 # health checks
 echo "Checking for ready pods"

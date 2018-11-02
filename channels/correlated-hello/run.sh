@@ -35,12 +35,12 @@ pushd "functions/$function/$invoker"
 
   # wait for function to build and deploy
   fats_echo "Waiting for $function_name, channels and subscriptions to become ready:"
-  wait_kservice_ready "${function_name}" 'default'
-  wait_channel_ready 'names' 'default'
-  wait_channel_ready 'replies' 'default'
+  wait_kservice_ready "${function_name}" $NAMESPACE
+  wait_channel_ready 'names' $NAMESPACE
+  wait_channel_ready 'replies' $NAMESPACE
   # TODO uncomment once subscriptions have a ready condition
-  #wait_subscription_ready "$function_name" 'default'
-  #wait_subscription_ready "$service_name" 'default'
+  #wait_subscription_ready "$function_name" $NAMESPACE
+  #wait_subscription_ready "$service_name" $NAMESPACE
   sleep 5
 
   riff service invoke $service_name /names --text -- \
