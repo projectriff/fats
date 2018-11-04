@@ -26,10 +26,6 @@ pks login -a api.pks.${TS_G_ENV}.cf-app.com -u admin -p ${UAA_ADMIN_PASSWORD} -k
 # pks create-cluster ${TS_G_ENV}-${CLUSTER_NAME} --external-hostname ${CLUSTER_NAME}.${TS_G_ENV}.cf-app.com --plan small --wait
 # TODO setup loadbalancer, see https://docs.pivotal.io/runtimes/pks/1-2/gcp-cluster-load-balancer.html
 
-# TODO comment if usering a PKS cluster per jobs
-export NAMESPACE=$CLUSTER_NAME
-export CLUSTER_NAME=fats
-
-pks get-credentials ${TS_G_ENV}-${CLUSTER_NAME}
-kubectl create namespace $NAMESPACE
-kubectl config set-context --current --namespace $NAMESPACE
+# TODO uncomment if usering a PKS cluster per jobs
+# pks get-credentials ${TS_G_ENV}-${CLUSTER_NAME}
+pks get-credentials ${TS_G_ENV}-fats
