@@ -5,6 +5,13 @@
 export USER_ACCOUNT="gcr.io/`gcloud config get-value project`"
 export SYSTEM_INSTALL_FLAGS=""
 
+wait_for_ingress_ready() {
+  name=$1
+  namespace=$2
+
+  wait_for_service_ip $name $namespace
+}
+
 fats_delete_image() {
   image=$1
 

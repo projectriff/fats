@@ -8,6 +8,18 @@ RED='\033[0;31m'
 BLUE='\e[104m'
 NC='\033[0m' # No Color
 
+wait_for_service_ip() {
+  name=$1
+  namespace=$2
+
+  wait_kube_ready \
+    'service' \
+    "$namespace" \
+    "$name" \
+    '{$.status.loadBalancer.ingress[].ip}' \
+    '[0-9]'
+}
+
 wait_pod_selector_ready() {
   label=$1
   namespace=$2

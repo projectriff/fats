@@ -5,6 +5,13 @@ export SYSTEM_INSTALL_FLAGS="--node-port"
 
 docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
 
+wait_for_ingress_ready() {
+  name=$1
+  namespace=$2
+
+  # nothing to do
+}
+
 fats_delete_image() {
   IFS=':' read -r -a image <<< "$1"
   repo=${image[0]}
