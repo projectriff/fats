@@ -3,7 +3,7 @@
 service_name='correlator'
 
 # install correlator
-riff service create $service_name --image projectriff/correlator:fats
+riff service create $service_name --image projectriff/correlator:fats --namespace $NAMESPACE
 
 # wait for correlator to deploy
 fats_echo "Waiting for $service_name to become ready:"
@@ -16,4 +16,4 @@ for test in correlated-hello; do
 done
 
 # cleanup correlator
-riff service delete $service_name
+riff service delete $service_name --namespace $NAMESPACE

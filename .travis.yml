@@ -5,7 +5,7 @@ go:
 env:
   global:
   - CLUSTER_NAME="fats-${TRAVIS_JOB_NUMBER//./-}"
-  - NAMESPACE="default"
+  - NAMESPACE="fats-${TRAVIS_JOB_NUMBER//./-}"
 install: true
 before_script:
 - "./install.sh kubectl"

@@ -6,6 +6,8 @@ source ./init.sh $CLUSTER
 go get github.com/projectriff/riff
 
 riff system install $SYSTEM_INSTALL_FLAGS
+
+kubectl create namespace $NAMESPACE
 fats_create_push_credentials $NAMESPACE
 riff namespace init $NAMESPACE --secret push-credentials
 

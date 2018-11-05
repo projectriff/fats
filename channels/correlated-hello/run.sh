@@ -21,17 +21,17 @@ pushd "functions/$function/$invoker"
     invoker=`cat .fats/invoker`
   fi
 
-  kail --label "function=$function_name" > $function_name.logs &
+  kail --ns $NAMESPACE --label "function=$function_name" > $function_name.logs &
   kail_function_pid=$!
 
   kail --ns knative-serving > $function_name.controller.logs &
   kail_controller_pid=$!
 
-  riff function create $invoker $function_name $args --image $image
-  riff channel create names --cluster-bus stub
-  riff channel create replies --cluster-bus stub
-  riff subscription create $function_name --channel names --subscriber $function_name --reply-to replies
-  riff subscription create $service_name --channel replies --subscriber $service_name
+  riff function create $invoker $function_name $args --image $image --namespace $NAMESPACE
+  riff channel create names --cluster-bus stub --namespace $NAMESPACE
+  riff channel create replies --cluster-bus stub --namespace $NAMESPACE
+  riff subscription create $function_name --channel names --subscriber $function_name --reply-to replies --namespace $NAMESPACE
+  riff subscription create $service_name --channel replies --subscriber $service_name --namespace $NAMESPACE
 
   # wait for function to build and deploy
   fats_echo "Waiting for $function_name, channels and subscriptions to become ready:"
@@ -43,7 +43,7 @@ pushd "functions/$function/$invoker"
   #wait_subscription_ready "$service_name" $NAMESPACE
   sleep 5
 
-  riff service invoke $service_name /names --text -- \
+  riff service invoke $service_name /names/$NAMESPACE --namespace $NAMESPACE --text -- \
     -H "knative-blocking-request: true" \
     -w'\n' \
     -d $input_data | tee $function_name.out
@@ -52,11 +52,11 @@ pushd "functions/$function/$invoker"
   actual_data=`cat $function_name.out | tail -1`
 
   kill $kail_function_pid $kail_controller_pid
-  riff subscription delete $function_name
-  riff subscription delete $service_name
-  riff channel delete names
-  riff channel delete replies
-  riff service delete $function_name
+  riff subscription delete $function_name --namespace $NAMESPACE
+  riff subscription delete $service_name --namespace $NAMESPACE
+  riff channel delete names --namespace $NAMESPACE
+  riff channel delete replies --namespace $NAMESPACE
+  riff service delete $function_name --namespace $NAMESPACE
 
   fats_delete_image $image
 
