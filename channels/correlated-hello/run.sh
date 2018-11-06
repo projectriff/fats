@@ -43,7 +43,7 @@ pushd "functions/$function/$invoker"
   #wait_subscription_ready "$service_name" $NAMESPACE
   sleep 5
 
-  riff service invoke $service_name /names/$NAMESPACE --namespace $NAMESPACE --text -- \
+  riff service invoke $service_name /$NAMESPACE/names --namespace $NAMESPACE --text -- \
     -H "knative-blocking-request: true" \
     -w'\n' \
     -d $input_data | tee $function_name.out
