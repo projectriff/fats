@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source ../helpers.sh
-
 dir=`dirname "${BASH_SOURCE[0]}"`
 function=`basename $dir`
 
