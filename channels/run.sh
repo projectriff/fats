@@ -9,7 +9,7 @@ riff service create $service_name --image projectriff/correlator:fats --namespac
 fats_echo "Waiting for $service_name to become ready:"
 wait_kservice_ready "${service_name}" $NAMESPACE
 
-for test in correlated-hello; do
+for test in correlated; do
   echo "Current eventing scenario: $test"
   source `dirname "${BASH_SOURCE[0]}"`/$test/run.sh $service_name
 done

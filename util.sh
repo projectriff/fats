@@ -66,6 +66,20 @@ wait_knative_ready() {
     ';Ready=True;'
 }
 
+wait_kube_selector_exists() {
+  type=$1
+  selector=$2
+  namespace=$3
+  name=$4
+
+  until kubectl get $type --namespace $namespace -l $selector \
+    -o yaml | grep -qE $name; \
+    do sleep 1; \
+  done
+  echo "$type found for $selector in $namespace"
+  kubectl get $type --namespace $namespace -l $selector
+}
+
 wait_kube_ready() {
   type=$1
   namespace=$2
