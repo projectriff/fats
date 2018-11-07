@@ -65,7 +65,7 @@ run_function() {
 
   create_function $path $invoker $function_name $image
 
-  invoke_function $name $input_data $expected_data
+  invoke_function $function_name $input_data $expected_data
 
   # cleanup resources
   kill $kail_function_pid $kail_controller_pid
