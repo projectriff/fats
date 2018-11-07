@@ -1,1 +1,1 @@
---git-repo https://github.com/projectriff-samples/fats-uppercase-java-buildpack.git
+--git-repo https://github.com/projectriff-samples/fats-uppercase-java-buildpack.git --handler functions.Upper
