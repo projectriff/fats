@@ -1,8 +1,6 @@
 #!/bin/bash
 
-dir=`dirname "${BASH_SOURCE[0]}"`
-
-source $dir/util.sh
+source `dirname "${BASH_SOURCE[0]}"`/util.sh
 
 fats_setup_gcloud
 
