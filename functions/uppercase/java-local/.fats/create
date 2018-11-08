@@ -1,1 +1,1 @@
---local-path .
+--local-path . --handler=functions.Upper
