@@ -1,7 +1,9 @@
 #!/bin/bash
 
-source ./util.sh
-source ./init.sh $CLUSTER
+dir=`dirname "${BASH_SOURCE[0]}"`
 
-source ./functions/run.sh
-source ./channels/run.sh
+source $dir/util.sh
+source $dir/init.sh $CLUSTER
+
+source $dir/functions/run.sh
+source $dir/channels/run.sh

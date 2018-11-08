@@ -1,7 +1,9 @@
 #!/bin/bash
 
-source ./util.sh
-source ./init.sh $CLUSTER
+dir=`dirname "${BASH_SOURCE[0]}"`
+
+source $dir/util.sh
+source $dir/init.sh $CLUSTER
 
 go get github.com/projectriff/riff
 

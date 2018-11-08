@@ -1,6 +1,8 @@
 #!/bin/bash
 
-source ./util.sh
+dir=`dirname "${BASH_SOURCE[0]}"`
+
+source $dir/util.sh
 
 # Install pivnet cli
 curl -Lo pivnet https://github.com/pivotal-cf/pivnet-cli/releases/download/v0.0.55/pivnet-linux-amd64-0.0.55 && \

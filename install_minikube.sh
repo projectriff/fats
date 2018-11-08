@@ -1,6 +1,8 @@
 #!/bin/bash
 
-source ./util.sh
+dir=`dirname "${BASH_SOURCE[0]}"`
+
+source $dir/util.sh
 
 # inspired by https://github.com/LiliC/travis-minikube/blob/minikube-26-kube-1.10/.travis.yml
 
