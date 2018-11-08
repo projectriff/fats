@@ -10,9 +10,8 @@ fats_echo "Waiting for $service_name to become ready:"
 wait_kservice_ready "${service_name}" $NAMESPACE
 
 for test in correlated-hello; do
-  dir=`dirname "${BASH_SOURCE[0]}"`
   echo "Current eventing scenario: $test"
-  source $dir/$test/run.sh $service_name
+  source `dirname "${BASH_SOURCE[0]}"`/$test/run.sh $service_name
 done
 
 # cleanup correlator

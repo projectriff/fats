@@ -1,3 +1,3 @@
 #!/bin/bash
 
-source ./install_$1.sh
+source `dirname "${BASH_SOURCE[0]}"`/install_$1.sh

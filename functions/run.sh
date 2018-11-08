@@ -1,10 +1,8 @@
 #!/bin/bash
 
-dir=`dirname "${BASH_SOURCE[0]}"`
-
-source $dir/helpers.sh
+source `dirname "${BASH_SOURCE[0]}"`/helpers.sh
 
 for test in uppercase; do
   echo "Current function scenario: $test"
-  source $dir/$test/run.sh
+  source `dirname "${BASH_SOURCE[0]}"`/$test/run.sh
 done
