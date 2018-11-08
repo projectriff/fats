@@ -19,7 +19,7 @@ create_function() {
 
     # create function
     fats_echo "Creating $function_name as $invoker:"
-    riff function create $invoker $function_name $args --image $image --namespace $NAMESPACE --verbose
+    riff function create $function_name $args --image $image --namespace $NAMESPACE --verbose
 
     # TODO reduce/eliminate this sleep
     sleep 5

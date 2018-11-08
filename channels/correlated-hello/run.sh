@@ -27,7 +27,7 @@ pushd "functions/$function/$invoker"
   kail --ns knative-serving > $function_name.controller.logs &
   kail_controller_pid=$!
 
-  riff function create $invoker $function_name $args --image $image --namespace $NAMESPACE
+  riff function create $function_name $args --image $image --namespace $NAMESPACE
   riff channel create names --cluster-bus stub --namespace $NAMESPACE
   riff channel create replies --cluster-bus stub --namespace $NAMESPACE
   riff subscription create $function_name --channel names --subscriber $function_name --reply-to replies --namespace $NAMESPACE

@@ -3,7 +3,7 @@
 dir=`dirname "${BASH_SOURCE[0]}"`
 function=`basename $dir`
 
-for invoker in command jar java java-local node; do
+for invoker in command java java-local node; do
   path="`dirname "${BASH_SOURCE[0]}"`/$invoker"
   function_name="fats-$function-$invoker"
   image="${USER_ACCOUNT}/${function_name}:${CLUSTER_NAME}"
