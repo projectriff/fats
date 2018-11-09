@@ -2,7 +2,7 @@
 
 service_name=$1
 
-function="hello"
+function="uppercase"
 invoker="node"
 
 pushd "functions/$function/$invoker"
@@ -48,7 +48,7 @@ pushd "functions/$function/$invoker"
     -w'\n' \
     -d $input_data | tee $function_name.out
 
-  expected_data_prefix="hello riff from"
+  expected_data="RIFF"
   actual_data=`cat $function_name.out | tail -1`
 
   kill $kail_function_pid $kail_controller_pid
@@ -60,7 +60,7 @@ pushd "functions/$function/$invoker"
 
   fats_delete_image $image
 
-  if [[ "$actual_data" != $expected_data_prefix* ]]; then
+  if [[ "$actual_data" != "$expected_data" ]]; then
     fats_echo "Function Logs:"
     cat $function_name.logs
     echo ""
@@ -68,7 +68,7 @@ pushd "functions/$function/$invoker"
     cat $function_name.controller.logs
     echo ""
     fats_echo "${RED}Function did not produce expected result${NC}";
-    echo "   expected prefix: $expected_data_prefix"
+    echo "   expected data: $expected_data"
     echo "   actual data: $actual_data"
     exit 1
   fi
