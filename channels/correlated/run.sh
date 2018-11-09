@@ -33,16 +33,6 @@ pushd "functions/$function/$invoker"
   riff subscription create $function_name --channel names --subscriber $function_name --reply-to replies --namespace $NAMESPACE
   riff subscription create $service_name --channel replies --subscriber $service_name --namespace $NAMESPACE
 
-  # wait for function deployment to be created
-  selector="riff.projectriff.io/function=$function_name"
-  fats_echo "Waiting for deployment labeled with $selector to be created:"
-  wait_kube_selector_exists 'deployment.extensions' "$selector" "$NAMESPACE" "$function_name"
-
-  # patch the cpu request for the function so it can start even if the available cpu is low
-  deployment="$(kubectl get deployment --namespace $NAMESPACE -l $selector -oname)"
-  fats_echo "Patching cpu request for $deployment"
-  kubectl patch $deployment --namespace $NAMESPACE --patch "$(cat ./cpu-patch.yaml)"
-
   # wait for function to build and deploy
   fats_echo "Waiting for $function_name, channels and subscriptions to become ready:"
   wait_kservice_ready "${function_name}" $NAMESPACE
