@@ -23,4 +23,4 @@ wait_for_ingress_ready 'knative-ingressgateway' 'istio-system'
 # setup namespace
 kubectl create namespace $NAMESPACE
 fats_create_push_credentials $NAMESPACE
-riff namespace init $NAMESPACE --secret push-credentials
+riff namespace init $NAMESPACE $NAMESPACE_INIT_FLAGS

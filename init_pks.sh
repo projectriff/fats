@@ -4,6 +4,7 @@
 
 export USER_ACCOUNT="gcr.io/`gcloud config get-value project`"
 export SYSTEM_INSTALL_FLAGS=""
+export NAMESPACE_INIT_FLAGS="--secret push-credentials"
 
 wait_for_ingress_ready() {
   name=$1

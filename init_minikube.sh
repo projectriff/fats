@@ -2,6 +2,7 @@
 
 export USER_ACCOUNT="${DOCKER_USERNAME}"
 export SYSTEM_INSTALL_FLAGS="--node-port"
+export NAMESPACE_INIT_FLAGS="--secret push-credentials"
 
 docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
 
