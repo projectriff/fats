@@ -3,7 +3,10 @@
 source `dirname "${BASH_SOURCE[0]}"`/util.sh
 source `dirname "${BASH_SOURCE[0]}"`/init.sh $CLUSTER
 
-go get github.com/projectriff/riff
+if ! [ -x "$(command -v riff)" ]; then
+  # install riff if not present
+  go get github.com/projectriff/riff
+fi
 
 riff system install $SYSTEM_INSTALL_FLAGS
 
