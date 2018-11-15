@@ -13,5 +13,5 @@ tab_width = 2
 [create]
 insert_final_newline = false
 
-[runtime]
+[invoker]
 insert_final_newline = false
