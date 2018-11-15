@@ -1,7 +1,3 @@
-*-function.yaml
-*-topics.yaml
-Dockerfile
-.dockerignore
 *.out
 .DS_Store
 .project
