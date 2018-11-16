@@ -123,6 +123,7 @@ fats_setup_gcloud() {
   sudo apt-get update && sudo apt-get install google-cloud-sdk
 
   gcloud config set project cf-spring-pfs-eng
+  gcloud config set compute/region us-central1
   gcloud config set compute/zone us-central1-a
   gcloud config set disable_prompts True
 
