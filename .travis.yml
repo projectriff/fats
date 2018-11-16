@@ -20,8 +20,9 @@ after_script:
 - "./cleanup.sh $CLUSTER"
 matrix:
   include:
-  - env: CLUSTER=gke
   - env: CLUSTER=minikube
+    dist: xenial
+  - env: CLUSTER=gke
   - env: CLUSTER=pks
 notifications:
   slack:

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ./util.sh
+source `dirname "${BASH_SOURCE[0]}"`/util.sh
 
 curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/v1.12.2/bin/linux/amd64/kubectl
 chmod +x kubectl

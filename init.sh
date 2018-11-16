@@ -1,3 +1,3 @@
 #!/bin/bash
 
-source ./init_$1.sh
+source `dirname "${BASH_SOURCE[0]}"`/init_$1.sh

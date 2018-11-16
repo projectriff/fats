@@ -1,12 +1,12 @@
 #!/bin/bash
 
-source ./util.sh
+source `dirname "${BASH_SOURCE[0]}"`/util.sh
 
 # inspired by https://github.com/LiliC/travis-minikube/blob/minikube-26-kube-1.10/.travis.yml
 
 export CHANGE_MINIKUBE_NONE_USER=true
 
-VERSION='v0.28.2'
+VERSION='v0.30.0'
 # install minikube if needed
 if hash minikube 2>/dev/null; then
   echo "Skipping minikube install"
@@ -20,15 +20,13 @@ fi
 sudo mount --make-rshared /
 
 sudo minikube start --memory=8192 --cpus=4 \
-  --kubernetes-version=v1.10.0 \
+  --kubernetes-version=v1.12.2 \
   --vm-driver=none \
-  --bootstrapper=localkube \
-  --extra-config=controller-manager.cluster-signing-cert-file="/var/lib/localkube/certs/ca.crt" \
-  --extra-config=controller-manager.cluster-signing-key-file="/var/lib/localkube/certs/ca.key" \
-  --extra-config=apiserver.admission-control="LimitRanger,NamespaceExists,NamespaceLifecycle,ResourceQuota,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook"
+  --bootstrapper=kubeadm \
+  --extra-config=apiserver.enable-admission-plugins="NamespaceExists,NamespaceLifecycle,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook"
 
 # Fix the kubectl context, as it's often stale.
-minikube update-context
+sudo minikube update-context
 
 # Wait for Kubernetes to be up and ready.
 JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}'; \

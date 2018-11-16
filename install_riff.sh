@@ -1,9 +1,12 @@
 #!/bin/bash
 
-source ./util.sh
-source ./init.sh $CLUSTER
+source `dirname "${BASH_SOURCE[0]}"`/util.sh
+source `dirname "${BASH_SOURCE[0]}"`/init.sh $CLUSTER
 
-go get github.com/projectriff/riff
+if ! [ -x "$(command -v riff)" ]; then
+  # install riff if not present
+  go get github.com/projectriff/riff
+fi
 
 riff system install $SYSTEM_INSTALL_FLAGS
 
@@ -23,3 +26,8 @@ wait_pod_selector_ready 'app=webhook' 'knative-eventing'
 wait_pod_selector_ready 'clusterBus=stub' 'knative-eventing'
 echo "Checking for ready ingress"
 wait_for_ingress_ready 'knative-ingressgateway' 'istio-system'
+
+# setup namespace
+kubectl create namespace $NAMESPACE
+fats_create_push_credentials $NAMESPACE
+riff namespace init $NAMESPACE $NAMESPACE_INIT_FLAGS
