@@ -22,10 +22,16 @@ export UAA_ADMIN_PASSWORD=$(echo $TOOLSMITH_ENV | base64 --decode | jq -r .pks_a
 
 pks login -a api.pks.${TS_G_ENV}.cf-app.com -u admin -p ${UAA_ADMIN_PASSWORD} -k
 
-# TODO uncomment if we use a PKS cluster per job
-# pks create-cluster ${TS_G_ENV}-${CLUSTER_NAME} --external-hostname ${CLUSTER_NAME}.${TS_G_ENV}.cf-app.com --plan small --wait
-# TODO setup loadbalancer, see https://docs.pivotal.io/runtimes/pks/1-2/gcp-cluster-load-balancer.html
+gcloud compute addresses create ${TS_G_ENV}-${CLUSTER_NAME}-ip --region=${CLOUDSDK_COMPUTE_REGION}
+export LB_IP=`gcloud compute addresses list --filter="name=(${TS_G_ENV}-${CLUSTER_NAME}-ip)" --format=json | jq -r .[0].address`
 
-# TODO uncomment if usering a PKS cluster per jobs
-# pks get-credentials ${TS_G_ENV}-${CLUSTER_NAME}
-pks get-credentials ${TS_G_ENV}-fats
+pks create-cluster ${TS_G_ENV}-${CLUSTER_NAME} --external-hostname ${LB_IP} --plan large --wait
+# TODO setup loadbalancer, see https://docs.pivotal.io/runtimes/pks/1-2/gcp-cluster-load-balancer.html
+export MASTER_IP=`pks cluster ${TS_G_ENV}-${CLUSTER_NAME} --json | jq -r .kubernetes_master_ips[0]`
+export MASTER_NAME=`gcloud compute instances list --format=json | jq -r ".[] | select(.networkInterfaces[].networkIP == \"${MASTER_IP}\") | .name"`
+
+gcloud compute target-instances create ${TS_G_ENV}-${CLUSTER_NAME}-ti --instance ${MASTER_NAME} --zone=${CLOUDSDK_COMPUTE_ZONE}
+gcloud compute forwarding-rules create ${TS_G_ENV}-${CLUSTER_NAME}-fw --target-instance=${TS_G_ENV}-${CLUSTER_NAME}-ti --address=${LB_IP} \
+ --region=${CLOUDSDK_COMPUTE_REGION} --target-instance-zone=${CLOUDSDK_COMPUTE_ZONE}
+
+pks get-credentials ${TS_G_ENV}-${CLUSTER_NAME}

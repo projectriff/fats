@@ -109,7 +109,12 @@ fats_setup_gcloud() {
   sudo apt-get update && sudo apt-get install google-cloud-sdk
 
   gcloud config set project cf-spring-pfs-eng
+  gcloud config set compute/region us-central1
   gcloud config set compute/zone us-central1-a
+  # TODO debug why config set for region and zone does not work
+  # current workaround is to use the env variables below
+  export CLOUDSDK_COMPUTE_REGION="us-central1"
+  export CLOUDSDK_COMPUTE_ZONE="us-central1-a"
   gcloud config set disable_prompts True
 
   echo $GCLOUD_CLIENT_SECRET | base64 --decode > client-secret.json
