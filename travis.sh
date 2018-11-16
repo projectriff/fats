@@ -1,8 +1,9 @@
 #!/bin/bash
- # from https://github.com/travis-ci/travis-build/blob/73f74a94957f73eb54dc821f80c0c85ad8f8aab7/lib/travis/build/script/templates/header.sh#L168
+# from https://github.com/travis-ci/travis-build/blob/73f74a94957f73eb54dc821f80c0c85ad8f8aab7/lib/travis/build/script/templates/header.sh#L168
 # duplication encuraged by https://twitter.com/travisci/status/499195739353153539
 # project licensed as MIT https://github.com/travis-ci/travis-build/blob/73f74a94957f73eb54dc821f80c0c85ad8f8aab7/LICENSE
- # source /etc/profile
+# source /etc/profile
+
 ANSI_RED="\033[31;1m"
 ANSI_GREEN="\033[32;1m"
 ANSI_RESET="\033[0m"
