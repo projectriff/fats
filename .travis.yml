@@ -9,7 +9,7 @@ env:
 install: true
 before_script:
 - "./install.sh kubectl"
-- "./install.sh $CLUSTER"
+- "travis_wait 60 ./install.sh $CLUSTER"
 script:
 - "./install.sh riff"
 - riff version
