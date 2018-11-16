@@ -10,5 +10,4 @@ gcp_zone=`gcloud config get-value compute/zone`
 gcloud compute forwarding-rules delete ${TS_G_ENV}-${CLUSTER_NAME}-fw --region=${gcp_region}
 gcloud compute target-instances delete ${TS_G_ENV}-${CLUSTER_NAME}-ti --zone=${gcp_zone}
 gcloud compute addresses delete ${TS_G_ENV}-${CLUSTER_NAME}-ip --region=${gcp_region}
-pks delete-cluster ${TS_G_ENV}-${CLUSTER_NAME} --non-interactive --wait
-
+travis_wait 60 pks delete-cluster ${TS_G_ENV}-${CLUSTER_NAME} --non-interactive --wait

@@ -9,7 +9,7 @@ env:
 install: true
 before_script:
 - "./install.sh kubectl"
-- "travis_wait 60 ./install.sh $CLUSTER"
+- "./install.sh $CLUSTER"
 script:
 - "./install.sh riff"
 - riff version
@@ -17,7 +17,7 @@ script:
 - "./run.sh"
 - "./cleanup.sh riff"
 after_script:
-- "travis_wait 60 ./cleanup.sh $CLUSTER"
+- "./cleanup.sh $CLUSTER"
 matrix:
   include:
   - env: CLUSTER=minikube

@@ -27,7 +27,7 @@ gcp_zone=`gcloud config get-value compute/zone`
 gcloud compute addresses create ${TS_G_ENV}-${CLUSTER_NAME}-ip --region=${gcp_region}
 lb_ip=`gcloud compute addresses list --filter="name=(${TS_G_ENV}-${CLUSTER_NAME}-ip)" --format=json | jq -r .[0].address`
 
-pks create-cluster ${TS_G_ENV}-${CLUSTER_NAME} --external-hostname ${lb_ip} --plan large --wait
+travis_wait 60 pks create-cluster ${TS_G_ENV}-${CLUSTER_NAME} --external-hostname ${lb_ip} --plan large --wait
 
 master_ip=`pks cluster ${TS_G_ENV}-${CLUSTER_NAME} --json | jq -r .kubernetes_master_ips[0]`
 master_name=`gcloud compute instances list --format=json | jq -r ".[] | select(.networkInterfaces[].networkIP == \"${master_ip}\") | .name"`
