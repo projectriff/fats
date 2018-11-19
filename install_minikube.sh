@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ex
 
 source `dirname "${BASH_SOURCE[0]}"`/util.sh
 
