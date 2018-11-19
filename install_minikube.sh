@@ -26,7 +26,7 @@ sudo minikube start --memory=8192 --cpus=4 \
   --extra-config=apiserver.enable-admission-plugins="NamespaceExists,NamespaceLifecycle,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook"
 
 # Point to minikube docker daemon
-sudo eval $(minikube docker-env)
+eval $(minikube docker-env)
 
 # Fix the kubectl context, as it's often stale.
 sudo minikube update-context
