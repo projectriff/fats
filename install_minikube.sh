@@ -38,7 +38,6 @@ sudo minikube addons list
 wait_pod_selector_ready kubernetes.io/minikube-addons=addon-manager kube-system
 sudo minikube addons enable registry
 wait_pod_selector_ready kubernetes.io/minikube-addons=registry kube-system
-sudo kubectl port-forward --namespace kube-system service/registry 80
 registry_ip=$(kubectl get svc --namespace kube-system -l "kubernetes.io/minikube-addons=registry" -o jsonpath="{.items[0].spec.clusterIP}")
-minikube ssh "echo \"$registry_ip       registry.kube-system.svc.cluster.local\" | sudo tee -a  /etc/hosts"
-sudo su -c 'echo "127.0.0.1       registry.kube-system.svc.cluster.local" >> /etc/hosts'
+# because we are running with --vm-driver=none the local host is minikube's host
+sudo su -c 'echo "$registry_ip       registry.kube-system.svc.cluster.local" >> /etc/hosts'
