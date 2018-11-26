@@ -23,9 +23,11 @@ sudo minikube start --memory=8192 --cpus=4 \
   --kubernetes-version=v1.12.2 \
   --vm-driver=none \
   --bootstrapper=kubeadm \
-  --extra-config=apiserver.enable-admission-plugins="NamespaceExists,NamespaceLifecycle,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook"
+  --extra-config=apiserver.enable-admission-plugins="LimitRanger,NamespaceExists,NamespaceLifecycle,ResourceQuota,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook" \
+  --insecure-registry registry.kube-system.svc.cluster.local
 
 # Enable local registry
+sudo minikube addons list
 sudo minikube addons enable registry
 sudo kubectl port-forward --namespace kube-system service/registry 80
 registry_ip=$(kubectl get svc --namespace kube-system -l "kubernetes.io/minikube-addons=registry" -o jsonpath="{.items[0].spec.clusterIP}")
