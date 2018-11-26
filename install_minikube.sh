@@ -25,6 +25,13 @@ sudo minikube start --memory=8192 --cpus=4 \
   --bootstrapper=kubeadm \
   --extra-config=apiserver.enable-admission-plugins="NamespaceExists,NamespaceLifecycle,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook"
 
+# Enable local registry
+sudo minikube addons enable registry
+sudo kubectl port-forward --namespace kube-system service/registry 80
+registry_ip=$(kubectl get svc --namespace kube-system -l "kubernetes.io/minikube-addons=registry" -o jsonpath="{.items[0].spec.clusterIP}")
+minikube ssh "echo \"$registry_ip       registry.kube-system.svc.cluster.local\" | sudo tee -a  /etc/hosts"
+sudo su -c 'echo "127.0.0.1       registry.kube-system.svc.cluster.local" >> /etc/hosts'
+
 # Fix the kubectl context, as it's often stale.
 sudo minikube update-context
 
