@@ -11,8 +11,11 @@ gcloud compute firewall-rules list --filter $CLUSTER_NAME --format="table(name)"
 
 # delete orphaned resources
 
+set +o errexit
+set +o pipefail
+
 cluster_prefix=${1:-fats}
-before=`date -v-1d -u +%Y-%m-%dT%H:%M:%SZ` # yesterday
+before=`date -d @$(( $(date +"%s") - 24*3600)) -u +%Y-%m-%dT%H:%M:%SZ` # yesterday
 
 gcloud container clusters list --filter="name ~ ^$cluster_prefix- AND createTime < $before" --format="table[no-heading](name)" | \
   xargs --no-run-if-empty gcloud container clusters delete
