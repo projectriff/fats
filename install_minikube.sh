@@ -24,7 +24,7 @@ sudo minikube start --memory=8192 --cpus=4 \
   --vm-driver=none \
   --bootstrapper=kubeadm \
   --extra-config=apiserver.enable-admission-plugins="LimitRanger,NamespaceExists,NamespaceLifecycle,ResourceQuota,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook" \
-  --insecure-registry registry.kube-system.svc.cluster.local
+  --insecure-registry 10.0.0.0/24
 
 # Fix the kubectl context, as it's often stale.
 sudo minikube update-context
