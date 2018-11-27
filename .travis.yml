@@ -18,6 +18,7 @@ script:
 - "./cleanup.sh riff"
 after_script:
 - "./cleanup.sh $CLUSTER"
+- "./cleanup.sh gc"
 matrix:
   include:
   - env: CLUSTER=minikube
