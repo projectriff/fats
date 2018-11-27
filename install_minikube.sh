@@ -5,7 +5,7 @@ source `dirname "${BASH_SOURCE[0]}"`/util.sh
 # inspired by https://github.com/LiliC/travis-minikube/blob/minikube-26-kube-1.10/.travis.yml
 
 # Allow for insecure registries
-sudo su -c "echo '{ \"insecure-registries\" : [ \"10.0.0.0/24\" ] }'" > /etc/docker/daemon.json
+sudo su -c "echo '{ \"insecure-registries\" : [ \"10.0.0.0/24\" ] }' > /etc/docker/daemon.json"
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 
