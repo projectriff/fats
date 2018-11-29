@@ -5,20 +5,30 @@ source `dirname "${BASH_SOURCE[0]}"`/util.sh
 # delete job resources
 
 gcloud container clusters delete $CLUSTER_NAME
-gcloud compute firewall-rules list --filter $CLUSTER_NAME --format="table(name)" | \
-  tail -n +2 | \
-  xargs --no-run-if-empty gcloud compute firewall-rules delete
 
 # delete orphaned resources
 
 set +o errexit
 set +o pipefail
 
+gcloud config list
+
 cluster_prefix=${1:-fats}
 before=`date -d @$(( $(date +"%s") - 24*3600)) -u +%Y-%m-%dT%H:%M:%SZ` # yesterday
 
-fats_echo "Cleanup orphaned clusters"
+fats_echo "gcloud container clusters list"
 gcloud container clusters list
+
+fats_echo "gcloud container clusters list --filter=\"name ~ ^$cluster_prefix-\""
+gcloud container clusters list --filter="name ~ ^$cluster_prefix- "
+
+fats_echo "gcloud container clusters list --filter=\"createTime < $before\""
+gcloud container clusters list --filter="createTime < $before"
+
+fats_echo "gcloud container clusters list --filter=\"name ~ ^$cluster_prefix- AND createTime < $before\""
+gcloud container clusters list --filter="name ~ ^$cluster_prefix- AND createTime < $before"
+
+fats_echo "Cleanup orphaned clusters"
 gcloud container clusters list --filter="name ~ ^$cluster_prefix- AND createTime < $before"
 gcloud container clusters list --filter="name ~ ^$cluster_prefix- AND createTime < $before" --format="table[no-heading](name, zone)" | \
   sed 's/ / --zone /2' | \
@@ -33,20 +43,20 @@ gcloud compute target-pools list --filter="createTime < $before" --format="table
 gcloud compute target-pools list --filter="createTime < $before"
 
 fats_echo "Cleanup orphaned firewall rules"
-gcloud compute firewall-rules list --filter="name ~ ^gke-$cluster_prefix- AND createTime < $before"
-gcloud compute firewall-rules list --filter="name ~ ^gke-$cluster_prefix- AND createTime < $before" --format="table[no-heading](name)" | \
+gcloud compute firewall-rules list --filter="name ~ $CLUSTER_NAME OR (name ~ ^gke-$cluster_prefix- AND createTime < $before)"
+gcloud compute firewall-rules list --filter="name ~ $CLUSTER_NAME OR (name ~ ^gke-$cluster_prefix- AND createTime < $before)" --format="table[no-heading](name)" | \
   xargs -L 1 --no-run-if-empty gcloud compute firewall-rules delete
-gcloud compute firewall-rules list --filter="name ~ ^gke-$cluster_prefix- AND createTime < $before"
+gcloud compute firewall-rules list --filter="name ~ $CLUSTER_NAME OR (name ~ ^gke-$cluster_prefix- AND createTime < $before)"
 
-fats_echo "Cleanup orphaned firewall rules"
+fats_echo "Cleanup orphaned health checks"
 gcloud compute http-health-checks list --filter="name ~ ^k8s- AND createTime < $before"
 gcloud compute http-health-checks list --filter="name ~ ^k8s- AND createTime < $before" --format="table[no-heading](name)" | \
   xargs -L 1 --no-run-if-empty gcloud compute http-health-checks delete
 gcloud compute http-health-checks list --filter="name ~ ^k8s- AND createTime < $before"
 
 fats_echo "Cleanup orphaned disks"
-gcloud compute disks list --filter="name ~ ^gke-$cluster_prefix- AND createTime < $before"
-gcloud compute disks list --filter="name ~ ^gke-$cluster_prefix- AND createTime < $before" --format="table[no-heading](name, zone)" | \
+gcloud compute disks list --filter="name ~ $CLUSTER_NAME OR (name ~ ^gke-$cluster_prefix- AND createTime < $before)"
+gcloud compute disks list --filter="name ~ $CLUSTER_NAME OR (name ~ ^gke-$cluster_prefix- AND createTime < $before)" --format="table[no-heading](name, zone)" | \
   sed 's/ / --zone /2' | \
   xargs -L 1 --no-run-if-empty gcloud compute disks delete
-gcloud compute disks list --filter="name ~ ^gke-$cluster_prefix- AND createTime < $before"
+gcloud compute disks list --filter="name ~ $CLUSTER_NAME OR (name ~ ^gke-$cluster_prefix- AND createTime < $before)"
