@@ -18,7 +18,7 @@ pks delete-cluster ${TS_G_ENV}-${CLUSTER_NAME} --non-interactive --wait
 set +o errexit
 set +o pipefail
 
-cluster_prefix="${TS_G_ENV}-`$CLUSTER_NAME | cut -d '-' -f1`"
+cluster_prefix="${TS_G_ENV}-`echo $CLUSTER_NAME | cut -d '-' -f1`"
 before=`date -d @$(( $(date +"%s") - 24*3600)) -u +%Y-%m-%dT%H:%M:%SZ` # yesterday
 
 fats_echo "Cleanup orphaned clusters"

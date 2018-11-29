@@ -11,13 +11,8 @@ gcloud container clusters delete $CLUSTER_NAME
 set +o errexit
 set +o pipefail
 
-cluster_prefix=`$CLUSTER_NAME | cut -d '-' -f1`
+cluster_prefix=`echo $CLUSTER_NAME | cut -d '-' -f1`
 before=`date -d @$(( $(date +"%s") - 24*3600)) -u +%Y-%m-%dT%H:%M:%SZ` # yesterday
-
-echo "cluster: $CLUSTER_NAME"
-echo "cluster_prefix: $cluster_prefix"
-echo "before: $before"
-echo "gcloud container clusters list --filter=\"name ~ ^$cluster_prefix- AND createTime < $before\""
 
 fats_echo "Cleanup orphaned clusters"
 gcloud container clusters list --filter="name ~ ^$cluster_prefix- AND createTime < $before"
