@@ -4,18 +4,16 @@ source `dirname "${BASH_SOURCE[0]}"`/util.sh
 source `dirname "${BASH_SOURCE[0]}"`/travis.sh
 
 # Install pivnet cli
-curl -Lo pivnet https://github.com/pivotal-cf/pivnet-cli/releases/download/v0.0.55/pivnet-linux-amd64-0.0.55 && \
-  chmod +x pivnet && sudo mv pivnet /usr/local/bin/
+source `dirname "${BASH_SOURCE[0]}"`/install.sh pivnet
 
 # Install pks cli
-pivnet login --api-token=${PIVNET_REFRESH_TOKEN}
 pivnet download-product-files -p pivotal-container-service -r 1.2.0 -i 219539 --accept-eula
 mv pks-* pks
 chmod +x pks
 sudo mv pks /usr/local/bin/
 
-# Install and configure gcloud for GCR access
-fats_setup_gcloud
+# Install gcloud for GCR access
+source `dirname "${BASH_SOURCE[0]}"`/install.sh gcloud
 
 # Create pks cluster
 TS_G_ENV=$(echo $TOOLSMITH_ENV | base64 --decode | jq -r .name)

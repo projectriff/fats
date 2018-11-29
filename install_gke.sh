@@ -1,8 +1,6 @@
 #!/bin/bash
 
-source `dirname "${BASH_SOURCE[0]}"`/util.sh
-
-fats_setup_gcloud
+source `dirname "${BASH_SOURCE[0]}"`/install.sh gcloud
 
 gcloud container clusters create $CLUSTER_NAME \
   --cluster-version=latest \
