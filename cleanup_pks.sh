@@ -23,4 +23,4 @@ before=`date -d @$(( $(date +"%s") - 24*3600)) -u +%Y-%m-%dT%H:%M:%SZ` # yesterd
 
 gcloud compute disks list --filter="name ~ ^disk- AND createTime < $before" --format="table[no-heading](name, zone)" | \
   sed 's/ / --zone /2' | \
-  xargs --no-run-if-empty gcloud compute disks delete
+  xargs -L 1 --no-run-if-empty gcloud compute disks delete
