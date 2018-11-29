@@ -17,7 +17,8 @@ set +o pipefail
 cluster_prefix=${1:-fats}
 before=`date -d @$(( $(date +"%s") - 24*3600)) -u +%Y-%m-%dT%H:%M:%SZ` # yesterday
 
-gcloud container clusters list --filter="name ~ ^$cluster_prefix- AND createTime < $before" --format="table[no-heading](name)" | \
+gcloud container clusters list --filter="name ~ ^$cluster_prefix- AND createTime < $before" --format="table[no-heading](name, zone)" | \
+  sed 's/ / --zone /2' | \
   xargs --no-run-if-empty gcloud container clusters delete
 
 gcloud compute target-pools list --filter="createTime < $before" --format="table[no-heading](name, region)" | \
