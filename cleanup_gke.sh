@@ -34,7 +34,3 @@ gcloud compute http-health-checks list --filter="name ~ ^k8s- AND createTime < $
 gcloud compute disks list --filter="name ~ ^gke-$cluster_prefix- AND createTime < $before" --format="table[no-heading](name, zone)" | \
   sed 's/ / --zone /2' | \
   xargs --no-run-if-empty gcloud compute disks delete
-
-gcloud compute disks list --filter="name ~ ^disk- AND createTime < $before" --format="table[no-heading](name, zone)" | \
-  sed 's/ / --zone /2' | \
-  xargs --no-run-if-empty gcloud compute disks delete

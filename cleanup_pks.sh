@@ -12,3 +12,15 @@ gcloud compute target-instances delete ${TS_G_ENV}-${CLUSTER_NAME}-ti --zone=${g
 gcloud compute addresses delete ${TS_G_ENV}-${CLUSTER_NAME}-ip --region=${gcp_region}
 
 pks delete-cluster ${TS_G_ENV}-${CLUSTER_NAME} --non-interactive --wait
+
+# delete orphaned resources
+
+set +o errexit
+set +o pipefail
+
+cluster_prefix=${1:-fats}
+before=`date -d @$(( $(date +"%s") - 24*3600)) -u +%Y-%m-%dT%H:%M:%SZ` # yesterday
+
+gcloud compute disks list --filter="name ~ ^disk- AND createTime < $before" --format="table[no-heading](name, zone)" | \
+  sed 's/ / --zone /2' | \
+  xargs --no-run-if-empty gcloud compute disks delete
