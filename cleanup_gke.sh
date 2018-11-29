@@ -17,6 +17,9 @@ set +o pipefail
 cluster_prefix=${1:-fats}
 before=`date -d @$(( $(date +"%s") - 24*3600)) -u +%Y-%m-%dT%H:%M:%SZ` # yesterday
 
+gcloud config unset compute/region
+gcloud config unset compute/zone
+
 fats_echo "Cleanup orphaned clusters"
 gcloud container clusters list --filter="name ~ ^$cluster_prefix- AND createTime < $before"
 gcloud container clusters list --filter="name ~ ^$cluster_prefix- AND createTime < $before" --format="table[no-heading](name, zone)" | \
