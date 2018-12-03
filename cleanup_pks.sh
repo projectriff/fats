@@ -21,11 +21,12 @@ set +o pipefail
 cluster_prefix="${TS_G_ENV}-`echo $CLUSTER_NAME | cut -d '-' -f1`"
 before=`date -d @$(( $(date +"%s") - 24*3600)) -u +%Y-%m-%dT%H:%M:%SZ` # yesterday
 
-fats_echo "Cleanup orphaned clusters"
-pks clusters
-pks clusters --json | jq -r '.[].name' | \
-  xargs -L 1 --no-run-if-empty pks delete-cluster --non-interactive --wait
-pks clusters
+# TODO restore once we can check the creation timestamp
+# fats_echo "Cleanup orphaned clusters"
+# pks clusters
+# pks clusters --json | jq -r '.[].name' | \
+#   xargs -L 1 --no-run-if-empty pks delete-cluster --non-interactive --wait
+# pks clusters
 
 fats_echo "Cleanup orphaned forwarding rules"
 gcloud compute forwarding-rules list --filter="name ~ ^$cluster_prefix- AND createTime < $before"
