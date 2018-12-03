@@ -30,8 +30,7 @@ lb_ip=`gcloud compute addresses list --filter="name=(${TS_G_ENV}-${CLUSTER_NAME}
 travis_wait 60 pks create-cluster ${TS_G_ENV}-${CLUSTER_NAME} --external-hostname ${lb_ip} --plan large --wait
 
 master_ip=`pks cluster ${TS_G_ENV}-${CLUSTER_NAME} --json | jq -r .kubernetes_master_ips[0]`
-master_name=`gcloud compute instances list --format=json | jq -r ".[] | select(.networkInterfaces[].networkIP == \"${master_ip}\") | .name"`
-
+master_name=`gcloud compute instances list --filter="tags.items = pcf-${TS_G_ENV} AND tags.items = master AND and networkInterfaces.networkIP = ${master_ip}" --format="table[no-heading](name)"`
 gcloud compute target-instances create ${TS_G_ENV}-${CLUSTER_NAME}-ti \
   --instance ${master_name} \
   --zone=${gcp_zone}
