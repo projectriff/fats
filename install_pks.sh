@@ -7,7 +7,7 @@ source `dirname "${BASH_SOURCE[0]}"`/travis.sh
 source `dirname "${BASH_SOURCE[0]}"`/install.sh pivnet
 
 # Install pks cli
-pivnet download-product-files -p pivotal-container-service -r 1.2.0 -i 219539 --accept-eula
+pivnet download-product-files -p pivotal-container-service -r 1.2.3 -i 268848 --accept-eula
 mv pks-* pks
 chmod +x pks
 sudo mv pks /usr/local/bin/
