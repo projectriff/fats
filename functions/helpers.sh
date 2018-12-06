@@ -2,9 +2,8 @@
 
 create_function() {
   path=$1
-  invoker=$2
-  function_name=$3
-  image=$4
+  function_name=$2
+  image=$3
 
   pushd $path
     args=""
@@ -12,13 +11,8 @@ create_function() {
       args=`cat .fats/create`
     fi
 
-    if [ -e '.fats/invoker' ]; then
-      # overwrite invoker
-      invoker=`cat .fats/invoker`
-    fi
-
     # create function
-    fats_echo "Creating $function_name as $invoker:"
+    fats_echo "Creating $function_name:"
     riff function create $function_name $args --image $image --namespace $NAMESPACE --verbose
 
     # TODO reduce/eliminate this sleep
@@ -51,11 +45,10 @@ destroy_function() {
 
 run_function() {
   path=$1
-  invoker=$2
-  function_name=$3
-  image=$4
-  input_data=$5
-  expected_data=$6
+  function_name=$2
+  image=$3
+  input_data=$4
+  expected_data=$5
 
   kail --ns $NAMESPACE --label "function=$function_name" > $function_name.logs &
   kail_function_pid=$!
@@ -63,7 +56,7 @@ run_function() {
   kail --ns knative-serving > $function_name.controller.logs &
   kail_controller_pid=$!
 
-  create_function $path $invoker $function_name $image
+  create_function $path $function_name $image
 
   invoke_function $function_name $input_data $expected_data
 
@@ -79,7 +72,7 @@ run_function() {
     fats_echo "Controller Logs:"
     cat $function_name.controller.logs
     echo ""
-    fats_echo "${RED}Function did not produce expected result${NC}:";
+    fats_echo "${ANSI_RED}Function did not produce expected result${ANSI_RESET}:";
     echo "   expected: $expected_data"
     echo "   actual: $actual_data"
     exit 1
