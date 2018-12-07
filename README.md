@@ -53,7 +53,7 @@ There are four extension points for FATS:
 - clusters: kubernetes clusters
 - registries: image registies where built functions are pushed before they are pulled into the cluster
 - functions: sample functions that can be invoked with helper scripts to aid creating, invoking and cleaning up
-- tools: items that needs to be installed, like kubectl or gcloud
+- tools: items that need to be installed, like kubectl or gcloud
 
 ### Clusters
 
