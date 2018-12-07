@@ -11,5 +11,3 @@ wait_for_ingress_ready() {
 
 # Install minikube cli
 source `dirname "${BASH_SOURCE[0]}"`/../../install.sh minikube
-
-export CHANGE_MINIKUBE_NONE_USER=true
