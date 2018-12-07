@@ -6,8 +6,8 @@ set -o pipefail
 
 source `dirname "${BASH_SOURCE[0]}"`/../start.sh
 
-# install riff if not present
-go get github.com/projectriff/riff
+# install riff
+source `dirname "${BASH_SOURCE[0]}"`/../install.sh riff
 
 riff system install $SYSTEM_INSTALL_FLAGS
 

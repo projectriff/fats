@@ -120,5 +120,6 @@ Support is provided for:
 - minikube
 - pivnet
 - pks
+- riff
 
 To add a new tool, create a file under `./tools/` as `<toolname>.sh`. Add any logic needed to install and configure the tool.
