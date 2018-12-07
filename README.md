@@ -70,7 +70,7 @@ To add a new cluster, create a directory under `./clusters/` and add three files
   - define function `wait_for_ingress_ready` that blocks until the cluster ingress is fully available
   - do any other one time configuration for the cluster
 - `start.sh` - start the kubernetes cluster and set it as the default kubectl context
-- `cleanup.sh` - shutdown the running cluster and clean up any shared or external resoruces
+- `cleanup.sh` - shutdown the running cluster and clean up any shared or external resources
 
 ### Registries
 
