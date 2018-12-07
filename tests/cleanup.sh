@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o nounset
+
 # script failed, dump debug info
 if [ "$TRAVIS_TEST_RESULT" = "1" ]; then
   sudo free -m -t
