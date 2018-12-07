@@ -11,7 +11,7 @@ An example config is provided in the `.travis.yml` file for this repo that doubl
 - `CLUSTER_NAME` a short, url safe, unique name (e.g. fats-123-4) used to distinguish resource between concurrent runs.
 - `NAMESPACE` the namespace to install resources into. May be hard coded for clusters that are provisioned on demand or dynamic for clusters that are reused between runs. (Note: if resources are shared jobs should not run concurrently)
 - `CLUSTER` the type of cluster to use. Some clusters will require additional environment variables
-- `REGISTRY` the type of registry to use. Some registries will require addition environment variables
+- `REGISTRY` the type of registry to use. Some registries will require additional environment variables
 
 There are two scripts that are commonly defined for Travis based builds, other CI environments may be configured differently.
 
