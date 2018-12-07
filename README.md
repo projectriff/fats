@@ -38,7 +38,7 @@ You need to:
   - `riff namespace init $NAMESPACE $NAMESPACE_INIT_FLAGS` (NAMESPACE_INIT_FLAGS is provided by FATS)
 - specify functions to test, typically:
   - `source ./functions/helpers.sh`
-  - per function `run_function <path-to-function> <name> <image> <input_data> <expected_data>` (name and image often include the CLUSTER_NAME for uniqueness)
+  - per function `run_function <path-to-function> <name> <image> <input_data> <expected_output>` (name and image often include the CLUSTER_NAME for uniqueness)
 - cleanup riff, typically:
   - `riff system uninstall --istio --force`
   - `kubectl delete namespace $NAMESPACE`
