@@ -86,7 +86,7 @@ To add a new registry, create a directory under `./registries/` and add three fi
   - set `IMAGE_REPOSITORY_PREFIX` env var that includes repository host and user information that can be pushed to
   - set `NAMESPACE_INIT_FLAGS` env var that is passed to `riff namespace init`
   - define function `fats_delete_image` that deletes a published image
-  - define function `fats_create_push_credentials` that creates a secret to be used to push incluster builds to the registry
+  - define function `fats_create_push_credentials` that creates a secret to be used to push in cluster builds to the registry
   - do any other one time configuration for the registry (run before the cluster is started)
 - `start.sh` - start the registry and set it as the default for docker push (run after the cluster is started)
 - `cleanup.sh` - shutdown the running registry and clean up any shared or external resources
