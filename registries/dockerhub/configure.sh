@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Login for local pushes
+docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
+
 IMAGE_REPOSITORY_PREFIX="${DOCKER_USERNAME}"
 NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --secret push-credentials"
 
@@ -31,6 +34,3 @@ data:
   password: $(echo -n "$DOCKER_PASSWORD" | openssl base64 -a -A)
 EOF
 }
-
-# Login for local pushes
-docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"

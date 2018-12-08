@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Install minikube cli
+source `dirname "${BASH_SOURCE[0]}"`/../../install.sh minikube
+
 SYSTEM_INSTALL_FLAGS="${SYSTEM_INSTALL_FLAGS:---node-port}"
 
 wait_for_ingress_ready() {
@@ -8,6 +11,3 @@ wait_for_ingress_ready() {
 
   # nothing to do
 }
-
-# Install minikube cli
-source `dirname "${BASH_SOURCE[0]}"`/../../install.sh minikube
