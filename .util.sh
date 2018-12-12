@@ -52,6 +52,7 @@ wait_subscription_ready() {
 }
 
 wait_knative_ready() {
+  type=$1
   name=$2
   namespace=$3
 
