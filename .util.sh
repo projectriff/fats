@@ -41,18 +41,17 @@ wait_channel_ready() {
   name=$1
   namespace=$2
 
-  wait_knative_ready 'channel.channels.knative.dev' "$name" "$namespace"
+  wait_knative_ready 'channel.eventing.knative.dev' "$name" "$namespace"
 }
 
 wait_subscription_ready() {
   name=$1
   namespace=$2
 
-  wait_knative_ready 'subscription.channels.knative.dev' "$name" "$namespace"
+  wait_knative_ready 'subscription.eventing.knative.dev' "$name" "$namespace"
 }
 
 wait_knative_ready() {
-  type=$1
   name=$2
   namespace=$3
 
