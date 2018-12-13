@@ -14,6 +14,9 @@ matrix:
   include:
   - env:
     - CLUSTER=minikube
+    - REGISTRY=minikube
+  - env:
+    - CLUSTER=minikube
     - REGISTRY=dockerhub
   - env:
     - CLUSTER=gke
