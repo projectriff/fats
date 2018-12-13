@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# try reloading the daemon
-sudo systemctl daemon-reload
-sudo systemctl restart docker
-
 # Login for local pushes
 docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
 
