@@ -14,13 +14,10 @@ matrix:
   include:
   - env:
     - CLUSTER=minikube
-    - REGISTRY=minikube
-  - env:
-    - CLUSTER=minikube
     - REGISTRY=dockerhub
-  # - env:
-  #   - CLUSTER=gke
-  #   - REGISTRY=gcr
+  - env:
+    - CLUSTER=gke
+    - REGISTRY=gcr
   # disable pks-gcp because creating the cluster take as long as travis job time limit
   # - env:
   #   - CLUSTER=pks-gcp
