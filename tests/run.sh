@@ -45,5 +45,4 @@ for test in java java-boot java-local node npm command; do
 done
 
 # eventing
-# TODO renbable eventing tests once riff has a release compatible with knative eventing 0.2
-# source `dirname "${BASH_SOURCE[0]}"`/eventing.sh
+source `dirname "${BASH_SOURCE[0]}"`/eventing.sh
