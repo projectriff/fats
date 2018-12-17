@@ -37,6 +37,11 @@ jobs:
       #   qualifier: windows
       #   cluster: gke
       #   registry: gcr
+      microk8s:
+        imageName: ubuntu-16.04
+        qualifier: microk8s
+        cluster: microk8s
+        registry: microk8s
 
   timeoutInMinutes: 90
 
