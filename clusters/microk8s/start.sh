@@ -6,6 +6,7 @@ echo "wait for microk8s"
 microk8s.status --wait-ready
 echo "enable dns"
 microk8s.enable dns
+sleep 2
 echo "wait for microk8s"
 microk8s.status --wait-ready
 
