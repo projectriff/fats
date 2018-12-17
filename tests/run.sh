@@ -35,7 +35,7 @@ echo "Run functions"
 source `dirname "${BASH_SOURCE[0]}"`/../functions/helpers.sh
 
 # uppercase
-for test in java java-boot java-local node npm command; do
+for test in java java-boot node npm command; do
   path=`dirname "${BASH_SOURCE[0]}"`/../functions/uppercase/${test}
   function_name=fats-uppercase-${test}
   image=${IMAGE_REPOSITORY_PREFIX}/fats-uppercase-${test}:${CLUSTER_NAME}
@@ -46,5 +46,4 @@ for test in java java-boot java-local node npm command; do
 done
 
 # eventing
-# TODO renbable eventing tests once riff has a release compatible with knative eventing 0.2
-# source `dirname "${BASH_SOURCE[0]}"`/eventing.sh
+source `dirname "${BASH_SOURCE[0]}"`/eventing.sh
