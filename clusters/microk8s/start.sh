@@ -6,5 +6,5 @@ echo "wait for microk8s"
 microk8s.status --wait-ready
 
 echo "alias kubectl docker"
-snap alias microk8s.kubectl kubectl
-snap alias microk8s.docker docker
+sudo snap alias microk8s.kubectl kubectl
+sudo snap alias microk8s.docker docker
