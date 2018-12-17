@@ -10,4 +10,4 @@ sudo snap alias microk8s.kubectl kubectl
 sudo snap alias microk8s.docker docker
 
 echo "expose kube config"
-kubectl config view > $HOME/.kube/config
+microk8s.kubectl config view --raw >$HOME/.kube/config
