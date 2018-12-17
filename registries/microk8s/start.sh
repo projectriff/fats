@@ -1,3 +1,4 @@
 #!/bin/bash
 
-microk8s.enable registry
+echo "enable registry"
+sudo microk8s.enable registry
