@@ -13,6 +13,9 @@ after_script: "./tests/cleanup.sh"
 matrix:
   include:
   - env:
+    - CLUSTER=microk8s
+    - REGISTRY=microk8s
+  - env:
     - CLUSTER=minikube
     - REGISTRY=dockerhub
   - env:
