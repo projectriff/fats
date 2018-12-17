@@ -8,3 +8,6 @@ microk8s.status --wait-ready
 echo "alias kubectl docker"
 sudo snap alias microk8s.kubectl kubectl
 sudo snap alias microk8s.docker docker
+
+echo "expose kube config"
+kubectl config view > $HOME/.kube/config
