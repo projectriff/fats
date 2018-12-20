@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Login for local pushes
-docker login --username $DOCKER_USERNAME --password-stdin <(echo "$DOCKER_PASSWORD")
+echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_USERNAME --password-stdin
 
 IMAGE_REPOSITORY_PREFIX="${DOCKER_USERNAME}"
 NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --secret push-credentials"
