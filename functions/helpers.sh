@@ -50,6 +50,8 @@ run_function() {
   input_data=$4
   expected_data=$5
 
+  travis_fold start function-$function_name
+
   kail --ns $NAMESPACE --label "function=$function_name" > $function_name.logs &
   kail_function_pid=$!
 
@@ -77,4 +79,6 @@ run_function() {
     echo "   actual: $actual_data"
     exit 1
   fi
+
+  travis_fold end function-$function_name
 }
