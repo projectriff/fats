@@ -7,17 +7,18 @@ IMAGE_REPOSITORY_PREFIX="${DOCKER_USERNAME}"
 NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --secret push-credentials"
 
 fats_delete_image() {
+  local image
   IFS=':' read -r -a image <<< "$1"
-  repo=${image[0]}
-  tag=${image[1]}
+  local repo=${image[0]}
+  local tag=${image[1]}
 
   echo "Delete image ${repo}:${tag}"
-  TOKEN=`curl -s -H "Content-Type: application/json" -X POST -d '{"username": "'${DOCKER_USERNAME}'", "password": "'${DOCKER_PASSWORD}'"}' https://hub.docker.com/v2/users/login/ | jq -r .token`
-  curl "https://hub.docker.com/v2/repositories/${repo}/tags/${tag}/" -X DELETE -H "Authorization: JWT ${TOKEN}"
+  local token=`curl -s -H "Content-Type: application/json" -X POST -d '{"username": "'${DOCKER_USERNAME}'", "password": "'${DOCKER_PASSWORD}'"}' https://hub.docker.com/v2/users/login/ | jq -r .token`
+  curl "https://hub.docker.com/v2/repositories/${repo}/tags/${tag}/" -X DELETE -H "Authorization: JWT ${token}"
 }
 
 fats_create_push_credentials() {
-  namespace="$1"
+  local namespace=$1
 
   echo "Create auth secret"
   cat <<EOF | kubectl apply -f -

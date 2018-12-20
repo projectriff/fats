@@ -7,8 +7,8 @@ source `dirname "${BASH_SOURCE[0]}"`/install.sh kail
 ANSI_BLUE="\033[34;1m"
 
 wait_for_service_ip() {
-  name=$1
-  namespace=$2
+  local name=$1
+  local namespace=$2
 
   wait_kube_ready \
     'service' \
@@ -19,8 +19,8 @@ wait_for_service_ip() {
 }
 
 wait_pod_selector_ready() {
-  label=$1
-  namespace=$2
+  local label=$1
+  local namespace=$2
 
   wait_kube_ready \
     'pods' \
@@ -31,30 +31,30 @@ wait_pod_selector_ready() {
 }
 
 wait_kservice_ready() {
-  name=$1
-  namespace=$2
+  local name=$1
+  local namespace=$2
 
   wait_knative_ready 'services.serving.knative.dev' "$name" "$namespace"
 }
 
 wait_channel_ready() {
-  name=$1
-  namespace=$2
+  local name=$1
+  local namespace=$2
 
   wait_knative_ready 'channel.eventing.knative.dev' "$name" "$namespace"
 }
 
 wait_subscription_ready() {
-  name=$1
-  namespace=$2
+  local name=$1
+  local namespace=$2
 
   wait_knative_ready 'subscription.eventing.knative.dev' "$name" "$namespace"
 }
 
 wait_knative_ready() {
-  type=$1
-  name=$2
-  namespace=$3
+  local type=$1
+  local name=$2
+  local namespace=$3
 
   wait_kube_ready \
     "$type" \
@@ -65,10 +65,10 @@ wait_knative_ready() {
 }
 
 wait_kube_selector_exists() {
-  type=$1
-  selector=$2
-  namespace=$3
-  name=$4
+  local type=$1
+  local selector=$2
+  local namespace=$3
+  local name=$4
 
   until kubectl get $type --namespace $namespace -l $selector \
     -o yaml | grep -qE $name; \
@@ -79,13 +79,13 @@ wait_kube_selector_exists() {
 }
 
 wait_kube_ready() {
-  type=$1
-  namespace=$2
-  jsonpath=$4
-  pattern=$5
+  local type=$1
+  local namespace=$2
+  local jsonpath=$4
+  local pattern=$5
 
   if [[ $3 = *"="* ]]; then
-    selector=$3
+    local selector=$3
 
     # TODO look for all resources to be ready, not just one
     until kubectl get $type --namespace $namespace -l $selector \
@@ -94,7 +94,7 @@ wait_kube_ready() {
     done
 
   else
-    name=$3
+    local name=$3
 
     until kubectl get $type --namespace $namespace $name \
       -o jsonpath="$jsonpath" 2>&1 | grep -qE $pattern; \
