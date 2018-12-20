@@ -10,7 +10,7 @@ source `dirname "${BASH_SOURCE[0]}"`/../start.sh
 source `dirname "${BASH_SOURCE[0]}"`/../install.sh riff
 
 travis_fold start system-install
-echo "Install riff system"
+echo "Installing riff system"
 
 riff system install $SYSTEM_INSTALL_FLAGS
 
@@ -36,7 +36,6 @@ riff namespace init $NAMESPACE $NAMESPACE_INIT_FLAGS
 travis_fold end system-install
 
 # run test functions
-echo "Run functions"
 source `dirname "${BASH_SOURCE[0]}"`/../functions/helpers.sh
 
 # uppercase

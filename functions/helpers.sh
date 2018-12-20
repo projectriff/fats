@@ -83,15 +83,19 @@ run_function() {
 
   actual_data=`cat $function_name.out | tail -1`
   if [ "$actual_data" != "$expected_data" ]; then
-    fats_echo "Function Logs:"
+    travis_fold start function-$function_name-logs-function
+    echo -e "Function Logs:"
     cat $function_name.logs
-    echo ""
-    fats_echo "Controller Logs:"
+    travis_fold end function-$function_name-logs-function
+    echo -e ""
+    travis_fold start function-$function_name-logs-controller
+    echo -e "Controller Logs:"
     cat $function_name.controller.logs
-    echo ""
-    fats_echo "${ANSI_RED}Function did not produce expected result${ANSI_RESET}:";
-    echo "   expected: $expected_data"
-    echo "   actual: $actual_data"
+    travis_fold end function-$function_name-logs-controller
+    echo -e ""
+    echo -e "${ANSI_RED}Function did not produce expected result${ANSI_RESET}:";
+    echo -e "   expected: $expected_data"
+    echo -e "   actual: $actual_data"
     exit 1
   fi
 
