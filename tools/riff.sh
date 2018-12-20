@@ -1,10 +1,10 @@
 #!/bin/bash
 
-d=`mktemp -d riff.XXXX`
+riff_dir=`mktemp -d riff.XXXX`
 
-pushd $d
-  echo 'module temp' > go.mod
-  GO111MODULE=on go get github.com/projectriff/riff@master
-popd
+curl -L https://storage.googleapis.com/projectriff/riff-cli/releases/latest/riff-linux-amd64.tgz \
+  | tar xz -C $riff_dir
+chmod +x $riff_dir/riff
+sudo mv $riff_dir/riff /usr/local/bin/
 
-rm -r "$d"
+rm -rf $riff_dir
