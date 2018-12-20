@@ -2,6 +2,8 @@
 
 set -o nounset
 
+source `dirname "${BASH_SOURCE[0]}"`/../.util.sh
+
 # script failed, dump debug info
 if [ "$TRAVIS_TEST_RESULT" = "1" ]; then
   travis_fold start debug
