@@ -5,6 +5,9 @@ create_function() {
   local function_name=$2
   local image=$3
 
+  travis_fold start create-function-$function_name
+  echo "Create function $function_name"
+
   pushd $path
     local args=""
     if [ -e '.fats/create' ]; then
@@ -18,6 +21,8 @@ create_function() {
     # TODO reduce/eliminate this sleep
     sleep 5
   popd
+
+  travis_fold end create-function-$function_name
 }
 
 invoke_function() {
@@ -25,7 +30,9 @@ invoke_function() {
   local input_data=$2
   local expected_data=$3
 
-  fats_echo "Invoking $function_name:"
+  travis_fold start invoke-function-$function_name
+  echo "Invoke function $function_name"
+
   riff service invoke $function_name --namespace $NAMESPACE -- \
     -H "Content-Type: text/plain" \
     -d $input_data \
@@ -33,14 +40,21 @@ invoke_function() {
 
   # add a new line after invoke, but without impacting the curl output
   echo ""
+
+  travis_fold end invoke-function-$function_name
 }
 
 destroy_function() {
   local function_name=$1
   local image=$2
 
+  travis_fold start destroy-function-$function_name
+  echo "Destroy function $function_name"
+
   riff service delete $function_name --namespace $NAMESPACE
   fats_delete_image $image
+
+  travis_fold end destroy-function-$function_name
 }
 
 run_function() {
@@ -49,6 +63,9 @@ run_function() {
   local image=$3
   local input_data=$4
   local expected_data=$5
+
+  travis_fold start function-$function_name
+  echo "Run function $function_name"
 
   kail --ns $NAMESPACE --label "function=$function_name" > $function_name.logs &
   local kail_function_pid=$!
@@ -66,15 +83,21 @@ run_function() {
 
   local actual_data=`cat $function_name.out | tail -1`
   if [ "$actual_data" != "$expected_data" ]; then
-    fats_echo "Function Logs:"
+    travis_fold start function-$function_name-logs-function
+    echo -e "Function Logs:"
     cat $function_name.logs
-    echo ""
-    fats_echo "Controller Logs:"
+    travis_fold end function-$function_name-logs-function
+    echo -e ""
+    travis_fold start function-$function_name-logs-controller
+    echo -e "Controller Logs:"
     cat $function_name.controller.logs
-    echo ""
-    fats_echo "${ANSI_RED}Function did not produce expected result${ANSI_RESET}:";
-    echo "   expected: $expected_data"
-    echo "   actual: $actual_data"
+    travis_fold end function-$function_name-logs-controller
+    echo -e ""
+    echo -e "${ANSI_RED}Function did not produce expected result${ANSI_RESET}:";
+    echo -e "   expected: $expected_data"
+    echo -e "   actual: $actual_data"
     exit 1
   fi
+
+  travis_fold end function-$function_name
 }

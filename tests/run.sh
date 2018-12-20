@@ -9,6 +9,9 @@ source `dirname "${BASH_SOURCE[0]}"`/../start.sh
 # install riff
 source `dirname "${BASH_SOURCE[0]}"`/../install.sh riff
 
+travis_fold start system-install
+echo "Installing riff system"
+
 riff system install $SYSTEM_INSTALL_FLAGS
 
 # health checks
@@ -30,8 +33,9 @@ kubectl create namespace $NAMESPACE
 fats_create_push_credentials $NAMESPACE
 riff namespace init $NAMESPACE $NAMESPACE_INIT_FLAGS
 
+travis_fold end system-install
+
 # run test functions
-echo "Run functions"
 source `dirname "${BASH_SOURCE[0]}"`/../functions/helpers.sh
 
 # uppercase

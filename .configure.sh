@@ -1,7 +1,8 @@
 #!/bin/bash
 
 if [[ "${FATS_CONFIGURED:-x}" == "x" ]]; then
-  echo -e "Configuring FATS run:"
+  travis_fold start configure
+  echo -e "Configuring FATS"
   echo -e "    cluster ${ANSI_BLUE}${CLUSTER}${ANSI_RESET}"
   echo -e "    registry ${ANSI_BLUE}${REGISTRY}${ANSI_RESET}"
 
@@ -9,4 +10,5 @@ if [[ "${FATS_CONFIGURED:-x}" == "x" ]]; then
   source `dirname "${BASH_SOURCE[0]}"`/registries/${REGISTRY}/configure.sh
 
   FATS_CONFIGURED=true
+  travis_fold end configure
 fi
