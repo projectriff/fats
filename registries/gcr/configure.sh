@@ -7,13 +7,13 @@ IMAGE_REPOSITORY_PREFIX="gcr.io/`gcloud config get-value project`"
 NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --secret push-credentials"
 
 fats_delete_image() {
-  image=$1
+  local image=$1
 
   gcloud container images delete $image
 }
 
 fats_create_push_credentials() {
-  namespace="$1"
+  local namespace=$1
 
   echo "Create auth secret"
   cat <<EOF | kubectl apply -f -
