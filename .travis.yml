@@ -1,13 +1,10 @@
 sudo: required
-language: go
-go:
-- '1.11'
+language: minimal
 dist: xenial
 env:
   global:
   - CLUSTER_NAME="fats-${TRAVIS_JOB_NUMBER//./-}"
   - NAMESPACE="fats-${TRAVIS_JOB_NUMBER//./-}"
-install: true
 script: "./tests/run.sh"
 after_script: "./tests/cleanup.sh"
 matrix:
