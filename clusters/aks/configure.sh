@@ -19,4 +19,5 @@ export RESOURCE_GROUP=`echo $CLUSTER_NAME | cut -d '-' -f1`
 
 az group create --name $RESOURCE_GROUP --location $LOCATION
 
-az provider register -n Microsoft.Compute az provider register -n Microsoft.Network
+az provider register -n Microsoft.Compute
+az provider register -n Microsoft.Network
