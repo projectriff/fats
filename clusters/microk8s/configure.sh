@@ -8,3 +8,6 @@ wait_for_ingress_ready() {
 
   # nothing to do
 }
+
+# allow network access from inside pods
+sudo iptables -P FORWARD ACCEPT
