@@ -14,8 +14,8 @@ wait_for_ingress_ready() {
 
 # custom azure config
 
-export LOCATION=eastus
-export RESOURCE_GROUP=`echo $CLUSTER_NAME | cut -d '-' -f1`
+export LOCATION=${LOCATION:-eastus}
+export RESOURCE_GROUP=${RESOURCE_GROUP:-`echo $CLUSTER_NAME | cut -d '-' -f1`}
 
 az group create --name $RESOURCE_GROUP --location $LOCATION
 
