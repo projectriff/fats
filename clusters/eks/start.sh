@@ -1,3 +1,3 @@
 #!/bin/bash
 
-eksctl get cluster --name $CLUSTER_NAME
+eksctl create cluster --name $CLUSTER_NAME
