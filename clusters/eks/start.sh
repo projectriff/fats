@@ -1,3 +1,3 @@
 #!/bin/bash
 
-eksctl create cluster --name $CLUSTER_NAME
+travis_wait eksctl create cluster --name $CLUSTER_NAME
