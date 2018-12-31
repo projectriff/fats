@@ -6,9 +6,7 @@ source `dirname "${BASH_SOURCE[0]}"`/../../install.sh aws
 # Login for local pushes
 $(aws ecr get-login --no-include-email --region us-west-2)
 
-aws sts get-caller-identity
-
-IMAGE_REPOSITORY_PREFIX="$(aws sts get-caller-identity | jq -r .Account).dkr.ecr.us-west-2.amazonaws.com"
+IMAGE_REPOSITORY_PREFIX="$(aws sts get-caller-identity --output text --query 'Account').dkr.ecr.us-west-2.amazonaws.com"
 NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --secret push-credentials"
 
 fats_delete_image() {
@@ -23,14 +21,10 @@ fats_delete_image() {
 fats_create_push_credentials() {
   local namespace=$1
 
-  local login_cmd=`aws ecr get-login --no-include-email --region us-west-2`
-  if ! [[ "$login_cmd" =~ "^docker login -u (\S+) -p (\S+) (\S+)$" ]]; then
-    echo "Unexpected output from 'aws ecr get-login'"
-    exit 1
-  fi
-  local username="${BASH_REMATCH[1]}"
-  local password="${BASH_REMATCH[2]}"
-  local endpoint="${BASH_REMATCH[3]}"
+  local token=`aws ecr get-authorization-token --region us-west-2 --output text --query 'authorizationData[].authorizationToken' | base64 --decode`
+  local username=`echo $token | cut -d':' -f1`
+  local password=`echo $token | cut -d':' -f2`
+  local endpoint="https://$(aws sts get-caller-identity --output text --query 'Account').dkr.ecr.us-west-2.amazonaws.com/"
 
   echo "Create auth secret"
   cat <<EOF | kubectl apply -f -
@@ -43,7 +37,7 @@ metadata:
     build.knative.dev/docker-0: $(echo -n "$endpoint")
 type: kubernetes.io/basic-auth
 data:
-  username: $(echo -n "$username")
-  password: $(echo -n "$password")
+  username: $(echo -n "$username" | openssl base64 -a -A)
+  password: $(echo -n "$password" | openssl base64 -a -A)
 EOF
 }
