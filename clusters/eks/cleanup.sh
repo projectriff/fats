@@ -2,4 +2,4 @@
 
 # delete job resources
 
-eksctl delete cluster --name $CLUSTER_NAME
+eksctl delete cluster --name $CLUSTER_NAME --verbose 4
