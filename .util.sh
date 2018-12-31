@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ "${FATS_LOADED:-x}" == "x" ]]; then
+if [[ "${FATS_LOADED:-x}" == "true" ]]; then
   return
 fi
 FATS_LOADED=true
