@@ -18,6 +18,19 @@ wait_for_service_ip() {
     '[0-9]'
 }
 
+wait_for_service_hostname() {
+  local name=$1
+  local namespace=$2
+  local pattern=$3
+
+  wait_kube_ready \
+    'service' \
+    "$namespace" \
+    "$name" \
+    '{$.status.loadBalancer.ingress[].hostname:}' \
+    "$pattern"
+}
+
 wait_pod_selector_ready() {
   local label=$1
   local namespace=$2
