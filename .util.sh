@@ -32,7 +32,7 @@ wait_for_service_hostname() {
     'service' \
     "$namespace" \
     "$name" \
-    '{$.status.loadBalancer.ingress[].hostname:}' \
+    '{$.status.loadBalancer.ingress[].hostname}' \
     "$pattern"
 }
 
