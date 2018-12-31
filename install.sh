@@ -1,6 +1,6 @@
 #!/bin/bash
 
-`dirname "${BASH_SOURCE[0]}"`/.util.sh
+source `dirname "${BASH_SOURCE[0]}"`/.util.sh
 
 if [ ! -f `dirname "${BASH_SOURCE[0]}"`/tools/$1.installed ]; then
   travis_fold start install-$1

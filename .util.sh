@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ "${FATS_LOADED:-x}" == "x" ]]; then
+  return
+fi
+FATS_LOADED=true
+
 source `dirname "${BASH_SOURCE[0]}"`/.travis.sh
 source `dirname "${BASH_SOURCE[0]}"`/install.sh kubectl
 source `dirname "${BASH_SOURCE[0]}"`/install.sh kail
