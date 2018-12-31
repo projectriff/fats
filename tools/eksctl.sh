@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Install aws cli
+source `dirname "${BASH_SOURCE[0]}"`/../install.sh aws
+
 eksctl_version="0.1.16"
 eksctl_dir=`mktemp -d eksctl.XXXX`
 
