@@ -17,8 +17,11 @@ fats_image_repo() {
   local tag="${CLUSTER}"
 
   # ECR requires the repo be created before pushing an image.
+  travis_fold start create-repo-${repo}
+  echo "Create repo for ${repo}"
   # allow to fail since the repository may already exist
   aws ecr create-repository --repository-name $repo --region us-west-2 || true
+  travis_fold end create-repo-${repo}
 
   echo -n "${IMAGE_REPOSITORY_PREFIX}/${repo}:${tag}"
 }
