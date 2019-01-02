@@ -6,6 +6,13 @@ source `dirname "${BASH_SOURCE[0]}"`/../../install.sh gcloud
 IMAGE_REPOSITORY_PREFIX="gcr.io/`gcloud config get-value project`"
 NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --secret push-credentials"
 
+fats_image_repo() {
+  local func=$1
+  local test=$2
+
+  echo -n "${IMAGE_REPOSITORY_PREFIX}/${func}-${test}:${CLUSTER}"
+}
+
 fats_delete_image() {
   local image=$1
 

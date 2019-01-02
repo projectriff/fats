@@ -8,6 +8,13 @@ sudo systemctl restart docker
 IMAGE_REPOSITORY_PREFIX="registry.kube-system.svc.cluster.local/u"
 NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --no-secret"
 
+fats_image_repo() {
+  local func=$1
+  local test=$2
+
+  echo -n "${IMAGE_REPOSITORY_PREFIX}/${func}-${test}:${CLUSTER}"
+}
+
 fats_delete_image() {
   local image=$1
 

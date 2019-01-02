@@ -9,6 +9,20 @@ $(aws ecr get-login --no-include-email --region us-west-2)
 IMAGE_REPOSITORY_PREFIX="$(aws sts get-caller-identity --output text --query 'Account').dkr.ecr.us-west-2.amazonaws.com"
 NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --secret push-credentials"
 
+fats_image_repo() {
+  local func=$1
+  local test=$2
+
+  local repo="fats-${func}-${test}"
+  local tag="${CLUSTER}"
+
+  # ECR requires the repo be created before pushing an image.
+  # allow to fail since the repository may already exist
+  aws ecr create-repository --repository-name $repo --region us-west-2 || true
+
+  echo -n "${IMAGE_REPOSITORY_PREFIX}/${repo}:${tag}"
+}
+
 fats_delete_image() {
   local image=$1
   IFS=':' read -r -a image <<< "$1"

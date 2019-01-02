@@ -6,6 +6,13 @@ echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_USERNAME --password-st
 IMAGE_REPOSITORY_PREFIX="${DOCKER_USERNAME}"
 NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --secret push-credentials"
 
+fats_image_repo() {
+  local func=$1
+  local test=$2
+
+  echo -n "${IMAGE_REPOSITORY_PREFIX}/${func}-${test}:${CLUSTER}"
+}
+
 fats_delete_image() {
   local image
   IFS=':' read -r -a image <<< "$1"
