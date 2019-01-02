@@ -11,7 +11,7 @@ matrix:
   include:
   - env:
     - CLUSTER=microk8s
-    - REGISTRY=microk8s
+    - REGISTRY=dockerhub
   - env:
     - CLUSTER=minikube
     - REGISTRY=dockerhub
