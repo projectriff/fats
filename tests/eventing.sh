@@ -31,7 +31,7 @@ riff service invoke correlator /$NAMESPACE/$test_name --namespace $NAMESPACE --t
 expected_data=riff
 actual_data=`cat $test_name.out | tail -1`
 
-kill $kail_test_pid $kail_controller_pid || true
+kill $kail_test_pid $kail_controller_pid
 riff subscription delete $test_name --namespace $NAMESPACE
 riff channel delete $test_name --namespace $NAMESPACE
 riff service delete correlator --namespace $NAMESPACE
