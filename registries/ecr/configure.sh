@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo -e "${ANSI_RED}NOTE: ECR will not fully work until https://github.com/knative/serving/issues/1996 is resolved${ANSI_RESET}"
+
 # Install aws for ECR access
 source `dirname "${BASH_SOURCE[0]}"`/../../install.sh aws
 
