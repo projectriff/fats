@@ -1,4 +1,4 @@
-# FaaS Acceptance Test Suite (FATS) for riff
+# FaaS Acceptance Test Suite (FATS) for riff [![Build Status](https://travis-ci.com/projectriff/fats.svg?branch=master)](https://travis-ci.com/projectriff/fats)
 
 FATS is a suite of scripts that support testing riff against various Kubernetes clusters.
 
