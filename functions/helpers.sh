@@ -67,9 +67,9 @@ run_function() {
   travis_fold start function-$function_name
   echo "Run function $function_name"
 
-  echo -e "${ANSI_BLUE}> path:${ANSI_CLEAR} ${path}"
-  echo -e "${ANSI_BLUE}> name:${ANSI_CLEAR} ${function_name}"
-  echo -e "${ANSI_BLUE}> image:${ANSI_CLEAR} ${image}"
+  echo -e "${ANSI_BLUE}> path:${ANSI_RESET} ${path}"
+  echo -e "${ANSI_BLUE}> name:${ANSI_RESET} ${function_name}"
+  echo -e "${ANSI_BLUE}> image:${ANSI_RESET} ${image}"
 
   kail --ns $NAMESPACE --label "function=$function_name" > $function_name.logs &
   local kail_function_pid=$!

@@ -42,7 +42,7 @@ source `dirname "${BASH_SOURCE[0]}"`/../functions/helpers.sh
 for test in java java-boot java-local node npm command; do
   path=`dirname "${BASH_SOURCE[0]}"`/../functions/uppercase/${test}
   function_name=fats-uppercase-${test}
-  image=$(fats_image_repo uppercase ${test})
+  image=$(fats_image_repo ${function_name})
   input_data=riff
   expected_data=RIFF
 

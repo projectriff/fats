@@ -7,10 +7,9 @@ IMAGE_REPOSITORY_PREFIX="gcr.io/`gcloud config get-value project`"
 NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --secret push-credentials"
 
 fats_image_repo() {
-  local func=$1
-  local test=$2
+  local function_name=$1
 
-  echo -n "${IMAGE_REPOSITORY_PREFIX}/${func}-${test}:${CLUSTER}"
+  echo -n "${IMAGE_REPOSITORY_PREFIX}/${function_name}:${CLUSTER_NAME}"
 }
 
 fats_delete_image() {
