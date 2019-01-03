@@ -34,7 +34,7 @@ fats_create_push_credentials() {
   local token=`aws ecr get-authorization-token --region us-west-2 --output text --query 'authorizationData[].authorizationToken' | base64 --decode`
   local username=`echo $token | cut -d':' -f1`
   local password=`echo $token | cut -d':' -f2`
-  local endpoint="https://$(aws sts get-caller-identity --output text --query 'Account').dkr.ecr.us-west-2.amazonaws.com/"
+  local endpoint="https://$(aws sts get-caller-identity --output text --query 'Account').dkr.ecr.us-west-2.amazonaws.com/v2/"
 
   echo "Create auth secret"
   cat <<EOF | kubectl apply -f -
