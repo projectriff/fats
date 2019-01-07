@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ "${FATS_LOADED:-x}" == "true" ]]; then
+  return
+fi
+FATS_LOADED=true
+
 source `dirname "${BASH_SOURCE[0]}"`/.travis.sh
 source `dirname "${BASH_SOURCE[0]}"`/install.sh kubectl
 source `dirname "${BASH_SOURCE[0]}"`/install.sh kail
@@ -16,6 +21,19 @@ wait_for_service_ip() {
     "$name" \
     '{$.status.loadBalancer.ingress[].ip}' \
     '[0-9]'
+}
+
+wait_for_service_hostname() {
+  local name=$1
+  local namespace=$2
+  local pattern=$3
+
+  wait_kube_ready \
+    'service' \
+    "$namespace" \
+    "$name" \
+    '{$.status.loadBalancer.ingress[].hostname}' \
+    "$pattern"
 }
 
 wait_pod_selector_ready() {

@@ -8,6 +8,12 @@ az acr login --name $ACR_USERNAME
 IMAGE_REPOSITORY_PREFIX="${ACR_USERNAME}.azurecr.io"
 NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --secret push-credentials"
 
+fats_image_repo() {
+  local function_name=$1
+
+  echo -n "${IMAGE_REPOSITORY_PREFIX}/${function_name}:${CLUSTER_NAME}"
+}
+
 fats_delete_image() {
   local image=$1
 

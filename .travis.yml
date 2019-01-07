@@ -16,6 +16,9 @@ matrix:
     - CLUSTER=gke
     - REGISTRY=gcr
   - env:
+    - CLUSTER=eks
+    - REGISTRY=dockerhub
+  - env:
     - CLUSTER=aks
     - REGISTRY=dockerhub
   # disable pks-gcp because creating the cluster take as long as travis job time limit
