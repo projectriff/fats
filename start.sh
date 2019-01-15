@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source `dirname "${BASH_SOURCE[0]}"`/.util.sh
-
 source `dirname "${BASH_SOURCE[0]}"`/.configure.sh
 
 travis_fold start start-cluster
