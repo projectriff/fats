@@ -9,7 +9,7 @@ NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --secret push-credentials"
 fats_delete_image() {
   image=$1
 
-  gcloud container images delete $image
+  gcloud container images delete $image --force-delete-tags
 }
 
 fats_create_push_credentials() {
