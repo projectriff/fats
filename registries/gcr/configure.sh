@@ -15,7 +15,7 @@ fats_image_repo() {
 fats_delete_image() {
   local image=$1
 
-  gcloud container images delete $image
+  gcloud container images delete $image --force-delete-tags
 }
 
 fats_create_push_credentials() {
