@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Install gcloud cli
-source `dirname "${BASH_SOURCE[0]}"`/../../install.sh gcloud
+`dirname "${BASH_SOURCE[0]}"`/../../install.sh gcloud
 
 SYSTEM_INSTALL_FLAGS="${SYSTEM_INSTALL_FLAGS:-}"
 

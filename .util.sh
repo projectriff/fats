@@ -6,8 +6,6 @@ fi
 FATS_LOADED=true
 
 source `dirname "${BASH_SOURCE[0]}"`/.travis.sh
-source `dirname "${BASH_SOURCE[0]}"`/install.sh kubectl
-source `dirname "${BASH_SOURCE[0]}"`/install.sh kail
 
 ANSI_BLUE="\033[34;1m"
 
