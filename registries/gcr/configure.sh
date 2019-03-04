@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Install gcloud for GCR access
-source `dirname "${BASH_SOURCE[0]}"`/../../install.sh gcloud
+`dirname "${BASH_SOURCE[0]}"`/../../install.sh gcloud
 
 IMAGE_REPOSITORY_PREFIX="gcr.io/`gcloud config get-value project`"
 NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --secret push-credentials"

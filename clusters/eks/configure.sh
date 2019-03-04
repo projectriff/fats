@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Install eksctl cli
-source `dirname "${BASH_SOURCE[0]}"`/../../install.sh eksctl
+`dirname "${BASH_SOURCE[0]}"`/../../install.sh eksctl
 
 SYSTEM_INSTALL_FLAGS="${SYSTEM_INSTALL_FLAGS:-}"
 
