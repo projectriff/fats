@@ -13,8 +13,14 @@ matrix:
     - CLUSTER=minikube
     - REGISTRY=dockerhub
   - env:
-    - CLUSTER=gke
-    - REGISTRY=gcr
+    - CLUSTER=minikube
+    - REGISTRY=minikube
+  - env:
+    - CLUSTER=minikube
+    - REGISTRY=docker
+  # - env:
+  #   - CLUSTER=gke
+  #   - REGISTRY=gcr
   # EKS and Knative Build 0.3 are not happy together
   # - env:
   #   - CLUSTER=eks
