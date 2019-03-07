@@ -5,7 +5,7 @@ sudo su -c "echo '{ \"insecure-registries\" : [ \"registry.local\" ] }' > /etc/d
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 
-IMAGE_REPOSITORY_PREFIX="registry.local"
+IMAGE_REPOSITORY_PREFIX="registry.local:5000"
 NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --no-secret"
 
 fats_image_repo() {
