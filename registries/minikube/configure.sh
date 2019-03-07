@@ -1,12 +1,13 @@
 #!/bin/bash
 
-# Allow for insecure registries
-sudo su -c "echo '{ \"insecure-registries\" : [ \"registry.kube-system.svc.cluster.local\" ] }' > /etc/docker/daemon.json"
-sudo systemctl daemon-reload
-sudo systemctl restart docker
-
+INSECURE_REGISTRY="registry.kube-system.svc.cluster.local"
 IMAGE_REPOSITORY_PREFIX="registry.kube-system.svc.cluster.local/u"
 NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --no-secret"
+
+# Allow for insecure registries
+sudo su -c "echo '{ \"insecure-registries\" : [ \"${INSECURE_REGISTRY}\" ] }' > /etc/docker/daemon.json"
+sudo systemctl daemon-reload
+sudo systemctl restart docker
 
 fats_image_repo() {
   local function_name=$1
