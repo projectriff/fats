@@ -38,7 +38,8 @@ You need to:
   - `riff namespace init $NAMESPACE $NAMESPACE_INIT_FLAGS` (NAMESPACE_INIT_FLAGS is provided by FATS)
 - specify functions to test, typically:
   - `source ./functions/helpers.sh`
-  - per function `run_function <path-to-function> <name> <image> <input_data> <expected_output>` (name and image often include the CLUSTER_NAME for uniqueness)
+  - per function `run_function <path-to-function> <name> <image> <create_args> <input_data> <expected_output>` (name and image often include the CLUSTER_NAME for uniqueness)
+    - create_args must specify the source to use with either `--git-repo <git-url>` or `--local-path <path>`
 - cleanup riff, typically:
   - `riff system uninstall --istio --force`
   - `kubectl delete namespace $NAMESPACE`
@@ -106,7 +107,7 @@ Support is provided for:
 To add a new function, create a directory anywhere, adding the following files:
 
 - `.fats`
-  - `create` - CLI arguments to pass to `riff function create`, typically `--git-repo <git-url>` or `--local-path .`, plus other function specific args like `--artifact` or `--handler`
+  - `create` - CLI arguments to pass to `riff function create`, like `--artifact` or `--handler`
 - any other files for your function if using `--local-path .`
 
 ### Tools

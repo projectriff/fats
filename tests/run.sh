@@ -40,15 +40,28 @@ travis_fold end system-install
 # run test functions
 source `dirname "${BASH_SOURCE[0]}"`/../functions/helpers.sh
 
-# uppercase
-for test in java java-boot java-local node npm command; do
+# in cluster builds
+for test in java java-boot node npm command; do
   path=`dirname "${BASH_SOURCE[0]}"`/../functions/uppercase/${test}
   function_name=fats-uppercase-${test}
   image=$(fats_image_repo ${function_name})
+  create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path functions/uppercase/${test}"
   input_data=riff
   expected_data=RIFF
 
-  run_function $path $function_name $image $input_data $expected_data
+  run_function $path $function_name $image "$create_args" $input_data $expected_data
+done
+
+# local builds
+for test in node npm command; do
+  path=`dirname "${BASH_SOURCE[0]}"`/../functions/uppercase/${test}
+  function_name=fats-uppercase-${test}
+  image=$(fats_image_repo ${function_name})
+  create_args="--local-path ${path}"
+  input_data=riff
+  expected_data=RIFF
+
+  run_function $path $function_name $image "$create_args" $input_data $expected_data
 done
 
 # eventing
