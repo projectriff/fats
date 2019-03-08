@@ -53,7 +53,7 @@ for test in java java-boot node npm command; do
 done
 
 # local builds
-for test in node npm command; do
+for test in java java-boot node npm command; do
   path=`dirname "${BASH_SOURCE[0]}"`/../functions/uppercase/${test}
   function_name=fats-local-uppercase-${test}
   image=$(fats_image_repo ${function_name})
