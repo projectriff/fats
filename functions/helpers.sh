@@ -71,6 +71,7 @@ run_function() {
   echo -e "${ANSI_BLUE}> path:${ANSI_RESET} ${path}"
   echo -e "${ANSI_BLUE}> name:${ANSI_RESET} ${function_name}"
   echo -e "${ANSI_BLUE}> image:${ANSI_RESET} ${image}"
+  echo -e "${ANSI_BLUE}> args:${ANSI_RESET} ${create_args}"
 
   kail --ns $NAMESPACE --label "function=$function_name" > $function_name.logs &
   local kail_function_pid=$!

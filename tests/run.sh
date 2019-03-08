@@ -43,7 +43,7 @@ source `dirname "${BASH_SOURCE[0]}"`/../functions/helpers.sh
 # in cluster builds
 for test in java java-boot node npm command; do
   path=`dirname "${BASH_SOURCE[0]}"`/../functions/uppercase/${test}
-  function_name=fats-uppercase-${test}
+  function_name=fats-uppercase-${test}-cluster
   image=$(fats_image_repo ${function_name})
   create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path functions/uppercase/${test}"
   input_data=riff
@@ -55,9 +55,9 @@ done
 # local builds
 for test in node npm command; do
   path=`dirname "${BASH_SOURCE[0]}"`/../functions/uppercase/${test}
-  function_name=fats-uppercase-${test}
+  function_name=fats-uppercase-${test}-local
   image=$(fats_image_repo ${function_name})
-  create_args="--local-path ${path}"
+  create_args="--local-path ."
   input_data=riff
   expected_data=RIFF
 
