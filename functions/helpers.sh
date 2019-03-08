@@ -4,14 +4,14 @@ create_function() {
   local path=$1
   local function_name=$2
   local image=$3
+  local args=$4
 
   travis_fold start create-function-$function_name
   echo "Create function $function_name"
 
   pushd $path
-    local args=""
     if [ -e '.fats/create' ]; then
-      args=`cat .fats/create`
+      args="${args} `cat .fats/create`"
     fi
 
     # create function
@@ -61,8 +61,9 @@ run_function() {
   local path=$1
   local function_name=$2
   local image=$3
-  local input_data=$4
-  local expected_data=$5
+  local create_args=$4
+  local input_data=$5
+  local expected_data=$6
 
   travis_fold start function-$function_name
   echo "Run function $function_name"
@@ -70,6 +71,7 @@ run_function() {
   echo -e "${ANSI_BLUE}> path:${ANSI_RESET} ${path}"
   echo -e "${ANSI_BLUE}> name:${ANSI_RESET} ${function_name}"
   echo -e "${ANSI_BLUE}> image:${ANSI_RESET} ${image}"
+  echo -e "${ANSI_BLUE}> args:${ANSI_RESET} ${create_args}"
 
   kail --ns $NAMESPACE --label "function=$function_name" > $function_name.logs &
   local kail_function_pid=$!
@@ -77,7 +79,7 @@ run_function() {
   kail --ns knative-serving > $function_name.controller.logs &
   local kail_controller_pid=$!
 
-  create_function $path $function_name $image
+  create_function $path $function_name $image "$create_args"
 
   invoke_function $function_name $input_data $expected_data
 
