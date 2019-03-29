@@ -23,6 +23,11 @@ variables:
   NAMESPACE: '$(CLUSTER_NAME)'
 
 steps:
+- task: DockerInstaller@0
+  displayName: Docker Installer
+  inputs:
+    dockerVersion: 18.06.3-ce
+
 - bash: ./tests/run.sh
   displayName: 'Run FATS'
 
