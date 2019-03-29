@@ -19,7 +19,7 @@ pool:
 variables:
   CLUSTER:  '$(cluster)'
   REGISTRY: '$(registry)'
-  CLUSTER_NAME: 'fats-$(BuildID)'
+  CLUSTER_NAME: 'fats-$(Build.BuildId)'
   NAMESPACE: '$(CLUSTER_NAME)'
 
 steps:
