@@ -8,7 +8,11 @@ strategy:
     minikube:
       imageName: ubuntu-16.04
       cluster: minikube
-      registry: minikube
+      registry: dockerhub
+    gke:
+      imageName: ubuntu-16.04
+      cluster: gke
+      registry: gcr
 
 trigger:
 - master
