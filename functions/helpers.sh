@@ -84,7 +84,7 @@ run_function() {
   invoke_function $function_name $input_data $expected_data
 
   # cleanup resources
-  kill $kail_function_pid $kail_controller_pid
+  kill $kail_function_pid $kail_controller_pid || true
   destroy_function $function_name $image
 
   local actual_data=`cat $function_name.out | tail -1`
