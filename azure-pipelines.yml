@@ -23,10 +23,8 @@ variables:
   NAMESPACE: '$(CLUSTER_NAME)'
 
 steps:
-- task: DockerInstaller@0
-  displayName: Docker Installer
-  inputs:
-    dockerVersion: 18.06.3-ce
+- script: sudo apt-get update && sudo apt-get install docker.io=18.06.1-0ubuntu1.2~16.04.1
+  displayName: 'Downgrade Docker'
 
 - bash: ./tests/run.sh
   displayName: 'Run FATS'
