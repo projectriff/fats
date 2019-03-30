@@ -42,21 +42,31 @@ spec:
     kind: Channel
     name: $test_name
 EOF
+echo "step 1"
 wait_knative_ready cronjobsource.sources.eventing.knative.dev test-cronjob-source $NAMESPACE
+echo "step 2"
 
 # cron source triggers once a minute
 sleep 75
+echo "step 3"
 
 expected_data="0"
 actual_data=$(cat $test_name.output.logs | grep 'Hello world!' | wc -l)
+echo "step 4"
 
 kill $kail_output_pid $kail_test_pid $kail_controller_pid || true
+echo "step 5"
 riff subscription delete $test_name --namespace $NAMESPACE
+echo "step 6"
 riff channel delete $test_name --namespace $NAMESPACE
+echo "step 7"
 riff service delete message-dumper --namespace $NAMESPACE
+echo "step 8"
 kubectl delete cronjobsource.sources.eventing.knative.dev test-cronjob-source -n $NAMESPACE
+echo "step 9"
 
 kubectl delete ns knative-sources
+echo "step 10"
 
 if [[ "$actual_data" == "$expected_data" ]]; then
   # negative test since we'll get no matching output by default
@@ -75,4 +85,6 @@ if [[ "$actual_data" == "$expected_data" ]]; then
   exit 1
 fi
 
+echo "step 11"
 travis_fold end eventing
+echo "step 12"
