@@ -73,10 +73,10 @@ run_function() {
   echo -e "${ANSI_BLUE}> image:${ANSI_RESET} ${image}"
   echo -e "${ANSI_BLUE}> args:${ANSI_RESET} ${create_args}"
 
-  kail --ns $NAMESPACE --label "function=$function_name" > $function_name.logs &
+  kail --ns $NAMESPACE --label "function=$function_name" > $function_name.logs 2>&1 &
   local kail_function_pid=$!
 
-  kail --ns knative-serving > $function_name.controller.logs &
+  kail --ns knative-serving > $function_name.controller.logs 2>&1 &
   local kail_controller_pid=$!
 
   create_function $path $function_name $image "$create_args"
