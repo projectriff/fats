@@ -50,7 +50,7 @@ sleep 75
 expected_data="0"
 actual_data=$(cat $test_name.output.logs | grep 'Hello world!' | wc -l)
 
-kill $kail_output_pid $kail_test_pid $kail_controller_pid
+kill $kail_output_pid $kail_test_pid $kail_controller_pid || true
 riff subscription delete $test_name --namespace $NAMESPACE
 riff channel delete $test_name --namespace $NAMESPACE
 riff service delete message-dumper --namespace $NAMESPACE
