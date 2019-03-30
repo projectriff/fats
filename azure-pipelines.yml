@@ -25,9 +25,9 @@ variables:
   REGISTRY: '$(registry)'
   CLUSTER_NAME: 'fats-$(Build.BuildId)'
   NAMESPACE: '$(CLUSTER_NAME)'
-  DOCKER_USERNAME: '$(secret.DockerUsername)'
-  DOCKER_PASSWORD: '$(secret.DockerPassword)'
-  GCLOUD_CLIENT_SECRET: '$(secret.GcloudClientSecret)'
+  DOCKER_USERNAME: '$(DockerUsername)'
+  DOCKER_PASSWORD: '$(DockerPassword)'
+  GCLOUD_CLIENT_SECRET: '$(GcloudClientSecret)'
 
 steps:
 - script: sudo apt-get update && sudo apt-get install docker.io=18.06.1-0ubuntu1.2~16.04.1
