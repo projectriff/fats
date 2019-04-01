@@ -1,0 +1,47 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+strategy:
+  matrix:
+    minikube:
+      imageName: ubuntu-16.04
+      cluster: minikube
+      registry: dockerhub
+    gke:
+      imageName: ubuntu-16.04
+      cluster: gke
+      registry: gcr
+
+trigger:
+- master
+
+pool:
+  vmImage: $(imageName)
+
+variables:
+  CLUSTER:  '$(cluster)'
+  REGISTRY: '$(registry)'
+  CLUSTER_NAME: 'fats-$(Build.BuildId)'
+  NAMESPACE: '$(CLUSTER_NAME)'
+
+steps:
+- script: sudo apt-get update && sudo apt-get install docker.io=18.06.1-0ubuntu1.2~16.04.1
+  condition: and(succeeded(), eq(variables['CLUSTER'], 'minikube'))
+  displayName: 'Downgrade Docker'
+
+- bash: ./tests/run.sh
+  env:
+    DOCKER_USERNAME: '$(DockerUsername)'
+    DOCKER_PASSWORD: '$(DockerPassword)'
+    GCLOUD_CLIENT_SECRET: '$(GcloudClientSecret)'
+  displayName: 'Run FATS'
+
+- bash: ./tests/cleanup.sh
+  env:
+    DOCKER_USERNAME: '$(DockerUsername)'
+    DOCKER_PASSWORD: '$(DockerPassword)'
+    GCLOUD_CLIENT_SECRET: '$(GcloudClientSecret)'
+  condition: always()
+  displayName: 'Cleanup FATS'

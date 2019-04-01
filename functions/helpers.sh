@@ -73,10 +73,10 @@ run_function() {
   echo -e "${ANSI_BLUE}> image:${ANSI_RESET} ${image}"
   echo -e "${ANSI_BLUE}> args:${ANSI_RESET} ${create_args}"
 
-  kail --ns $NAMESPACE --label "function=$function_name" > $function_name.logs &
+  kail --ns $NAMESPACE --label "function=$function_name" > $function_name.logs 2>&1 &
   local kail_function_pid=$!
 
-  kail --ns knative-serving > $function_name.controller.logs &
+  kail --ns knative-serving > $function_name.controller.logs 2>&1 &
   local kail_controller_pid=$!
 
   create_function $path $function_name $image "$create_args"
@@ -84,7 +84,7 @@ run_function() {
   invoke_function $function_name $input_data $expected_data
 
   # cleanup resources
-  kill $kail_function_pid $kail_controller_pid
+  kill $kail_function_pid $kail_controller_pid || true
   destroy_function $function_name $image
 
   local actual_data=`cat $function_name.out | tail -1`
