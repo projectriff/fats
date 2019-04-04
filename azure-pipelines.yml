@@ -27,7 +27,7 @@ variables:
   NAMESPACE: '$(CLUSTER_NAME)'
 
 steps:
-- script: sudo apt-get update && sudo apt-get remove docker.io && sudo apt-get autoremove && sudo apt-get install docker.io=18.06.1-0ubuntu1.2~16.04.1
+- script: sudo apt list --installed && sudo apt-get update && sudo apt-get remove docker.io moby-engine moby-cli && sudo apt-get autoremove && sudo apt-get install docker.io=18.06.1-0ubuntu1.2~16.04.1
   condition: and(succeeded(), eq(variables['CLUSTER'], 'minikube'))
   displayName: 'Downgrade Docker'
 
