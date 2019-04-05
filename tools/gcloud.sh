@@ -2,6 +2,8 @@
 
 if hash choco 2>/dev/null; then
   choco install gcloudsdk
+
+  source ~/.bashrc
 else
   # Create environment variable for correct distribution
   export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
@@ -14,12 +16,12 @@ else
 
   # Update the package list and install the Cloud SDK
   sudo apt-get update && sudo apt-get install google-cloud-sdk
-
-  gcloud config set project cf-spring-pfs-eng
-  gcloud config set compute/region us-central1
-  gcloud config set compute/zone us-central1-a
-  gcloud config set disable_prompts True
-
-  gcloud auth activate-service-account --key-file <(echo $GCLOUD_CLIENT_SECRET | base64 --decode)
-  gcloud auth configure-docker
 fi
+
+gcloud config set project cf-spring-pfs-eng
+gcloud config set compute/region us-central1
+gcloud config set compute/zone us-central1-a
+gcloud config set disable_prompts True
+
+gcloud auth activate-service-account --key-file <(echo $GCLOUD_CLIENT_SECRET | base64 --decode)
+gcloud auth configure-docker
