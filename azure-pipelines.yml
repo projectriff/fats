@@ -14,9 +14,6 @@ strategy:
       cluster: gke
       registry: gcr
 
-trigger:
-- master
-
 pool:
   vmImage: $(imageName)
 
