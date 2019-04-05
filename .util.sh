@@ -17,7 +17,6 @@ case "${unameOut}" in
     MINGW*)     machine=MinGw;;
     *)          machine="UNKNOWN:${unameOut}"
 esac
-echo "Machine: ${machine}"
 
 wait_for_service_ip() {
   local name=$1

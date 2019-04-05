@@ -4,7 +4,7 @@ riff_version="latest"
 
 if [ "$machine" == "MinGw" ]; then
   curl -L https://storage.googleapis.com/projectriff/riff-cli/releases/${riff_version}/riff-windows-amd64.zip > riff.zip
-  unzip riff.zip ~/bin/
+  unzip riff.zip /usr/bin/
   rm riff.zip
 else
   riff_dir=`mktemp -d riff.XXXX`
