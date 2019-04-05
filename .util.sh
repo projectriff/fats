@@ -18,6 +18,12 @@ case "${unameOut}" in
     *)          machine="UNKNOWN:${unameOut}"
 esac
 
+if [ "$machine" == "MinGw" ]; then
+  sudo() {
+    $@
+  }
+fi
+
 wait_for_service_ip() {
   local name=$1
   local namespace=$2
