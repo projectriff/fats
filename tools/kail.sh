@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$machine" == "MinGw"]; then
+if [ "$machine" == "MinGw" ]; then
   # binaries are not available for windows, we need to build from source
   go get github.com/boz/kail/cmd/kail
 else
