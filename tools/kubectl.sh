@@ -4,6 +4,8 @@ kubectl_version="v1.12.3"
 
 if [ "$machine" == "MinGw" ]; then
   curl -Lo kubectl.exe https://storage.googleapis.com/kubernetes-release/release/${kubectl_version}/bin/windows/amd64/kubectl.exe
+  ls -la ~
+  mkdir ~/bin
   mv kubectl.exe ~/bin/
 else
   curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/${kubectl_version}/bin/linux/amd64/kubectl
