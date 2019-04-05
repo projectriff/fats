@@ -24,6 +24,10 @@ variables:
   NAMESPACE: '$(CLUSTER_NAME)'
 
 steps:
+- script: curl -s https://raw.githubusercontent.com/imachug/win-sudo/master/install.sh | sh
+  condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+  displayName: 'Install sudo'
+
 - script: sudo apt-get update && sudo apt-get remove moby-engine moby-cli && sudo apt-get install docker.io=18.06.1-0ubuntu1.2~16.04.1
   condition: and(succeeded(), eq(variables['CLUSTER'], 'minikube'))
   displayName: 'Downgrade Docker'
