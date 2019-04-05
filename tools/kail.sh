@@ -5,6 +5,7 @@ if [ "$machine" == "MinGw" ]; then
   export GOPATH=$(go env GOPATH)
   go get -d github.com/boz/kail
   pushd $GOPATH/src/github.com/boz/kail
+    git checkout v0.6.0
     make install-deps
     make
     mv kail.exe /usr/bin/
