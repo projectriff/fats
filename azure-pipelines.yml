@@ -24,7 +24,7 @@ variables:
   NAMESPACE: '$(CLUSTER_NAME)'
 
 steps:
-- script: curl -s https://raw.githubusercontent.com/imachug/win-sudo/master/install.sh | sh
+- bash: curl -s https://raw.githubusercontent.com/imachug/win-sudo/master/install.sh | sh && source ~/.bashrc
   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
   displayName: 'Install sudo'
 
