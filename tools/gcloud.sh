@@ -2,15 +2,9 @@
 
 if hash choco 2>/dev/null; then
   choco install gcloudsdk
-  echo "/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin"
 
-  ln -s "/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/gcloud" /usr/bin/gcloud
-  ln -s "/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/gcloud-ps.ps1" /usr/bin/gcloud-ps.ps1
-  ln -s "/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/gcloud.cmd" /usr/bin/gcloud.cmd
-  ln -s "/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/gsutil-ps.ps1" /usr/bin/gsutil-ps.ps1
-  ln -s "/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/gsutil.cmd" /usr/bin/gsutil.cmd
-
-  ls -la "/usr/bin"
+  echo '#!/bin/bash\n\n"/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/gcloud" $@' > /usr/bin/gcloud
+  chmod +x /usr/bin/gcloud
 else
   # Create environment variable for correct distribution
   export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
