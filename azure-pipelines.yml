@@ -34,7 +34,7 @@ steps:
     )
   displayName: 'Downgrade Docker'
 
-- bash: install.sh gcloud
+- bash: ./install.sh gcloud
   condition: |
     or(
       eq(variables['CLUSTER'], 'gke'),
