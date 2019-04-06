@@ -34,7 +34,7 @@ steps:
     )
   displayName: 'Downgrade Docker'
 
-- script: ./install.sh docker-desktop
+- bash: ./install.sh docker-desktop
   condition: |
     and(
       succeeded(),
