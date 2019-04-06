@@ -2,6 +2,8 @@
 
 if hash choco 2>/dev/null; then
   choco install gcloudsdk
+  echo "/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin"
+  ls -la "/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin"
   export PATH="$PATH:/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin"
 else
   # Create environment variable for correct distribution
