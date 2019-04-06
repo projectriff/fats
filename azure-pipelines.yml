@@ -5,9 +5,9 @@
 
 strategy:
   matrix:
-    minikube:
+    docker-for-windows:
       imageName: windows-2019
-      cluster: minikube
+      cluster: docker-desktop
       registry: dockerhub
     gke:
       imageName: windows-2019
