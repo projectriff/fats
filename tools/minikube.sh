@@ -5,8 +5,6 @@ minikube_version="v0.30.0"
 if [ "$machine" == "MinGw" ]; then
   curl -Lo minikube.exe https://storage.googleapis.com/minikube/releases/$minikube_version/minikube-windows-amd64.exe
   mv minikube.exe /usr/bin
-
-  choco install virtualbox
 else
   curl -Lo minikube https://storage.googleapis.com/minikube/releases/$minikube_version/minikube-linux-amd64
   chmod +x minikube
