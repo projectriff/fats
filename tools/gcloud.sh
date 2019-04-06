@@ -3,7 +3,9 @@
 if hash choco 2>/dev/null; then
   choco install gcloudsdk
 
-  echo '#!/bin/bash\n\n"/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/gcloud" $@' > /usr/bin/gcloud
+  echo "#!/bin/bash" > /usr/bin/gcloud
+  echo "" >> /usr/bin/gcloud
+  echo '"/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/gcloud" $@' >> /usr/bin/gcloud
   chmod +x /usr/bin/gcloud
 else
   # Create environment variable for correct distribution
