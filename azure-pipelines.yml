@@ -35,6 +35,8 @@ steps:
   displayName: 'Downgrade Docker'
 
 - bash: ./install.sh gcloud
+  env:
+    GCLOUD_CLIENT_SECRET: '$(GcloudClientSecret)'
   condition: |
     or(
       eq(variables['CLUSTER'], 'gke'),
