@@ -3,8 +3,7 @@
 # inspired by https://github.com/LiliC/travis-minikube/blob/minikube-30-kube-1.12/.travis.yml
 
 if [ "$machine" == "MinGw" ]; then
-  choco install virtualbox
-  vm_driver=virtualbox
+  vm_driver=hyperv
 else
   export CHANGE_MINIKUBE_NONE_USER=true
 
