@@ -22,5 +22,7 @@ gcloud config set compute/region us-central1
 gcloud config set compute/zone us-central1-a
 gcloud config set disable_prompts True
 
-gcloud auth activate-service-account --key-file <(echo $GCLOUD_CLIENT_SECRET | base64 --decode)
+echo $GCLOUD_CLIENT_SECRET | base64 --decode > key.json
+gcloud auth activate-service-account --key-file key.json
+rm key.json
 gcloud auth configure-docker
