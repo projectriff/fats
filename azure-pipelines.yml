@@ -34,22 +34,11 @@ steps:
     )
   displayName: 'Downgrade Docker'
 
-- bash: ./install.sh gcloud
-  env:
-    GCLOUD_CLIENT_SECRET: '$(GcloudClientSecret)'
-  condition: |
-    or(
-      eq(variables['CLUSTER'], 'gke'),
-      eq(variables['REGISTRY'], 'gcr')
-    )
-  displayName: 'Preinstall gcloud'
-
 - bash: ./tests/run.sh
   env:
     DOCKER_USERNAME: '$(DockerUsername)'
     DOCKER_PASSWORD: '$(DockerPassword)'
     GCLOUD_CLIENT_SECRET: '$(GcloudClientSecret)'
-    PATH: '$PATH:/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin'
   displayName: 'Run FATS'
 
 - bash: ./tests/cleanup.sh
@@ -57,6 +46,5 @@ steps:
     DOCKER_USERNAME: '$(DockerUsername)'
     DOCKER_PASSWORD: '$(DockerPassword)'
     GCLOUD_CLIENT_SECRET: '$(GcloudClientSecret)'
-    PATH: '$PATH:/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin'
   condition: always()
   displayName: 'Cleanup FATS'
