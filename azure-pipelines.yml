@@ -5,10 +5,10 @@
 
 strategy:
   matrix:
-    docker-for-windows:
-      imageName: windows-2019
-      cluster: docker-desktop
-      registry: dockerhub
+    # docker-for-windows:
+    #   imageName: windows-2019
+    #   cluster: docker-desktop
+    #   registry: dockerhub
     gke:
       imageName: windows-2019
       cluster: gke
@@ -33,6 +33,14 @@ steps:
       ne(variables['Agent.OS'], 'Windows_NT')
     )
   displayName: 'Downgrade Docker'
+
+- bash: install.sh gcloud
+  condition: |
+    or(
+      eq(variables['CLUSTER'], 'gke'),
+      eq(variables['REGISTRY'], 'gcr')
+    )
+  displayName: 'Preinstall gcloud'
 
 - bash: ./tests/run.sh
   env:
