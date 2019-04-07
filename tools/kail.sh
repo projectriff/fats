@@ -12,9 +12,12 @@ if [ "$machine" == "MinGw" ]; then
   # popd
 
   # stub out kail for now
-  sudo() {
-    return
-  }
+  cat <<EOF > /usr/bin/kail
+#!/bin/bash
+
+echo "kail output is not supported on this platform"
+sleep 600
+EOF
 else
   mkdir -p kail
   curl -L https://github.com/boz/kail/releases/download/v0.7.0/kail_0.7.0_linux_amd64.tar.gz \
