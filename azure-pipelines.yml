@@ -38,15 +38,6 @@ steps:
     )
   displayName: 'Downgrade Docker'
 
-- bash: ./install.sh docker-desktop
-  condition: |
-    and(
-      succeeded(),
-      ne(variables['CLUSTER'], 'minikube'),
-      eq(variables['Agent.OS'], 'Windows_NT')
-    )
-  displayName: 'Install Linux Docker'
-
 - bash: ./tests/run.sh
   env:
     DOCKER_USERNAME: '$(DockerUsername)'
