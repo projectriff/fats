@@ -68,4 +68,7 @@ if [ "$machine" != "MinGw" ]; then
 fi
 
 # eventing
-source `dirname "${BASH_SOURCE[0]}"`/eventing.sh
+if [ "$machine" != "MinGw" ]; then
+  # TODO enable for all environments that support kail
+  source `dirname "${BASH_SOURCE[0]}"`/eventing.sh
+fi
