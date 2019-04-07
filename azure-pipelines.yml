@@ -5,7 +5,15 @@
 
 strategy:
   matrix:
+    minikube:
+      imageName: ubuntu-16.04
+      cluster: minikube
+      registry: dockerhub
     gke:
+      imageName: ubuntu-16.04
+      cluster: gke
+      registry: gcr
+    windows:
       imageName: windows-2019
       cluster: gke
       registry: gcr
@@ -16,7 +24,7 @@ pool:
 variables:
   CLUSTER:  '$(cluster)'
   REGISTRY: '$(registry)'
-  CLUSTER_NAME: 'fats-$(Build.BuildId)'
+  CLUSTER_NAME: 'fats-$(Build.BuildId)-$(Agent.JobName)'
   NAMESPACE: '$(CLUSTER_NAME)'
 
 steps:
