@@ -63,6 +63,3 @@ for test in java java-boot node npm command; do
 
   run_function $path $function_name $image "$create_args" $input_data $expected_data
 done
-
-# eventing
-source `dirname "${BASH_SOURCE[0]}"`/eventing.sh
