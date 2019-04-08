@@ -68,20 +68,6 @@ wait_kservice_ready() {
   wait_knative_ready 'services.serving.knative.dev' "$name" "$namespace"
 }
 
-wait_channel_ready() {
-  local name=$1
-  local namespace=$2
-
-  wait_knative_ready 'channel.eventing.knative.dev' "$name" "$namespace"
-}
-
-wait_subscription_ready() {
-  local name=$1
-  local namespace=$2
-
-  wait_knative_ready 'subscription.eventing.knative.dev' "$name" "$namespace"
-}
-
 wait_knative_ready() {
   local type=$1
   local name=$2
