@@ -18,12 +18,12 @@ fi
 # add to path
 # this is a hack since we can't mutate the PATH inside this script and have it exposed to the caller and future scripts
 for c in gcloud gsutil docker-credential-gcloud; do
-  cat <<EOF > /usr/local/bin/${c}
+  sudo cat <<EOF > /usr/local/bin/${c}
 #!/bin/bash
 
 "${gcloud_dir}/bin/${c}" \$@
 EOF
-  chmod +x /usr/local/bin/${c}
+  sudo chmod +x /usr/local/bin/${c}
 done
 
 gcloud config set project cf-spring-pfs-eng
