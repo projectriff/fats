@@ -6,19 +6,20 @@ if hash choco 2>/dev/null; then
   gcloud_dir="/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk"
   mkdir -p "${gcloud_dir}"
   curl -L https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${gcloud_version}-windows-x86.zip > gcloud.zip
-  unzip gcloud.zip -d "${gcloud_dir}"
+  unzip -d "${gcloud_dir}" gcloud.zip && f=("${gcloud_dir}"/*) && mv "${gcloud_dir}"/*/* "${gcloud_dir}" && rmdir "${f[@]}"
   rm gcloud.zip
 else
   gcloud_dir="$HOME/google-cloud-sdk"
   mkdir -p "${gcloud_dir}"
   curl -L https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${gcloud_version}-linux-x86_64.tar.gz  \
-    | tar xz -C $gcloud_dir
+    | tar xz -C $gcloud_dir --strip-components=1
 fi
 
 echo "##vso[task.prependpath]${gcloud_dir}/bin"
 export PATH="${gcloud_dir}/bin:$PATH"
 
 echo $PATH
+ls -la "${gcloud_dir}"
 ls -la "${gcloud_dir}/bin"
 echo `which gcloud`
 
