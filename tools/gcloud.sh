@@ -6,7 +6,7 @@ if hash choco 2>/dev/null; then
   gcloud_dir="/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk"
   mkdir -p "${gcloud_dir}"
   curl -L https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${gcloud_version}-windows-x86.zip > gcloud.zip
-  unzip -d "${gcloud_dir}" gcloud.zip && f=("${gcloud_dir}"/*) && mv "${gcloud_dir}"/*/* "${gcloud_dir}" && rmdir "${f[@]}"
+  unzip -q -d "${gcloud_dir}" gcloud.zip && f=("${gcloud_dir}"/*) && mv "${gcloud_dir}"/*/* "${gcloud_dir}" && rmdir "${f[@]}"
   rm gcloud.zip
 else
   gcloud_dir="$HOME/google-cloud-sdk"
