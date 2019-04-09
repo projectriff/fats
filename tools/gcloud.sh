@@ -30,6 +30,7 @@ gcloud config set project cf-spring-pfs-eng
 gcloud config set compute/region us-central1
 gcloud config set compute/zone us-central1-a
 gcloud config set disable_prompts True
+gcloud config set container/use_application_default_credentials true
 
 echo $GCLOUD_CLIENT_SECRET | base64 --decode > key.json
 gcloud auth activate-service-account --key-file key.json
