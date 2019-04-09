@@ -23,6 +23,7 @@ for c in gcloud gsutil docker-credential-gcloud; do
 
 "${gcloud_dir}/bin/${c}" \$@
 EOF
+  chmod +x /usr/bin/${c}
 done
 
 gcloud config set project cf-spring-pfs-eng
