@@ -9,6 +9,19 @@ source `dirname "${BASH_SOURCE[0]}"`/.travis.sh
 
 ANSI_BLUE="\033[34;1m"
 
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    MINGW*)     machine=MinGw;;
+    *)          machine="UNKNOWN:${unameOut}"
+esac
+
+if [ "$machine" == "MinGw" ]; then
+  sudo() {
+    $@
+  }
+fi
+
 wait_for_service_ip() {
   local name=$1
   local namespace=$2
