@@ -1,10 +1,18 @@
 #!/bin/bash
 
-riff_dir=`mktemp -d riff.XXXX`
+riff_version="v0.3.0-snapshot"
 
-curl -L https://storage.googleapis.com/projectriff/riff-cli/releases/v0.3.0-snapshot/riff-linux-amd64.tgz \
-  | tar xz -C $riff_dir
-chmod +x $riff_dir/riff
-sudo mv $riff_dir/riff /usr/local/bin/
+if [ "$machine" == "MinGw" ]; then
+  curl -L https://storage.googleapis.com/projectriff/riff-cli/releases/${riff_version}/riff-windows-amd64.zip > riff.zip
+  unzip riff.zip -d /usr/bin/
+  rm riff.zip
+else
+  riff_dir=`mktemp -d riff.XXXX`
 
-rm -rf $riff_dir
+  curl -L https://storage.googleapis.com/projectriff/riff-cli/releases/${riff_version}/riff-linux-amd64.tgz \
+    | tar xz -C $riff_dir
+  chmod +x $riff_dir/riff
+  sudo mv $riff_dir/riff /usr/local/bin/
+
+  rm -rf $riff_dir
+fi
