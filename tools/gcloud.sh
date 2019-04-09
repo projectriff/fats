@@ -18,6 +18,9 @@ fi
 echo "##vso[task.prependpath]${gcloud_dir}/bin"
 export PATH="${gcloud_dir}/bin:$PATH"
 
+echo $PATH
+echo `which gcloud`
+
 gcloud config set project cf-spring-pfs-eng
 gcloud config set compute/region us-central1
 gcloud config set compute/zone us-central1-a
