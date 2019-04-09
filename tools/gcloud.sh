@@ -1,36 +1,21 @@
 #!/bin/bash
 
+gcloud_version=241.0.0
+
 if hash choco 2>/dev/null; then
-  choco install gcloudsdk
-
-  cat <<EOF > /usr/bin/gcloud
-#!/bin/bash
-
-"/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/gcloud" \$@
-EOF
-  cat <<EOF > /usr/bin/gsutil
-#!/bin/bash
-
-"/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/gsutil" \$@
-EOF
-  cat <<EOF > /usr/bin/docker-credential-gcloud
-#!/bin/bash
-
-"/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/docker-credential-gcloud" \$@
-EOF
+  gcloud_dir="/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk"
+  curl -L https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${gcloud_version}-windows-x86.zip > gcloud.zip
+  mkdir -p "${gcloud_dir}"
+  unzip gcloud.zip -d "${gcloud_dir}"
+  rm gcloud.zip
 else
-  # Create environment variable for correct distribution
-  export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
-
-  # Add the Cloud SDK distribution URI as a package source
-  echo "deb https://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-
-  # Import the Google Cloud Platform public key
-  curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-
-  # Update the package list and install the Cloud SDK
-  sudo apt-get update && sudo apt-get install google-cloud-sdk
+  gcloud_dir="$HOME/google-cloud-sdk"
+  curl -L https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${gcloud_version}-linux-x86_64.tar.gz  \
+    | tar xz -C $gcloud_dir
 fi
+
+echo "##vso[task.prependpath]${gcloud_dir}/bin"
+export PATH="${gcloud_dir}/bin:$PATH"
 
 gcloud config set project cf-spring-pfs-eng
 gcloud config set compute/region us-central1
