@@ -15,13 +15,15 @@ else
     | tar xz -C $gcloud_dir --strip-components=1
 fi
 
-echo "##vso[task.prependpath]${gcloud_dir}/bin"
-export PATH="${gcloud_dir}/bin:$PATH"
+# add to path
+# this is a hack since we can't mutate the PATH inside this script and have it exposed to the caller and future scripts
+for c in gcloud gsutil docker-credential-gcloud; do
+  cat <<EOF > /usr/bin/${c}
+#!/bin/bash
 
-echo $PATH
-ls -la "${gcloud_dir}"
-ls -la "${gcloud_dir}/bin"
-echo `which gcloud`
+"${gcloud_dir}/bin/${c}" \$@
+EOF
+done
 
 gcloud config set project cf-spring-pfs-eng
 gcloud config set compute/region us-central1
@@ -32,3 +34,6 @@ echo $GCLOUD_CLIENT_SECRET | base64 --decode > key.json
 gcloud auth activate-service-account --key-file key.json
 rm key.json
 gcloud auth configure-docker
+
+unset gcloud_version
+unset gcloud_dir

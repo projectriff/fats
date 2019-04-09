@@ -10,3 +10,5 @@ else
   chmod +x kubectl
   sudo mv kubectl /usr/local/bin/
 fi
+
+unset kubectl_version

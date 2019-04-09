@@ -13,3 +13,6 @@ chmod +x $eksctl_dir/eksctl
 sudo mv $eksctl_dir/eksctl /usr/local/bin
 
 rm -rf $eksctl_dir
+
+unset eksctl_version
+unset eksctl_dir

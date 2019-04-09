@@ -16,3 +16,5 @@ else
 
   rm -rf $riff_dir
 fi
+
+unset riff_version

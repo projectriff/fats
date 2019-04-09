@@ -10,3 +10,5 @@ else
   chmod +x minikube
   sudo mv minikube /usr/local/bin/
 fi
+
+unset minikube_version
