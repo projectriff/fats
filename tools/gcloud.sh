@@ -13,6 +13,11 @@ EOF
 
 "/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/gsutil" \$@
 EOF
+  cat <<EOF > /usr/bin/docker-credential-gcloud
+#!/bin/bash
+
+"/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk/bin/docker-credential-gcloud" \$@
+EOF
 else
   # Create environment variable for correct distribution
   export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
