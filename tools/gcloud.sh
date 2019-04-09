@@ -19,6 +19,7 @@ echo "##vso[task.prependpath]${gcloud_dir}/bin"
 export PATH="${gcloud_dir}/bin:$PATH"
 
 echo $PATH
+ls -la "${gcloud_dir}/bin"
 echo `which gcloud`
 
 gcloud config set project cf-spring-pfs-eng
