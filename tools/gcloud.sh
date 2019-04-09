@@ -4,12 +4,13 @@ gcloud_version=241.0.0
 
 if hash choco 2>/dev/null; then
   gcloud_dir="/c/Program Files (x86)/Google/Cloud SDK/google-cloud-sdk"
-  curl -L https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${gcloud_version}-windows-x86.zip > gcloud.zip
   mkdir -p "${gcloud_dir}"
+  curl -L https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${gcloud_version}-windows-x86.zip > gcloud.zip
   unzip gcloud.zip -d "${gcloud_dir}"
   rm gcloud.zip
 else
   gcloud_dir="$HOME/google-cloud-sdk"
+  mkdir -p "${gcloud_dir}"
   curl -L https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${gcloud_version}-linux-x86_64.tar.gz  \
     | tar xz -C $gcloud_dir
 fi
