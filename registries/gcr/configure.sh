@@ -3,6 +3,13 @@
 # Install gcloud for GCR access
 `dirname "${BASH_SOURCE[0]}"`/../../install.sh gcloud
 
+if [ "$machine" == "MinGw" ]; then
+  # `gcloud auth configure-docker` doesn't work on Windows for some reason
+  echo "${GCLOUD_CLIENT_SECRET}" | base64 --decode | docker login -u _json_key --password-stdin https://gcr.io
+else
+  gcloud auth configure-docker
+fi
+
 IMAGE_REPOSITORY_PREFIX="gcr.io/`gcloud config get-value project`"
 NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --secret push-credentials"
 
