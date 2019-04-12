@@ -18,7 +18,7 @@ sudo minikube start --memory=8192 --cpus=4 \
   --vm-driver=${vm_driver} \
   --bootstrapper=kubeadm \
   --extra-config=apiserver.enable-admission-plugins="LimitRanger,NamespaceExists,NamespaceLifecycle,ResourceQuota,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook" \
-  --insecure-registry registry.kube-system.svc.cluster.local
+  --insecure-registry registry.pfs.svc.cluster.local
 
 # Fix permissions issue in AzurePipelines
 sudo chmod --recursive 777 $HOME/.minikube

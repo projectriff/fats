@@ -1,6 +1,6 @@
 #!/bin/bash
 
-minikube_version="v0.30.0"
+minikube_version="v1.0.0"
 
 if [ "$machine" == "MinGw" ]; then
   curl -Lo minikube.exe https://storage.googleapis.com/minikube/releases/$minikube_version/minikube-windows-amd64.exe
