@@ -1,69 +1,72 @@
 pr: none
 
-strategy:
-  matrix:
-    minikube:
-      imageName: ubuntu-16.04
-      cluster: minikube
-      registry: dockerhub
-      timeoutInMinutes: 60
-    gke:
-      imageName: ubuntu-16.04
-      cluster: gke
-      registry: gcr
-      timeoutInMinutes: 60
-    pks:
-      imageName: ubuntu-16.04
-      cluster: pks-gcp
-      registry: gcr
-      timeoutInMinutes: 90
-    windows:
-      imageName: windows-2019
-      cluster: gke
-      registry: gcr
-      timeoutInMinutes: 60
+jobs:
+- job: fats
 
-timeoutInMinutes: $(timeoutInMinutes)
+  strategy:
+    matrix:
+      minikube:
+        imageName: ubuntu-16.04
+        cluster: minikube
+        registry: dockerhub
+        timeoutInMinutes: 60
+      gke:
+        imageName: ubuntu-16.04
+        cluster: gke
+        registry: gcr
+        timeoutInMinutes: 60
+      pks:
+        imageName: ubuntu-16.04
+        cluster: pks-gcp
+        registry: gcr
+        timeoutInMinutes: 90
+      windows:
+        imageName: windows-2019
+        cluster: gke
+        registry: gcr
+        timeoutInMinutes: 60
 
-pool:
-  vmImage: $(imageName)
+  timeoutInMinutes: $(timeoutInMinutes)
 
-variables:
-  CLUSTER:  '$(cluster)'
-  REGISTRY: '$(registry)'
-  CLUSTER_NAME: 'fats-$(Build.BuildId)-$(Agent.JobName)'
-  NAMESPACE: '$(CLUSTER_NAME)'
+  pool:
+    vmImage: $(imageName)
 
-steps:
+  variables:
+    CLUSTER:  '$(cluster)'
+    REGISTRY: '$(registry)'
+    CLUSTER_NAME: 'fats-$(Build.BuildId)-$(Agent.JobName)'
+    NAMESPACE: '$(CLUSTER_NAME)'
 
-- script: sudo apt-get update && sudo apt-get remove moby-engine moby-cli && sudo apt-get install docker.io=18.06.1-0ubuntu1.2~16.04.1
-  condition: |
-    and(
-      succeeded(),
-      eq(variables['CLUSTER'], 'minikube'),
-      ne(variables['Agent.OS'], 'Windows_NT')
-    )
-  displayName: 'Downgrade Docker'
+  steps:
 
-- task: DownloadSecureFile@1
-  inputs:
-    secureFile: toolsmiths-healdsburg.json
-  condition: and(succeeded(), eq(variables['CLUSTER'], 'pks-gcp'))
-  displayName: 'Load credentials'
+  - script: sudo apt-get update && sudo apt-get remove moby-engine moby-cli && sudo apt-get install docker.io=18.06.1-0ubuntu1.2~16.04.1
+    condition: |
+      and(
+        succeeded(),
+        eq(variables['CLUSTER'], 'minikube'),
+        ne(variables['Agent.OS'], 'Windows_NT')
+      )
+    displayName: 'Downgrade Docker'
 
-- bash: ./tests/run.sh
-  env:
-    DOCKER_USERNAME: '$(DockerUsername)'
-    DOCKER_PASSWORD: '$(DockerPassword)'
-    GCLOUD_CLIENT_SECRET: '$(GcloudClientSecret)'
-    PIVNET_REFRESH_TOKEN: '$(PivnetRefreshToken)'
-  displayName: 'Run FATS'
+  - task: DownloadSecureFile@1
+    inputs:
+      secureFile: toolsmiths-healdsburg.json
+    condition: and(succeeded(), eq(variables['CLUSTER'], 'pks-gcp'))
+    displayName: 'Load credentials'
 
-- bash: ./tests/cleanup.sh
-  env:
-    DOCKER_USERNAME: '$(DockerUsername)'
-    DOCKER_PASSWORD: '$(DockerPassword)'
-    GCLOUD_CLIENT_SECRET: '$(GcloudClientSecret)'
-    PIVNET_REFRESH_TOKEN: '$(PivnetRefreshToken)'
-  condition: always()
-  displayName: 'Cleanup FATS'
+  - bash: ./tests/run.sh
+    env:
+      DOCKER_USERNAME: '$(DockerUsername)'
+      DOCKER_PASSWORD: '$(DockerPassword)'
+      GCLOUD_CLIENT_SECRET: '$(GcloudClientSecret)'
+      PIVNET_REFRESH_TOKEN: '$(PivnetRefreshToken)'
+    displayName: 'Run FATS'
+
+  - bash: ./tests/cleanup.sh
+    env:
+      DOCKER_USERNAME: '$(DockerUsername)'
+      DOCKER_PASSWORD: '$(DockerPassword)'
+      GCLOUD_CLIENT_SECRET: '$(GcloudClientSecret)'
+      PIVNET_REFRESH_TOKEN: '$(PivnetRefreshToken)'
+    condition: always()
+    displayName: 'Cleanup FATS'
