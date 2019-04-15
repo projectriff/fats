@@ -5,7 +5,7 @@ sudo su -c "echo '{ \"insecure-registries\" : [ \"registry.kube-system.svc.clust
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 
-IMAGE_REPOSITORY_PREFIX="registry.kube-system.svc.cluster.local/u"
+IMAGE_REPOSITORY_PREFIX="registry.kube-system.svc.cluster.local"
 NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --no-secret"
 
 fats_image_repo() {
