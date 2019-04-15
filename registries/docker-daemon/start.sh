@@ -8,7 +8,6 @@ dev_ip=172.16.1.1
 sudo su -c "echo \"\" >> /etc/hosts"
 sudo su -c "echo \"$dev_ip       registry.kube-system.svc.cluster.local\" >> /etc/hosts"
 sudo ifconfig lo:0 $dev_ip
-kubectl create namespace kube-system
 cat <<EOF | kubectl create -f -
 ---
 kind: Service
