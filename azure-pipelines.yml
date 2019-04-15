@@ -9,24 +9,24 @@ jobs:
         imageName: ubuntu-16.04
         cluster: minikube
         registry: dockerhub
-        timeoutInMinutes: 60
+        timeout: 60
       gke:
         imageName: ubuntu-16.04
         cluster: gke
         registry: gcr
-        timeoutInMinutes: 60
+        timeout: 60
       pks:
         imageName: ubuntu-16.04
         cluster: pks-gcp
         registry: gcr
-        timeoutInMinutes: 90
+        timeout: 90
       windows:
         imageName: windows-2019
         cluster: gke
         registry: gcr
-        timeoutInMinutes: 60
+        timeout: 60
 
-  timeoutInMinutes: $(timeoutInMinutes)
+  timeoutInMinutes: $(timeout)
 
   pool:
     vmImage: $(imageName)
