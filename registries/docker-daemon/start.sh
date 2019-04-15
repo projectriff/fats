@@ -13,22 +13,22 @@ cat <<EOF | kubectl create -f -
 kind: Service
 apiVersion: v1
 metadata:
-    name: registry
-    namespace: kube-system
+  name: registry
+  namespace: kube-system
 spec:
-    ports:
-    - protocol: TCP
-      port: 5000
-      targetPort: 5000
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
 ---
 kind: Endpoints
 apiVersion: v1
 metadata:
-    name: registry
-    namespace: kube-system
+  name: registry
+  namespace: kube-system
 subsets:
-    - addresses:
-        - ip: $dev_ip
-    - ports:
-        - port: 5000
+  - addresses:
+    - ip: $dev_ip
+    ports:
+      - port: 5000
 EOF
