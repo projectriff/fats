@@ -29,6 +29,6 @@ metadata:
 subsets:
     - addresses:
         - ip: $dev_ip
-    ports:
+    - ports:
         - port: 5000
 EOF
