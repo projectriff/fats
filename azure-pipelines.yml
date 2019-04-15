@@ -9,6 +9,10 @@ jobs:
         imageName: ubuntu-16.04
         cluster: minikube
         registry: dockerhub
+      localregistry:
+        imageName: ubuntu-16.04
+        cluster: minikube
+        registry: docker-daemon
       gke:
         imageName: ubuntu-16.04
         cluster: gke
@@ -66,3 +70,4 @@ jobs:
       PIVNET_REFRESH_TOKEN: '$(PivnetRefreshToken)'
     condition: always()
     displayName: 'Cleanup FATS'
+
