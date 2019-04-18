@@ -1,0 +1,7 @@
+parameters:
+  fatsDir: '' # path to the locally cloned fats directory
+  name: ''    # name of the tool to install
+
+steps:
+- script: ${{ parameters.fatsDir }}/install.sh ${{ parameters.name }}
+  displayName: 'install ${{ parameters.name }}'

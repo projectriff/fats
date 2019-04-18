@@ -1,0 +1,14 @@
+parameters:
+  fatsDir: '' # path to the locally cloned fats directory
+  registry: 'minikube' # default registry to use
+
+steps:
+- script: sudo apt-get update && sudo apt-get remove moby-engine moby-cli && sudo apt-get install docker.io=18.06.1-0ubuntu1.2~16.04.1
+  displayName: 'Downgrade Docker'
+
+- script: |
+    source ${{ parameters.fatsDir }}/start.sh
+  displayName: 'install and start minikube'
+  env:
+    CLUSTER: 'minikube'
+    REGISTRY: ${{ parameters.registry }}
