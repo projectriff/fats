@@ -2,7 +2,7 @@
 
 # Enable local registry
 echo "Installing a local registry"
-docker run -d -p 80:5000 registry:2
+docker run -d -p 5000:5000 registry:2
 
 dev_ip=172.16.1.1
 sudo su -c "echo \"\" >> /etc/hosts"
@@ -18,8 +18,8 @@ metadata:
 spec:
   ports:
   - protocol: TCP
-    port: 80
-    targetPort: 80
+    port: 5000
+    targetPort: 5000
 ---
 kind: Endpoints
 apiVersion: v1
@@ -30,5 +30,5 @@ subsets:
   - addresses:
     - ip: $dev_ip
     ports:
-      - port: 80
+      - port: 5000
 EOF
