@@ -1,5 +1,11 @@
 pr: none
 
+variables:
+  DOCKER_USERNAME: '$(DockerUsername)'
+  DOCKER_PASSWORD: '$(DockerPassword)'
+  GCLOUD_CLIENT_SECRET: '$(GcloudClientSecret)'
+  PIVNET_REFRESH_TOKEN: '$(PivnetRefreshToken)'
+
 jobs:
 - job: fats
 
@@ -32,11 +38,6 @@ jobs:
     REGISTRY: '$(registry)'
     CLUSTER_NAME: 'fats-$(Build.BuildId)-$(Agent.JobName)'
     NAMESPACE: '$(CLUSTER_NAME)'
-    # credentials
-    DOCKER_USERNAME: '$(DockerUsername)'
-    DOCKER_PASSWORD: '$(DockerPassword)'
-    GCLOUD_CLIENT_SECRET: '$(GcloudClientSecret)'
-    PIVNET_REFRESH_TOKEN: '$(PivnetRefreshToken)'
 
   steps:
 
