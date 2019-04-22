@@ -18,7 +18,7 @@ metadata:
 spec:
   ports:
   - protocol: TCP
-    port: 5000
+    port: 80
     targetPort: 5000
 ---
 kind: Endpoints
