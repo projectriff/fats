@@ -32,6 +32,11 @@ jobs:
     REGISTRY: '$(registry)'
     CLUSTER_NAME: 'fats-$(Build.BuildId)-$(Agent.JobName)'
     NAMESPACE: '$(CLUSTER_NAME)'
+    # credentials
+    DOCKER_USERNAME: '$(DockerUsername)'
+    DOCKER_PASSWORD: '$(DockerPassword)'
+    GCLOUD_CLIENT_SECRET: '$(GcloudClientSecret)'
+    PIVNET_REFRESH_TOKEN: '$(PivnetRefreshToken)'
 
   steps:
 
@@ -51,18 +56,8 @@ jobs:
     displayName: 'Load credentials'
 
   - bash: ./tests/run.sh
-    env:
-      DOCKER_USERNAME: '$(DockerUsername)'
-      DOCKER_PASSWORD: '$(DockerPassword)'
-      GCLOUD_CLIENT_SECRET: '$(GcloudClientSecret)'
-      PIVNET_REFRESH_TOKEN: '$(PivnetRefreshToken)'
     displayName: 'Run FATS'
 
   - bash: ./tests/cleanup.sh
-    env:
-      DOCKER_USERNAME: '$(DockerUsername)'
-      DOCKER_PASSWORD: '$(DockerPassword)'
-      GCLOUD_CLIENT_SECRET: '$(GcloudClientSecret)'
-      PIVNET_REFRESH_TOKEN: '$(PivnetRefreshToken)'
     condition: always()
     displayName: 'Cleanup FATS'
