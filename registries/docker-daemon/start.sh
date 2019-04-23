@@ -2,7 +2,7 @@
 
 # Enable local registry
 echo "Installing a local registry"
-docker run -d -p 5000:5000 registry:2
+docker run -d -p 5000:5000 -p 80:5000 registry:2
 
 dev_ip=172.16.1.1
 sudo su -c "echo \"\" >> /etc/hosts"
