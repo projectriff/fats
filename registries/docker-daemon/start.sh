@@ -1,13 +1,14 @@
 #!/bin/bash
 
 # Enable local registry
-echo "Installing a local registry"
+echo "Installing a daemon registry"
 docker run -d -p 5000:5000 -p 80:5000 registry:2
 
 dev_ip=172.16.1.1
 sudo su -c "echo \"\" >> /etc/hosts"
 sudo su -c "echo \"$dev_ip       registry.kube-system.svc.cluster.local\" >> /etc/hosts"
 sudo ifconfig lo:0 $dev_ip
+
 cat <<EOF | kubectl create -f -
 ---
 kind: Service
