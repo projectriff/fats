@@ -2,7 +2,7 @@
 
 # Enable local registry
 echo "Installing a daemon registry"
-docker run -d -p 5000:5000 -p 80:5000 registry:2
+docker run -d -p 80:5000 registry:2
 
 dev_ip=172.16.1.1
 sudo su -c "echo \"\" >> /etc/hosts"
@@ -20,7 +20,7 @@ spec:
   ports:
   - protocol: TCP
     port: 80
-    targetPort: 5000
+    targetPort: 80
 ---
 kind: Endpoints
 apiVersion: v1
@@ -31,5 +31,5 @@ subsets:
   - addresses:
     - ip: $dev_ip
     ports:
-      - port: 5000
+      - port: 80
 EOF
