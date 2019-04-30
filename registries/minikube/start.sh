@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Enable local registry
-echo "Installing a local registry"
+echo "Installing the minikube registry"
 wait_pod_selector_ready kubernetes.io/minikube-addons=addon-manager kube-system
 sudo minikube addons enable registry
 wait_pod_selector_ready kubernetes.io/minikube-addons=registry kube-system
