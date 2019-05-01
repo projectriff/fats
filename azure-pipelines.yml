@@ -7,18 +7,22 @@ strategy:
   matrix:
     minikube:
       imageName: ubuntu-16.04
+     qualifier: minikube
       cluster: minikube
       registry: dockerhub
     gke:
       imageName: ubuntu-16.04
+      qualifier: gke
       cluster: gke
       registry: gcr
     pks:
       imageName: ubuntu-16.04
+      qualifier: pks
       cluster: pks-gcp
       registry: gcr
     windows:
       imageName: windows-2019
+      qualifier: windows
       cluster: gke
       registry: gcr
 
@@ -28,7 +32,7 @@ pool:
 variables:
   CLUSTER:  '$(cluster)'
   REGISTRY: '$(registry)'
-  CLUSTER_NAME: 'fats-$(Build.BuildId)-$(Agent.JobName)'
+  CLUSTER_NAME: 'fats-$(Build.BuildId)-$(qualifier)'
   NAMESPACE: '$(CLUSTER_NAME)'
 
 steps:
