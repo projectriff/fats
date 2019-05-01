@@ -1,9 +1,14 @@
 #!/bin/bash
 
 # Allow for insecure registries
-sudo su -c "echo '{ \"insecure-registries\" : [ \"registry.kube-system.svc.cluster.local\" ] }' > /etc/docker/daemon.json"
-sudo systemctl daemon-reload
-sudo systemctl restart docker
+docker-daemon-file=/etc/docker/daemon.json
+if test -f ${docker-daemon-file} && grep -q registry.kube-system ${docker-daemon-file}; then
+  # do nothing
+else
+  sudo su -c "echo '{ \"insecure-registries\" : [ \"registry.kube-system.svc.cluster.local\" ] }' > /etc/docker/daemon.json"
+  sudo systemctl daemon-reload
+  sudo systemctl restart docker
+fi
 
 IMAGE_REPOSITORY_PREFIX="registry.kube-system.svc.cluster.local"
 NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --no-secret"
