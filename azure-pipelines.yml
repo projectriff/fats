@@ -7,7 +7,7 @@ strategy:
   matrix:
     minikube:
       imageName: ubuntu-16.04
-     qualifier: minikube
+      qualifier: minikube
       cluster: minikube
       registry: dockerhub
     gke:
