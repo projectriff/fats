@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Allow for insecure registries
-docker-daemon-file=/etc/docker/daemon.json
+docker-daemon-file="/etc/docker/daemon.json"
 if test -f ${docker-daemon-file} && grep -q registry.kube-system ${docker-daemon-file}; then
   # do nothing
 else
