@@ -38,5 +38,5 @@ fats_create_push_credentials() {
   local endpoint="https://$(aws sts get-caller-identity --output text --query 'Account').dkr.ecr.us-west-2.amazonaws.com/v2/"
 
   echo "Create auth secret"
-  echo "${password}" | riff credentials apply ecr --registry "${endpoint}" --registry-user "${username}"
+  echo "${password}" | riff credentials apply ecr --registry "${endpoint}" --registry-user "${username}" --namespace "${namespace}"
 }

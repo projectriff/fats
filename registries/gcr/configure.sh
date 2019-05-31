@@ -28,5 +28,5 @@ fats_create_push_credentials() {
   local namespace=$1
 
   echo "Create auth secret"
-  riff credentials apply gcr --gcr <(echo $GCLOUD_CLIENT_SECRET | base64 --decode)
+  riff credentials apply gcr --gcr <(echo $GCLOUD_CLIENT_SECRET | base64 --decode) --namespace "${namespace}"
 }
