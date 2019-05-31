@@ -16,7 +16,7 @@ source `dirname "${BASH_SOURCE[0]}"`/../start.sh
 travis_fold start system-install
 echo "Installing riff system"
 
-cat <<EOF | myk8s.yaml
+cat <<EOF | > myk8s.yaml
 name: myk8s
 credentials:
 - name: kubeconfig
