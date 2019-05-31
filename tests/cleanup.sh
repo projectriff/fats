@@ -16,7 +16,7 @@ fi
 # attempt to cleanup riff and the cluster
 travis_fold start system-uninstall
 echo "Uninstall riff system"
-duffle uninstall myriff || true
+duffle uninstall riff --credentials k8s || true
 kubectl delete namespace $NAMESPACE || true
 travis_fold end system-uninstall
 
