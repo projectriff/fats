@@ -11,7 +11,6 @@ else
 fi
 
 IMAGE_REPOSITORY_PREFIX="registry.kube-system.svc.cluster.local"
-NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --no-secret"
 
 fats_image_repo() {
   local function_name=$1
