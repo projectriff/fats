@@ -28,4 +28,7 @@ fats_create_push_credentials() {
   local namespace=$1
 
   # nothing to do
+
+  # TODO remove this
+  kubectl create sa riff-build -n $namespace
 }
