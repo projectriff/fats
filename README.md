@@ -32,19 +32,15 @@ You need to:
 - pick the cluster (set as $CLUSTER, e.g. 'minikube') and registry (set as $REGISTRY, e.g. 'dockerhub') to use, suppling any custom config they require.
 - start FATS, typically:
   - `source ./start.sh`
-- install and configure riff, typically:
-  - `riff system install $SYSTEM_INSTALL_FLAGS` (SYSTEM_INSTALL_FLAGS is provided by FATS)
+- install and configure riff
 - create and configure the target namespace, typically:
   - `kubectl create namespace $NAMESPACE`
   - `fats_create_push_credentials $NAMESPACE`
-  - `riff namespace init $NAMESPACE $NAMESPACE_INIT_FLAGS` (NAMESPACE_INIT_FLAGS is provided by FATS)
 - specify functions to test, typically:
   - `source ./functions/helpers.sh`
   - per function `run_function <path-to-function> <name> <image> <create_args> <input_data> <expected_output>` (name and image often include the CLUSTER_NAME for uniqueness)
     - create_args must specify the source to use with either `--git-repo <git-url>` or `--local-path <path>`
-- cleanup riff, typically:
-  - `riff system uninstall --istio --force`
-  - `kubectl delete namespace $NAMESPACE`
+- cleanup riff
 - cleanup FATS, typically:
   - `source ./cleanup.sh`
 
@@ -69,7 +65,6 @@ Support is provided for:
 To add a new cluster, create a directory under `./clusters/` and add three files:
 
 - `configure.sh` - configuration shared by the start and cleanup scripts
-  - set `SYSTEM_INSTALL_FLAGS` env var that is passed to `riff system install`
   - define function `wait_for_ingress_ready` that blocks until the cluster ingress is fully available
   - do any other one time configuration for the cluster
 - `start.sh` - start the kubernetes cluster and set it as the default kubectl context
@@ -86,7 +81,6 @@ Support is provided for:
 To add a new registry, create a directory under `./registries/` and add three files:
 
 - `configure.sh` - configuration for the registry
-  - set `NAMESPACE_INIT_FLAGS` env var that is passed to `riff namespace init`
   - define function `fats_image_repo` that echos the Docker repository to push the image to
   - define function `fats_delete_image` that deletes a published image
   - define function `fats_create_push_credentials` that creates a secret to be used to push in cluster builds to the registry
@@ -102,7 +96,6 @@ Support is provided for:
   - command
   - java
   - java-boot
-  - java-local
   - node
   - npm
 
@@ -124,5 +117,6 @@ Support is provided for:
 - pivnet
 - pks
 - riff
+- duffle
 
 To add a new tool, create a file under `./tools/` as `<toolname>.sh`. Add any logic needed to install and configure the tool.

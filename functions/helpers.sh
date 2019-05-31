@@ -18,6 +18,9 @@ create_function() {
     fats_echo "Creating $function_name:"
     riff function create $function_name $args --image $image --namespace $NAMESPACE --tail &
     riff handler create $function_name --function-ref $function_name --namespace $NAMESPACE --tail
+
+    # TODO reduce/eliminate this sleep
+    sleep 5
   popd
 
   travis_fold end create-function-$function_name
