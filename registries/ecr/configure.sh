@@ -9,7 +9,6 @@ echo -e "${ANSI_RED}NOTE: ECR will not fully work until https://github.com/knati
 $(aws ecr get-login --no-include-email --region us-west-2)
 
 IMAGE_REPOSITORY_PREFIX="$(aws sts get-caller-identity --output text --query 'Account').dkr.ecr.us-west-2.amazonaws.com"
-NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --secret push-credentials"
 
 fats_image_repo() {
   local function_name=$1
@@ -39,17 +38,5 @@ fats_create_push_credentials() {
   local endpoint="https://$(aws sts get-caller-identity --output text --query 'Account').dkr.ecr.us-west-2.amazonaws.com/v2/"
 
   echo "Create auth secret"
-  cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Secret
-metadata:
-  name: push-credentials
-  namespace: $(echo -n "$namespace")
-  annotations:
-    build.knative.dev/docker-0: $(echo -n "$endpoint")
-type: kubernetes.io/basic-auth
-data:
-  username: $(echo -n "$username" | openssl base64 -a -A)
-  password: $(echo -n "$password" | openssl base64 -a -A)
-EOF
+  echo "${password}" | riff credentials apply ecr --registry "${endpoint}" --registry-user "${username}" --namespace "${namespace}"
 }

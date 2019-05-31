@@ -2,8 +2,7 @@
 
 # Install minikube cli
 `dirname "${BASH_SOURCE[0]}"`/../../install.sh minikube
-
-SYSTEM_INSTALL_FLAGS="${SYSTEM_INSTALL_FLAGS:---node-port}"
+minikube config set embed-certs true
 
 wait_for_ingress_ready() {
   local name=$1

@@ -4,7 +4,6 @@
 echo "$DOCKER_PASSWORD" | docker login --username $DOCKER_USERNAME --password-stdin
 
 IMAGE_REPOSITORY_PREFIX="${DOCKER_USERNAME}"
-NAMESPACE_INIT_FLAGS="${NAMESPACE_INIT_FLAGS:-} --secret push-credentials"
 
 fats_image_repo() {
   local function_name=$1
@@ -27,17 +26,5 @@ fats_create_push_credentials() {
   local namespace=$1
 
   echo "Create auth secret"
-  cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Secret
-metadata:
-  name: push-credentials
-  namespace: $(echo -n "$namespace")
-  annotations:
-    build.knative.dev/docker-0: https://index.docker.io/v1/
-type: kubernetes.io/basic-auth
-data:
-  username: $(echo -n "$DOCKER_USERNAME" | openssl base64 -a -A)
-  password: $(echo -n "$DOCKER_PASSWORD" | openssl base64 -a -A)
-EOF
+  echo -n "$DOCKER_PASSWORD" | openssl base64 -a -A | riff credentials apply dockerhub --docker-hub "$(echo -n "$DOCKER_USERNAME" | openssl base64 -a -A)" --namespace "${namespace}"
 }

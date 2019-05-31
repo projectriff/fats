@@ -16,7 +16,8 @@ create_function() {
 
     # create function
     fats_echo "Creating $function_name:"
-    riff function create $function_name $args --image $image --namespace $NAMESPACE --verbose
+    riff function create $function_name $args --image $image --namespace $NAMESPACE --tail &
+    riff handler create $function_name --function-ref $function_name --namespace $NAMESPACE --tail
 
     # TODO reduce/eliminate this sleep
     sleep 5
@@ -33,7 +34,7 @@ invoke_function() {
   travis_fold start invoke-function-$function_name
   echo "Invoke function $function_name"
 
-  riff service invoke $function_name --namespace $NAMESPACE -- \
+  riff handler invoke $function_name --namespace $NAMESPACE -- \
     -H "Content-Type: text/plain" \
     -d $input_data \
     -v | tee $function_name.out
@@ -51,7 +52,8 @@ destroy_function() {
   travis_fold start destroy-function-$function_name
   echo "Destroy function $function_name"
 
-  riff service delete $function_name --namespace $NAMESPACE
+  riff handler delete $function_name --namespace $NAMESPACE
+  riff function delete $function_name --namespace $NAMESPACE
   fats_delete_image $image
 
   travis_fold end destroy-function-$function_name
