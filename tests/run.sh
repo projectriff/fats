@@ -16,14 +16,7 @@ source `dirname "${BASH_SOURCE[0]}"`/../start.sh
 travis_fold start system-install
 echo "Installing riff system"
 
-cat <<EOF | > myk8s.yaml
-name: myk8s
-credentials:
-- name: kubeconfig
-  source:
-    path: $HOME/.kube/config
-EOF
-duffle credentials add myk8s.yaml
+duffle credentials add `dirname "${BASH_SOURCE[0]}"`/myk8s.yaml
 curl -O https://storage.googleapis.com/projectriff/riff-cnab/snapshots/riff-bundle-latest.json
 duffle install myriff riff-bundle-latest.json --bundle-is-file --credentials myk8s --insecure
 
