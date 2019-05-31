@@ -16,7 +16,7 @@ source `dirname "${BASH_SOURCE[0]}"`/../start.sh
 travis_fold start system-install
 echo "Installing riff system"
 
-duffle credentials add `dirname "${BASH_SOURCE[0]}"`/k8s-duffle-creds.yaml
+duffle credentials add `dirname "${BASH_SOURCE[0]}"`/duffle-creds/k8s.yaml
 curl -O https://storage.googleapis.com/projectriff/riff-cnab/snapshots/riff-bundle-latest.json
 duffle install riff riff-bundle-latest.json --bundle-is-file --credentials k8s --insecure
 
