@@ -5,12 +5,11 @@ jobs:
 
   strategy:
     matrix:
-      # TODO restore minikube
-      # minikube:
-      #   imageName: ubuntu-16.04
-      #   qualifier: minikube
-      #   cluster: minikube
-      #   registry: dockerhub
+      minikube:
+        imageName: ubuntu-16.04
+        qualifier: minikube
+        cluster: minikube
+        registry: dockerhub
       daemonregistry:
         imageName: ubuntu-16.04
         qualifier: daemonregistry
@@ -78,4 +77,3 @@ jobs:
       PIVNET_REFRESH_TOKEN: '$(PivnetRefreshToken)'
     condition: always()
     displayName: 'Cleanup FATS'
-
