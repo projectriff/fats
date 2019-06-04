@@ -9,12 +9,17 @@ jobs:
         imageName: ubuntu-16.04
         qualifier: minikube
         cluster: minikube
-        registry: dockerhub
-      daemonregistry:
+        registry: minikube
+      daemon:
         imageName: ubuntu-16.04
-        qualifier: daemonregistry
+        qualifier: daemon
         cluster: minikube
         registry: docker-daemon
+      dockerhub:
+        imageName: ubuntu-16.04
+        qualifier: minikube
+        cluster: minikube
+        registry: dockerhub
       gke:
         imageName: ubuntu-16.04
         qualifier: gke
