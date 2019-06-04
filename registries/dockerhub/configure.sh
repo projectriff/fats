@@ -26,5 +26,5 @@ fats_create_push_credentials() {
   local namespace=$1
 
   echo "Create auth secret"
-  echo -n "$DOCKER_PASSWORD" | openssl base64 -a -A | riff credentials apply dockerhub --docker-hub "$(echo -n "$DOCKER_USERNAME" | openssl base64 -a -A)" --namespace "${namespace}"
+  echo -n "${DOCKER_PASSWORD}" | riff credentials apply dockerhub --docker-hub "${DOCKER_USERNAME}" --namespace "${namespace}"
 }
