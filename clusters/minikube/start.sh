@@ -19,5 +19,5 @@ sudo minikube start --memory=8192 --cpus=4 \
   --insecure-registry registry.kube-system.svc.cluster.local
 
 # Fix permissions issue in AzurePipelines
-# sudo chmod --recursive 777 $HOME/.minikube
-# sudo chmod --recursive 777 $HOME/.kube
+sudo chmod --recursive 777 $HOME/.minikube
+sudo chmod --recursive 777 $HOME/.kube
