@@ -65,6 +65,10 @@ jobs:
       PIVNET_REFRESH_TOKEN: '$(PivnetRefreshToken)'
     displayName: 'Run FATS'
 
+  - bash: ./tests/diagnostics.sh
+    condition: failed()
+    displayName: 'Diagnostics'
+
   - bash: ./tests/cleanup.sh
     env:
       DOCKER_USERNAME: '$(DockerUsername)'
