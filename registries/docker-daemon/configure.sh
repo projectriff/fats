@@ -1,11 +1,12 @@
 #!/bin/bash
 
-file='/etc/docker/daemon.json'
-if test -f ${file} && grep -q registry.kube-system ${file}; then
+daemonConfig='/etc/docker/daemon.json'
+if test -f ${daemonConfig} && grep -q registry.kube-system ${daemonConfig}; then
   echo "insecure registry previously configured"
 else
   # Allow for insecure registries
-  sudo su -c "echo '{ \"insecure-registries\" : [ \"registry.kube-system.svc.cluster.local\" ] }' > /etc/docker/daemon.json"
+  sudo mkdir -p /etc/docker
+  echo '{ "insecure-registries": [ "registry.kube-system.svc.cluster.local" ] }' | sudo tee ${daemonConfig} > /dev/null
   sudo systemctl daemon-reload
   sudo systemctl restart docker
 fi
