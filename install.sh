@@ -8,8 +8,8 @@ if [ ! -f `dirname "${BASH_SOURCE[0]}"`/tools/$1.installed ]; then
   touch `dirname "${BASH_SOURCE[0]}"`/tools/$1.installed
   source `dirname "${BASH_SOURCE[0]}"`/.util.sh
 
-  travis_fold start install-$1
+  fats_fold start install-$1
   echo "Installing $1"
   source `dirname "${BASH_SOURCE[0]}"`/tools/$1.sh
-  travis_fold end install-$1
+  fats_fold end install-$1
 fi

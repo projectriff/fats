@@ -13,7 +13,7 @@ source `dirname "${BASH_SOURCE[0]}"`/../start.sh
 `dirname "${BASH_SOURCE[0]}"`/../install.sh riff
 `dirname "${BASH_SOURCE[0]}"`/../install.sh duffle
 
-travis_fold start system-install
+fats_fold start system-install
 echo "Installing riff system"
 
 duffle credentials add `dirname "${BASH_SOURCE[0]}"`/duffle-creds/k8s.yaml
@@ -28,7 +28,7 @@ wait_for_ingress_ready 'istio-ingressgateway' 'istio-system'
 kubectl create namespace $NAMESPACE
 fats_create_push_credentials $NAMESPACE
 
-travis_fold end system-install
+fats_fold end system-install
 
 # run test functions
 source `dirname "${BASH_SOURCE[0]}"`/../functions/helpers.sh

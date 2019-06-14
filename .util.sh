@@ -5,9 +5,11 @@ if [[ "${FATS_LOADED:-x}" == "true" ]]; then
 fi
 FATS_LOADED=true
 
-source `dirname "${BASH_SOURCE[0]}"`/.travis.sh
-
+ANSI_RED="\033[31;1m"
+ANSI_GREEN="\033[32;1m"
 ANSI_BLUE="\033[34;1m"
+ANSI_RESET="\033[0m"
+ANSI_CLEAR="\033[0K"
 
 unameOut="$(uname -s)"
 case "${unameOut}" in
@@ -120,4 +122,12 @@ wait_kube_ready() {
 
 fats_echo() {
   echo -e "$ANSI_BLUE[`date -u +%Y-%m-%dT%H:%M:%SZ`]$ANSI_RESET $@"
+}
+
+fats_fold() {
+  local action=$1
+  local name=$2
+  if [ -z ${TRAVIS+x} ]; then
+    echo -en "travis_fold:${action}:${name}\r${ANSI_CLEAR}"
+  fi
 }
