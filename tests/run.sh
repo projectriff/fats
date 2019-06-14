@@ -3,7 +3,7 @@
 set -o errexit
 set -o nounset
 set -o pipefail
-å
+
 source `dirname "${BASH_SOURCE[0]}"`/../start.sh
 
 # install tools
