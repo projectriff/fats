@@ -11,6 +11,8 @@ ANSI_BLUE="\033[34;1m"
 ANSI_RESET="\033[0m"
 ANSI_CLEAR="\033[0K"
 
+`dirname "${BASH_SOURCE[0]}"`/install.sh kubectl
+
 unameOut="$(uname -s)"
 case "${unameOut}" in
     Linux*)     machine=Linux;;

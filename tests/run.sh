@@ -9,7 +9,6 @@ source `dirname "${BASH_SOURCE[0]}"`/../start.sh
 # install tools
 `dirname "${BASH_SOURCE[0]}"`/../install.sh riff
 `dirname "${BASH_SOURCE[0]}"`/../install.sh duffle
-`dirname "${BASH_SOURCE[0]}"`/../install.sh kubectl
 
 echo "Installing riff system"
 
