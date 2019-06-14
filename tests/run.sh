@@ -3,15 +3,13 @@
 set -o errexit
 set -o nounset
 set -o pipefail
-
-`dirname "${BASH_SOURCE[0]}"`/../install.sh kubectl
-`dirname "${BASH_SOURCE[0]}"`/../install.sh kail
-
+å
 source `dirname "${BASH_SOURCE[0]}"`/../start.sh
 
-# install riff
+# install tools
 `dirname "${BASH_SOURCE[0]}"`/../install.sh riff
 `dirname "${BASH_SOURCE[0]}"`/../install.sh duffle
+`dirname "${BASH_SOURCE[0]}"`/../install.sh kubectl
 
 echo "Installing riff system"
 
