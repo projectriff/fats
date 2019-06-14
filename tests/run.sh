@@ -4,16 +4,12 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-`dirname "${BASH_SOURCE[0]}"`/../install.sh kubectl
-`dirname "${BASH_SOURCE[0]}"`/../install.sh kail
-
 source `dirname "${BASH_SOURCE[0]}"`/../start.sh
 
-# install riff
+# install tools
 `dirname "${BASH_SOURCE[0]}"`/../install.sh riff
 `dirname "${BASH_SOURCE[0]}"`/../install.sh duffle
 
-travis_fold start system-install
 echo "Installing riff system"
 
 duffle credentials add `dirname "${BASH_SOURCE[0]}"`/duffle-creds/k8s.yaml
@@ -27,8 +23,6 @@ wait_for_ingress_ready 'istio-ingressgateway' 'istio-system'
 # setup namespace
 kubectl create namespace $NAMESPACE
 fats_create_push_credentials $NAMESPACE
-
-travis_fold end system-install
 
 # run test functions
 source `dirname "${BASH_SOURCE[0]}"`/../functions/helpers.sh

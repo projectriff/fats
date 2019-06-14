@@ -5,9 +5,13 @@ if [[ "${FATS_LOADED:-x}" == "true" ]]; then
 fi
 FATS_LOADED=true
 
-source `dirname "${BASH_SOURCE[0]}"`/.travis.sh
-
+ANSI_RED="\033[31;1m"
+ANSI_GREEN="\033[32;1m"
 ANSI_BLUE="\033[34;1m"
+ANSI_RESET="\033[0m"
+ANSI_CLEAR="\033[0K"
+
+`dirname "${BASH_SOURCE[0]}"`/install.sh kubectl
 
 unameOut="$(uname -s)"
 case "${unameOut}" in

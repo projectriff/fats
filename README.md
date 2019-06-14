@@ -111,7 +111,6 @@ Support is provided for:
 
 - aws
 - glcoud
-- kail
 - kubectl
 - minikube
 - pivnet
