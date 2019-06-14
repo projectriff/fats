@@ -123,11 +123,3 @@ wait_kube_ready() {
 fats_echo() {
   echo -e "$ANSI_BLUE[`date -u +%Y-%m-%dT%H:%M:%SZ`]$ANSI_RESET $@"
 }
-
-fats_fold() {
-  local action=$1
-  local name=$2
-  if [ -z ${TRAVIS+x} ]; then
-    echo -en "travis_fold:${action}:${name}\r${ANSI_CLEAR}"
-  fi
-}

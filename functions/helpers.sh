@@ -6,7 +6,6 @@ create_function() {
   local image=$3
   local args=$4
 
-  fats_fold start create-function-$function_name
   echo "Create function $function_name"
 
   pushd $path
@@ -22,8 +21,6 @@ create_function() {
     # TODO reduce/eliminate this sleep
     sleep 5
   popd
-
-  fats_fold end create-function-$function_name
 }
 
 invoke_function() {
@@ -31,7 +28,6 @@ invoke_function() {
   local input_data=$2
   local expected_data=$3
 
-  fats_fold start invoke-function-$function_name
   echo "Invoke function $function_name"
 
   riff handler invoke $function_name --namespace $NAMESPACE -- \
@@ -41,22 +37,17 @@ invoke_function() {
 
   # add a new line after invoke, but without impacting the curl output
   echo ""
-
-  fats_fold end invoke-function-$function_name
 }
 
 destroy_function() {
   local function_name=$1
   local image=$2
 
-  fats_fold start destroy-function-$function_name
   echo "Destroy function $function_name"
 
   riff handler delete $function_name --namespace $NAMESPACE
   riff function delete $function_name --namespace $NAMESPACE
   fats_delete_image $image
-
-  fats_fold end destroy-function-$function_name
 }
 
 run_function() {
@@ -67,7 +58,6 @@ run_function() {
   local input_data=$5
   local expected_data=$6
 
-  fats_fold start function-$function_name
   echo "Run function $function_name"
 
   echo -e "${ANSI_BLUE}> path:${ANSI_RESET} ${path}"
@@ -91,21 +81,15 @@ run_function() {
 
   local actual_data=`cat $function_name.out | tail -1`
   if [ "$actual_data" != "$expected_data" ]; then
-    fats_fold start function-$function_name-logs-function
     echo -e "Function Logs:"
     cat $function_name.logs
-    fats_fold end function-$function_name-logs-function
     echo -e ""
-    fats_fold start function-$function_name-logs-controller
     echo -e "Controller Logs:"
     cat $function_name.controller.logs
-    fats_fold end function-$function_name-logs-controller
     echo -e ""
     echo -e "${ANSI_RED}Function did not produce expected result${ANSI_RESET}:";
     echo -e "   expected: $expected_data"
     echo -e "   actual: $actual_data"
     exit 1
   fi
-
-  fats_fold end function-$function_name
 }
