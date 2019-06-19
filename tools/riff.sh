@@ -1,6 +1,6 @@
 #!/bin/bash
 
-riff_version="latest"
+riff_version="${1:-latest}"
 
 if [ "$machine" == "MinGw" ]; then
   curl -L https://storage.googleapis.com/projectriff/riff-cli/releases/${riff_version}/riff-windows-amd64.zip > riff.zip
