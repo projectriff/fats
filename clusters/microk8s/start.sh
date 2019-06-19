@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo chown root /
+sudo chown 0:0 /
 
 echo "install microk8s"
 sudo snap install microk8s --classic --channel=1.14/stable
