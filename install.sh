@@ -9,5 +9,5 @@ if [ ! -f `dirname "${BASH_SOURCE[0]}"`/tools/$1.installed ]; then
   source `dirname "${BASH_SOURCE[0]}"`/.util.sh
 
   echo "Installing $1"
-  source `dirname "${BASH_SOURCE[0]}"`/tools/$1.sh ${@:2}
+  source `dirname "${BASH_SOURCE[0]}"`/tools/$1.sh "${2:-}" "${3:-}"
 fi
