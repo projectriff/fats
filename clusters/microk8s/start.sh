@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "install microk8s"
-snap install microk8s --classic --channel=1.14/stable
+sudo snap install microk8s --classic --channel=1.14/stable
 echo "wait for microk8s"
 microk8s.status --wait-ready
 echo "enable dns storage"
