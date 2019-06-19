@@ -1,6 +1,6 @@
 #!/bin/bash
 
-kubectl_version="v1.12.3"
+kubectl_version="${1:-v1.12.3}"
 
 if [ "$machine" == "MinGw" ]; then
   curl -Lo kubectl.exe https://storage.googleapis.com/kubernetes-release/release/${kubectl_version}/bin/windows/amd64/kubectl.exe

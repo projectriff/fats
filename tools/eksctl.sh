@@ -4,7 +4,7 @@
 `dirname "${BASH_SOURCE[0]}"`/../install.sh aws
 `dirname "${BASH_SOURCE[0]}"`/../install.sh aws-iam-authenticator
 
-eksctl_version="0.1.16"
+eksctl_version="${1:-0.1.16}"
 eksctl_dir=`mktemp -d eksctl.XXXX`
 
 curl -s -L "https://github.com/weaveworks/eksctl/releases/download/${eksctl_version}/eksctl_Linux_amd64.tar.gz" \
