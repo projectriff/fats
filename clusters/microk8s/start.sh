@@ -1,5 +1,8 @@
 #!/bin/bash
 
+sudo apt update
+sudo apt install snapd
+
 echo "install microk8s"
 sudo snap install microk8s --classic --channel=1.14/stable
 echo "wait for microk8s"
