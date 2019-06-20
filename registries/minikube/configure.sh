@@ -29,7 +29,4 @@ fats_create_push_credentials() {
   local namespace=$1
 
   # nothing to do
-
-  # TODO remove this
-  echo "fake" | riff credentials apply fake --registry http://example.com --registry-user fake --namespace "${namespace}"
 }
