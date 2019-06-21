@@ -9,6 +9,8 @@ fi
 # Install pks cli
 `dirname "${BASH_SOURCE[0]}"`/../../install.sh pks
 
+export DUFFLE_RIFF_INSTALL_FLAGS="${DUFFLE_RIFF_INSTALL_FLAGS:-} -s node_port=false"
+
 wait_for_ingress_ready() {
   local name=$1
   local namespace=$2
