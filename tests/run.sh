@@ -12,9 +12,14 @@ source `dirname "${BASH_SOURCE[0]}"`/../start.sh
 
 echo "Installing riff system"
 
-duffle credentials add `dirname "${BASH_SOURCE[0]}"`/duffle-creds/k8s.yaml
+duffle_k8s_service_account=${duffle_k8s_service_account:-duffle-runtime}
+duffle_k8s_namespace=${duffle_k8s_namespace:-kube-system}
+
+kubectl create serviceaccount "${duffle_k8s_service_account}" -n "${duffle_k8s_namespace}"
+kubectl create clusterrolebinding "${duffle_k8s_service_account}-cluster-admin" --clusterrole cluster-admin --serviceaccount "${duffle_k8s_namespace}:${duffle_k8s_service_account}"
+
 curl -O https://storage.googleapis.com/projectriff/riff-cnab/snapshots/riff-bundle-latest.json
-duffle install riff riff-bundle-latest.json --bundle-is-file --credentials k8s --insecure
+SERVICE_ACCOUNT=${duffle_k8s_service_account} KUBE_NAMESPACE=${duffle_k8s_namespace} duffle install riff riff-bundle-latest.json --bundle-is-file ${DUFFLE_RIFF_INSTALL_FLAGS} -d k8s
 
 # health checks
 echo "Checking for ready ingress"
