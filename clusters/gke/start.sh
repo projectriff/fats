@@ -2,7 +2,7 @@
 
 gcloud container clusters create $CLUSTER_NAME \
   --cluster-version=latest \
-  --machine-type=n1-standard-4 \
+  --machine-type=n1-standard-2 \
   --enable-autoscaling --min-nodes=1 --max-nodes=3 \
   --enable-autorepair \
   --scopes=service-control,service-management,compute-rw,storage-ro,cloud-platform,logging-write,monitoring-write,pubsub,datastore \
