@@ -1,6 +1,6 @@
 #!/bin/bash
 
-duffle_version="${1:-0.2.0-beta.1-auth}"
+duffle_version="${1:-0.2.0-beta.1-schema}"
 # base_url="${2:-https://github.com/deislabs/duffle/releases/download}"
 base_url="${2:-https://storage.googleapis.com/projectriff/internal/duffle}"
 
