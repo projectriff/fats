@@ -18,8 +18,13 @@ duffle_k8s_namespace=${duffle_k8s_namespace:-kube-system}
 kubectl create serviceaccount "${duffle_k8s_service_account}" -n "${duffle_k8s_namespace}"
 kubectl create clusterrolebinding "${duffle_k8s_service_account}-cluster-admin" --clusterrole cluster-admin --serviceaccount "${duffle_k8s_namespace}:${duffle_k8s_service_account}"
 
+duffle_opts=${duffle_opts:-}
+if [[ $K8S_SERVICE_TYPE == "NodePort" ]]; then
+  duffle_opts="${duffle_opts} -s node_port=true"
+fi
+
 curl -O https://storage.googleapis.com/projectriff/riff-cnab/snapshots/riff-bundle-latest.json
-SERVICE_ACCOUNT=${duffle_k8s_service_account} KUBE_NAMESPACE=${duffle_k8s_namespace} duffle install riff riff-bundle-latest.json --bundle-is-file ${DUFFLE_RIFF_INSTALL_FLAGS} -d k8s
+SERVICE_ACCOUNT=${duffle_k8s_service_account} KUBE_NAMESPACE=${duffle_k8s_namespace} duffle install riff riff-bundle-latest.json --bundle-is-file ${duffle_opts} -d k8s
 
 # health checks
 echo "Checking for ready ingress"

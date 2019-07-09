@@ -8,7 +8,7 @@ export MINIKUBE_WANTUPDATENOTIFICATION=false
 export MINIKUBE_WANTREPORTERRORPROMPT=false
 export MINIKUBE_HOME=$HOME
 
-export DUFFLE_RIFF_INSTALL_FLAGS="${DUFFLE_RIFF_INSTALL_FLAGS:-} -s node_port=true"
+export K8S_SERVICE_TYPE=NodePort
 
 wait_for_ingress_ready() {
   local name=$1
