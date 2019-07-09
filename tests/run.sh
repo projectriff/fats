@@ -21,6 +21,8 @@ kubectl create clusterrolebinding "${duffle_k8s_service_account}-cluster-admin" 
 duffle_opts=${duffle_opts:-}
 if [[ $K8S_SERVICE_TYPE == "NodePort" ]]; then
   duffle_opts="${duffle_opts} -s node_port=true"
+else
+  duffle_opts="${duffle_opts} -s node_port=false"
 fi
 
 curl -O https://storage.googleapis.com/projectriff/riff-cnab/snapshots/riff-bundle-latest.json

@@ -11,7 +11,7 @@ if [ "$machine" == "MinGw" ]; then
 else
   helm_dir=`mktemp -d helm.XXXX`
 
-  curl -L ${base_url}/helm-v${helm_version}-linux-amd64.tar.gz | tar xz -C $helm_dir
+  curl -L ${base_url}/helm-v${helm_version}-linux-amd64.tar.gz | tar xz -C $helm_dir --strip-components 1
   chmod +x $helm_dir/helm
   sudo mv $helm_dir/helm /usr/local/bin/
 
