@@ -3,7 +3,7 @@
 # Install gcloud cli
 `dirname "${BASH_SOURCE[0]}"`/../../install.sh gcloud
 
-export DUFFLE_RIFF_INSTALL_FLAGS="${DUFFLE_RIFF_INSTALL_FLAGS:-} -s node_port=false"
+export K8S_SERVICE_TYPE=LoadBalancer
 
 wait_for_ingress_ready() {
   local name=$1

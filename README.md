@@ -26,7 +26,7 @@ FATS will:
 - configure and start an image registry defined by `$REGISTRY`
 - create, invoke (asserting correct output) and cleanup functions
 - cleanup the cluster and registry after tests are complete
-- provide common duffle install flags for the riff bundle via `$DUFFLE_RIFF_INSTALL_FLAGS`
+- provide Kubernetes Service type via `$K8S_SERVICE_TYPE`
 
 You need to:
 
