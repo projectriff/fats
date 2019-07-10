@@ -16,4 +16,6 @@ else
   sudo mv $helm_dir/helm /usr/local/bin/
 
   rm -rf $helm_dir
+
+  sudo apt-get install socat
 fi
