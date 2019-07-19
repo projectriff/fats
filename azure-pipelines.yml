@@ -25,12 +25,11 @@ jobs:
         qualifier: gke
         cluster: gke
         registry: gcr
-      # TODO restore PKS
-      # pks:
-      #   imageName: ubuntu-16.04
-      #   qualifier: pks
-      #   cluster: pks-gcp
-      #   registry: gcr
+      pks:
+        imageName: ubuntu-16.04
+        qualifier: pks
+        cluster: pks-gcp
+        registry: gcr
       windows:
         imageName: windows-2019
         qualifier: windows
