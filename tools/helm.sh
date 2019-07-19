@@ -1,13 +1,15 @@
 #!/bin/bash
 
-helm_version="${1:-2.14.1}"
+helm_version="${1:-2.14.2}"
 base_url="${2:-https://get.helm.sh}"
 
 if [ "$machine" == "MinGw" ]; then
-
   curl -L ${base_url}/helm-v${helm_version}-windows-amd64.zip > helm.zip
-  unzip helm.zip -d /usr/bin/
+  unzip helm.zip
+  mv windows-amd64/helm.exe /usr/bin/
+
   rm helm.zip
+  rm -rf windows-amd64
 else
   helm_dir=`mktemp -d helm.XXXX`
 
@@ -16,6 +18,4 @@ else
   sudo mv $helm_dir/helm /usr/local/bin/
 
   rm -rf $helm_dir
-
-  sudo apt-get install socat
 fi
