@@ -34,4 +34,7 @@ gcloud compute forwarding-rules create ${TS_G_ENV}-${CLUSTER_NAME}-fr \
   --ports 8443 \
   --region ${gcp_region}
 
+# shouldn't be nessesary, but sometimes the cluster/network isn't ready
+sleep 60
+
 pks get-credentials ${TS_G_ENV}-${CLUSTER_NAME}
