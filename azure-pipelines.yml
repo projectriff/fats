@@ -49,7 +49,7 @@ jobs:
 
   - task: DownloadSecureFile@1
     inputs:
-      secureFile: toolsmiths-sandcity.json
+      secureFile: toolsmiths-merced.json
     condition: and(succeeded(), eq(variables['CLUSTER'], 'pks-gcp'))
     displayName: 'Load credentials'
 
