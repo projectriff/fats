@@ -16,7 +16,7 @@ create_function() {
     # create function
     fats_echo "Creating $function_name:"
     riff function create $function_name $args --image $image --namespace $NAMESPACE --tail &
-    riff knative handler create $function_name --function-ref $function_name --namespace $NAMESPACE --tail
+    riff knative deployer create $function_name --function-ref $function_name --namespace $NAMESPACE --tail
 
     # TODO reduce/eliminate this sleep
     sleep 5
@@ -30,7 +30,7 @@ invoke_function() {
 
   echo "Invoke function $function_name"
 
-  riff knative handler invoke $function_name --namespace $NAMESPACE -- \
+  riff knative deployer invoke $function_name --namespace $NAMESPACE -- \
     -H "Content-Type: text/plain" \
     -d $input_data \
     -v | tee $function_name.out
@@ -45,7 +45,7 @@ destroy_function() {
 
   echo "Destroy function $function_name"
 
-  riff knative handler delete $function_name --namespace $NAMESPACE
+  riff knative deployer delete $function_name --namespace $NAMESPACE
   riff function delete $function_name --namespace $NAMESPACE
   fats_delete_image $image
 }
