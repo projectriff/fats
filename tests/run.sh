@@ -47,8 +47,9 @@ for test in java java-boot node npm command; do
   create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path functions/uppercase/${test}"
   input_data=fats
   expected_data=FATS
+  runtime=core
 
-  run_function $path $function_name $image "$create_args" $input_data $expected_data
+  run_function $path $function_name $image "$create_args" $input_data $expected_data $runtime
 done
 
 # local builds
@@ -61,7 +62,8 @@ if [ "$machine" != "MinGw" ]; then
     create_args="--local-path ."
     input_data=fats
     expected_data=FATS
+    runtime=knative
 
-    run_function $path $function_name $image "$create_args" $input_data $expected_data
+    run_function $path $function_name $image "$create_args" $input_data $expected_data $runtime
   done
 fi
