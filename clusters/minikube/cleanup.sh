@@ -1,4 +1,4 @@
 #!/bin/bash
 
-minikube stop
-minikube delete
+sudo minikube stop
+sudo minikube delete
