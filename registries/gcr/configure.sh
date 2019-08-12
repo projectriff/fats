@@ -21,6 +21,9 @@ fats_image_repo() {
 fats_delete_image() {
   local image=$1
 
+  # drop the tag if there is also a digest, preserving the digest
+  image=$(echo $image | sed -e 's|:[^@:]*@|@|g')
+
   gcloud container images delete $image --force-delete-tags
 }
 
