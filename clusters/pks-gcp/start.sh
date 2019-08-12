@@ -17,7 +17,7 @@ gcloud dns record-sets transaction start --zone=${TS_G_ENV}-zone
 gcloud dns record-sets transaction add ${lb_ip} --name=${pks_hostname}. --ttl=300 --type=A --zone=${TS_G_ENV}-zone
 gcloud dns record-sets transaction execute --zone=${TS_G_ENV}-zone
 
-pks create-cluster ${TS_G_ENV}-${CLUSTER_NAME} --external-hostname ${pks_hostname} --plan large --wait
+pks create-cluster ${TS_G_ENV}-${CLUSTER_NAME} --external-hostname ${pks_hostname} --plan small --wait
 
 master_ip=`pks cluster ${TS_G_ENV}-${CLUSTER_NAME} --json | jq -r .kubernetes_master_ips[0]`
 master_vm=`gcloud compute instances list --filter "tags.items = pcf-${TS_G_ENV} AND tags.items = master AND networkInterfaces.networkIP = ${master_ip}" --format "table[no-heading](name, zone)"`
