@@ -5,11 +5,6 @@ jobs:
     matrix:
       minikube:
         imageName: ubuntu-16.04
-        qualifier: minikube
-        cluster: minikube
-        registry: minikube
-      daemon:
-        imageName: ubuntu-16.04
         qualifier: daemon
         cluster: minikube
         registry: docker-daemon
