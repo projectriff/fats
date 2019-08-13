@@ -33,7 +33,7 @@ invoke_function() {
   echo "Invoke function $function_name"
 
   if [ $runtime = "core" ]; then
-    svc=$(kubectl get deployers.$runtime.projectriff.io --namespace $NAMESPACE ${function_name} -o jsonpath={.status.serviceName})
+    svc=$(kubectl get deployers.core.projectriff.io --namespace $NAMESPACE ${function_name} -o jsonpath='{$.status.serviceName}')
     kubectl port-forward --namespace $NAMESPACE service/${svc} 8080:80 &
     pf_pid=$!
 
@@ -54,7 +54,16 @@ invoke_function() {
 
     kill $pf_pid
   elif [ $runtime = "knative" ]; then
-    riff $runtime deployer invoke $function_name --namespace $NAMESPACE -- \
+    ip=$(kubectl get service -n istio-system istio-ingressgateway -o jsonpath='{$.status.loadBalancer.ingress[0].ip}')
+    port="80"
+    if [ -z "$ip" ]; then
+      ip="localhost"
+      port=$(kubectl get service -n istio-system istio-ingressgateway -o jsonpath='{$.spec.ports[?(@.name=="http2")].nodePort}')
+    fi
+    hostname=$(kubectl get deployers.knative.projectriff.io --namespace $NAMESPACE ${function_name} -o jsonpath='{$.status.url}' | sed -e 's|http://||g')
+
+    curl ${ip}:${port} \
+      -H "Host: ${hostname}" \
       -H "Content-Type: text/plain" \
       -d $input_data \
       -v | tee $function_name.out
