@@ -4,29 +4,25 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-source `dirname "${BASH_SOURCE[0]}"`/../start.sh
+fats_dir=`dirname "${BASH_SOURCE[0]}"`/..
+
+source $fats_dir/start.sh
 
 # install tools
-`dirname "${BASH_SOURCE[0]}"`/../install.sh riff
-`dirname "${BASH_SOURCE[0]}"`/../install.sh duffle
+$fats_dir/install.sh riff
+$fats_dir/install.sh helm
 
 echo "Installing riff system"
 
-duffle_k8s_service_account=${duffle_k8s_service_account:-duffle-runtime}
-duffle_k8s_namespace=${duffle_k8s_namespace:-kube-system}
+kubectl create serviceaccount tiller -n kube-system
+kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount kube-system:tiller
+helm init --wait --service-account tiller
 
-kubectl create serviceaccount "${duffle_k8s_service_account}" -n "${duffle_k8s_namespace}"
-kubectl create clusterrolebinding "${duffle_k8s_service_account}-cluster-admin" --clusterrole cluster-admin --serviceaccount "${duffle_k8s_namespace}:${duffle_k8s_service_account}"
+helm repo add projectriff https://projectriff.storage.googleapis.com/charts/releases
+helm repo update
 
-duffle_opts=${duffle_opts:-}
-if [[ $K8S_SERVICE_TYPE == "NodePort" ]]; then
-  duffle_opts="${duffle_opts} -s node_port=true"
-else
-  duffle_opts="${duffle_opts} -s node_port=false"
-fi
-
-curl -O https://storage.googleapis.com/projectriff/riff-cnab/snapshots/riff-bundle-latest.json
-SERVICE_ACCOUNT=${duffle_k8s_service_account} KUBE_NAMESPACE=${duffle_k8s_namespace} duffle install riff riff-bundle-latest.json --bundle-is-file ${duffle_opts} -d k8s
+helm install projectriff/istio --name istio --namespace istio-system --devel --wait --set gateways.istio-ingressgateway.type=${K8S_SERVICE_TYPE}
+helm install projectriff/riff --name riff --devel --set knative.enabled=true
 
 # health checks
 echo "Checking for ready ingress"
