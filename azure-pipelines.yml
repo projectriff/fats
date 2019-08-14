@@ -50,7 +50,7 @@ jobs:
     condition: and(succeeded(), eq(variables['CLUSTER'], 'pks-gcp'))
     displayName: 'Load credentials'
 
-  - bash: ./tests/run.sh
+  - bash: ./ci/run.sh
     env:
       DOCKER_USERNAME: '$(DockerUsername)'
       DOCKER_PASSWORD: '$(DockerPassword)'
@@ -58,11 +58,9 @@ jobs:
       PIVNET_REFRESH_TOKEN: '$(PivnetRefreshToken)'
     displayName: 'Run FATS'
 
-  - bash: ./tests/diagnostics.sh
-    condition: failed()
-    displayName: 'Diagnostics'
+  - template: ci/dump-diagnostics-steps.yml
 
-  - bash: ./tests/cleanup.sh
+  - bash: ./ci/cleanup.sh
     env:
       DOCKER_USERNAME: '$(DockerUsername)'
       DOCKER_PASSWORD: '$(DockerPassword)'
