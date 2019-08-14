@@ -1,0 +1,29 @@
+steps:
+
+  - bash: |
+      echo "RESOURCES:"
+      kubectl get deployments,services,pods,cm,sa,secrets,riff --all-namespaces
+      echo "RIFF RESOURCES:"
+      kubectl describe riff --all-namespaces
+      echo "NON-RUNNING PODS:"
+      kubectl get pods --all-namespaces --field-selector=status.phase!=Running | \
+        tail -n +2 | awk '{print "-n", $1, $2}' | xargs -L 1 kubectl describe pod
+      echo "NODES:"
+      kubectl describe node
+    condition: failed()
+    displayName: 'Dump Diagnostics'
+
+  - bash: |
+      kubectl logs -n riff-system -l app=controller --tail 10000 || true
+    condition: failed()
+    displayName: 'Dump riff logs'
+
+  - bash: |
+      kubectl logs -n knative-build -l app=build-controller --tail 10000 || true
+    condition: failed()
+    displayName: 'Dump Knative Build logs'
+
+  - bash: |
+      kubectl logs -n knative-serving -l app=controller --tail 10000 || true
+    condition: failed()
+    displayName: 'Dump Knative Serving logs'
