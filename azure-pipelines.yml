@@ -1,7 +1,20 @@
-pr: none
-
 jobs:
+
+- job: gate
+  steps:
+  - bash: |
+      if [ $IS_FORK = 'TRUE' ] ; then
+        exit 1
+      fi
+    env:
+      IS_FORK: '$(System.PullRequest.IsFork)'
+    displayName: 'No remote PRs'
+
 - job: fats
+  dependsOn: gate
+
+  # don't run for pull requests
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
   strategy:
     matrix:
