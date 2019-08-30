@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UpperController {
 
-    @RequestMapping("/upper")
+    @RequestMapping("/")
     public String upper(@RequestParam String input) {
         return input.toUpperCase();
     }
