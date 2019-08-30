@@ -72,7 +72,7 @@ for test in java-boot; do
   application_name=fats-application-uppercase-${test}
   image=$(fats_image_repo ${application_name})
   create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path applications/${test}"
-  input_data="input=application"
+  input_data="\"input=application\""
   expected_data=APPLICATION
   runtime=core
 
