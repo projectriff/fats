@@ -27,10 +27,11 @@ create_type() {
 
 invoke_type() {
   local type=$1
-  local type_name=$2
-  local input_data=$3
-  local expected_data=$4
-  local runtime=${5:-core}
+  local header=$2
+  local type_name=$3
+  local input_data=$4
+  local expected_data=$5
+  local runtime=${6:-core}
 
   echo "Invoke $type $type_name"
 
@@ -50,7 +51,7 @@ invoke_type() {
     fi
 
     curl localhost:8080 \
-      -H "Content-Type: text/plain" \
+      -H "$header" \
       -d $input_data \
       -v | tee $type_name.out
 

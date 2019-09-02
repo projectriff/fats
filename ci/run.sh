@@ -33,36 +33,36 @@ kubectl create namespace $NAMESPACE
 fats_create_push_credentials $NAMESPACE
 
 # run test functions
-# source `dirname "${BASH_SOURCE[0]}"`/../functions/helpers.sh
+source `dirname "${BASH_SOURCE[0]}"`/../functions/helpers.sh
 
-# # in cluster builds
-# for test in java java-boot node npm command; do
-#   path=`dirname "${BASH_SOURCE[0]}"`/../functions/uppercase/${test}
-#   function_name=fats-cluster-uppercase-${test}
-#   image=$(fats_image_repo ${function_name})
-#   create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path functions/uppercase/${test}"
-#   input_data=fats
-#   expected_data=FATS
-#   runtime=core
+# in cluster builds
+for test in java java-boot node npm command; do
+  path=`dirname "${BASH_SOURCE[0]}"`/../functions/uppercase/${test}
+  function_name=fats-cluster-uppercase-${test}
+  image=$(fats_image_repo ${function_name})
+  create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path functions/uppercase/${test}"
+  input_data=fats
+  expected_data=FATS
+  runtime=core
 
-#   run_function $path $function_name $image "$create_args" $input_data $expected_data $runtime
-# done
+  run_function $path $function_name $image "$create_args" $input_data $expected_data $runtime
+done
 
-# # local builds
-# if [ "$machine" != "MinGw" ]; then
-#   # TODO enable for windows once we have a linux docker daemon available
-#   for test in java java-boot node npm command; do
-#     path=`dirname "${BASH_SOURCE[0]}"`/../functions/uppercase/${test}
-#     function_name=fats-local-uppercase-${test}
-#     image=$(fats_image_repo ${function_name})
-#     create_args="--local-path ."
-#     input_data=fats
-#     expected_data=FATS
-#     runtime=knative
+# local builds
+if [ "$machine" != "MinGw" ]; then
+  # TODO enable for windows once we have a linux docker daemon available
+  for test in java java-boot node npm command; do
+    path=`dirname "${BASH_SOURCE[0]}"`/../functions/uppercase/${test}
+    function_name=fats-local-uppercase-${test}
+    image=$(fats_image_repo ${function_name})
+    create_args="--local-path ."
+    input_data=fats
+    expected_data=FATS
+    runtime=knative
 
-#     run_function $path $function_name $image "$create_args" $input_data $expected_data $runtime
-#   done
-# fi
+    run_function $path $function_name $image "$create_args" $input_data $expected_data $runtime
+  done
+fi
 
 # run application
 source `dirname "${BASH_SOURCE[0]}"`/../applications/helpers.sh

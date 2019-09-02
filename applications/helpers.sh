@@ -7,7 +7,7 @@ create_application() {
 }
 
 invoke_application() {
-  invoke_type "application" "$@"
+  invoke_type "application" "" "$@"
 }
 
 destroy_application() {

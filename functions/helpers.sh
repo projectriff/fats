@@ -7,7 +7,7 @@ create_function() {
 }
 
 invoke_function() {
-  invoke_type "function" "$@"
+  invoke_type "function" "Content-Type: text/plain" "$@"
 }
 
 destroy_function() {
