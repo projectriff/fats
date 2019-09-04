@@ -49,6 +49,7 @@ invoke_type() {
       sleep 5
     fi
 
+    echo "curl command: curl localhost:8080 $curl_opts -v"
     curl localhost:8080 \
       $curl_opts \
       -v | tee $type_name.out
