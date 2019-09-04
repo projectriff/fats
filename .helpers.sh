@@ -50,9 +50,7 @@ invoke_type() {
     fi
 
     echo "curl command: curl localhost:8080 $curl_opts -v"
-    curl localhost:8080 \
-      $curl_opts \
-      -v | tee $type_name.out
+    curl localhost:8080 $curl_opts -v | tee $type_name.out
 
     kill $pf_pid
   elif [ $runtime = "knative" ]; then
