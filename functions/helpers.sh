@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source `dirname "${BASH_SOURCE[0]}"`/../.testhelpers.sh
+source `dirname "${BASH_SOURCE[0]}"`/../.helpers.sh
 
 create_function() {
   create_type "function" "$@"
