@@ -49,9 +49,8 @@ invoke_type() {
     else
       sleep 5
     fi
-
-    echo "curl command: curl localhost:8080 $curl_opts -v"
-    curl localhost:8080 $curl_opts -v | tee $type_name.out
+    echo "curl_opts"
+    curl localhost:8080 "${curl_opts}" -v | tee $type_name.out
 
     kill $pf_pid
     set +x
