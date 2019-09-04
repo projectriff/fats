@@ -27,11 +27,10 @@ create_type() {
 
 invoke_type() {
   local type=$1
-  local header=$2
-  local type_name=$3
-  local input_data=$4
-  local expected_data=$5
-  local runtime=${6:-core}
+  local type_name=$2
+  local curl_opts=$3
+  local expected_data=$4
+  local runtime=${5:-core}
 
   echo "Invoke $type $type_name"
 
@@ -51,8 +50,7 @@ invoke_type() {
     fi
 
     curl localhost:8080 \
-      -H "$header" \
-      -d $input_data \
+      $curl_opts \
       -v | tee $type_name.out
 
     kill $pf_pid
@@ -67,8 +65,7 @@ invoke_type() {
 
     curl ${ip}:${port} \
       -H "Host: ${hostname}" \
-      -H "Content-Type: text/plain" \
-      -d $input_data \
+      $curl_opts \
       -v | tee $type_name.out
   fi
 
