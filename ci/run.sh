@@ -67,8 +67,8 @@ fi
 # run application
 source `dirname "${BASH_SOURCE[0]}"`/../applications/helpers.sh
 
-for test in java-boot; do
-  path=`dirname "${BASH_SOURCE[0]}"`/../applications/${test}
+for test in java-boot node; do
+  path=`dirname "${BASH_SOURCE[0]}"`/../applications/uppercase/${test}
   application_name=fats-application-uppercase-${test}
   image=$(fats_image_repo ${application_name})
   create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path applications/${test}"
