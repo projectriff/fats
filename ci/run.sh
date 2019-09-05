@@ -63,3 +63,18 @@ if [ "$machine" != "MinGw" ]; then
     run_function $path $function_name $image "$create_args" $input_data $expected_data $runtime
   done
 fi
+
+# run application
+source `dirname "${BASH_SOURCE[0]}"`/../applications/helpers.sh
+
+for test in java-boot; do
+  path=`dirname "${BASH_SOURCE[0]}"`/../applications/${test}
+  application_name=fats-application-uppercase-${test}
+  image=$(fats_image_repo ${application_name})
+  create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path applications/${test}"
+  input_data="application"
+  expected_data=APPLICATION
+  runtime=core
+
+  run_application $path $application_name $image "$create_args" "$input_data" $expected_data $runtime
+done
