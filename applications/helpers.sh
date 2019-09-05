@@ -11,7 +11,7 @@ invoke_application() {
   local input_data=$2
   local expected_data=$3
   local runtime=$4
-  invoke_type "application" $type_name "-d \"$input_data \""  $expected_data $runtime
+  invoke_type "application" $type_name "-d $input_data"  $expected_data $runtime
 }
 
 destroy_application() {

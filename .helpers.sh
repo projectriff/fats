@@ -35,7 +35,6 @@ invoke_type() {
   echo "Invoke $type $type_name"
 
   if [ $runtime = "core" ]; then
-    set -x
     svc=$(kubectl get deployers.core.projectriff.io --namespace $NAMESPACE ${type_name} -o jsonpath='{$.status.serviceName}')
     kubectl port-forward --namespace $NAMESPACE service/${svc} 8080:80 &
     pf_pid=$!
@@ -49,11 +48,10 @@ invoke_type() {
     else
       sleep 5
     fi
-    echo "curl_opts"
-    curl localhost:8080 "${curl_opts}" -v | tee $type_name.out
+
+    curl localhost:8080 ${curl_opts} -v | tee $type_name.out
 
     kill $pf_pid
-    set +x
   elif [ $runtime = "knative" ]; then
     ip=$(kubectl get service -n istio-system istio-ingressgateway -o jsonpath='{$.status.loadBalancer.ingress[0].ip}')
     port="80"
