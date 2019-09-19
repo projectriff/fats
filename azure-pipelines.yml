@@ -3,7 +3,8 @@ jobs:
 - job: gate
   steps:
   - bash: |
-      if [ $IS_FORK = 'TRUE' ] ; then
+      echo "IS_FORK: $IS_FORK"
+      if [ $IS_FORK != 'False' ] ; then
         exit 1
       fi
     env:
