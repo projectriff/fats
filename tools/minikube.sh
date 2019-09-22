@@ -1,6 +1,6 @@
 #!/bin/bash
 
-minikube_version="${1:-v1.4.0}"
+minikube_version="${1:-v1.3.0}"
 base_url="${2:-https://storage.googleapis.com/minikube/releases}"
 
 if [ "$machine" == "MinGw" ]; then
