@@ -3,6 +3,8 @@
 if [ "$machine" == "MinGw" ]; then
   vm_driver=hyperv
 else
+  `dirname "${BASH_SOURCE[0]}"`/install-docker.sh
+
   vm_driver=none
 
   export MINIKUBE_HOME=$HOME
