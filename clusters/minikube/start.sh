@@ -14,8 +14,6 @@ else
 fi
 
 sudo -E minikube start --memory=8192 --cpus=4 \
-  --kubernetes-version=v1.12.3 \
+  --kubernetes-version=v1.14.7 \
   --vm-driver=${vm_driver} \
-  --bootstrapper=kubeadm \
-  --extra-config=apiserver.enable-admission-plugins="LimitRanger,NamespaceExists,NamespaceLifecycle,ResourceQuota,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook" \
   --insecure-registry registry.kube-system.svc.cluster.local
