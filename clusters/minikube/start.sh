@@ -3,6 +3,8 @@
 if [ "$machine" == "MinGw" ]; then
   vm_driver=hyperv
 else
+  sudo `dirname "${BASH_SOURCE[0]}"`/install-docker.sh
+
   vm_driver=none
 
   export CHANGE_MINIKUBE_NONE_USER=true
