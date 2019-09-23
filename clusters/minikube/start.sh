@@ -4,6 +4,8 @@ if [ "$machine" == "MinGw" ]; then
   vm_driver=hyperv
 else
   sudo `dirname "${BASH_SOURCE[0]}"`/install-docker.sh
+  sudo systemctl enable kubelet.service
+  sudo apt-get install ebtables
 
   vm_driver=none
 
