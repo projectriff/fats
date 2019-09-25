@@ -1,6 +1,6 @@
 #!/bin/bash
 
-kubectl_version="${1:-v1.12.3}"
+kubectl_version="${1:-v1.14.7}"
 base_url="${2:-https://storage.googleapis.com/kubernetes-release/release}"
 
 if [ "$machine" == "MinGw" ]; then
