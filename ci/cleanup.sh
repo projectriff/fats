@@ -5,6 +5,10 @@ set -o nounset
 source `dirname "${BASH_SOURCE[0]}"`/../.util.sh
 
 # attempt to cleanup riff and the cluster
+echo "Remove riff and Knative resources"
+kubectl delete riff --all-namespaces --all
+kubectl delete knative --all-namespaces --all
+
 echo "Uninstall riff system"
 helm delete --purge riff
 kubectl delete customresourcedefinitions.apiextensions.k8s.io -l app.kubernetes.io/managed-by=Tiller,app.kubernetes.io/instance=riff
