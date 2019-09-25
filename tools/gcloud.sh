@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if hash choco 2>/dev/null; then
-  choco install gcloudsdk
+  choco install gcloudsdk --ignore-checksums
 
   # expose gcloud to the path
   cat <<EOF > /usr/bin/gcloud
