@@ -1,17 +1,17 @@
 #!/bin/bash
 
 daemonConfig='/etc/docker/daemon.json'
-if test -f ${daemonConfig} && grep -q registry.kube-system ${daemonConfig}; then
+if test -f ${daemonConfig} && grep -q registry.kube-system.svc.cluster.local ${daemonConfig}; then
   echo "insecure registry previously configured"
 else
   # Allow for insecure registries
   sudo mkdir -p /etc/docker
-  echo '{ "insecure-registries": [ "registry.kube-system.svc.cluster.local" ] }' | sudo tee ${daemonConfig} > /dev/null
+  echo '{ "insecure-registries": [ "registry.kube-system.svc.cluster.local:5000" ] }' | sudo tee ${daemonConfig} > /dev/null
   sudo systemctl daemon-reload
   sudo systemctl restart docker
 fi
 
-IMAGE_REPOSITORY_PREFIX="registry.kube-system.svc.cluster.local"
+IMAGE_REPOSITORY_PREFIX="registry.kube-system.svc.cluster.local:5000"
 
 fats_image_repo() {
   local function_name=$1

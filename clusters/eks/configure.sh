@@ -11,3 +11,9 @@ wait_for_ingress_ready() {
 
   wait_for_service_hostname $name $namespace .elb.amazonaws.com
 }
+
+post_registry_start() {
+  local registry=$1
+
+  # nothing to do
+}

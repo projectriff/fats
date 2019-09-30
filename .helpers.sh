@@ -56,7 +56,13 @@ invoke_type() {
     ip=$(kubectl get service -n istio-system istio-ingressgateway -o jsonpath='{$.status.loadBalancer.ingress[0].ip}')
     port="80"
     if [ -z "$ip" ]; then
-      ip="localhost"
+      ip=$(kubectl get node -o jsonpath='{$.items[0].status.addresses[?(@.type=="ExternalIP")].address}')
+      if [ -z "$ip" ] ; then
+        ip=$(kubectl get node -o jsonpath='{$.items[0].status.addresses[?(@.type=="InternalIP")].address}')
+      fi
+      if [ -z "$ip" ] ; then
+        ip=localhost
+      fi
       port=$(kubectl get service -n istio-system istio-ingressgateway -o jsonpath='{$.spec.ports[?(@.name=="http2")].nodePort}')
     fi
     hostname=$(kubectl get deployers.knative.projectriff.io --namespace $NAMESPACE ${name} -o jsonpath='{$.status.url}' | sed -e 's|http://||g')

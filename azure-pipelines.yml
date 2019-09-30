@@ -19,15 +19,15 @@ jobs:
 
   strategy:
     matrix:
-      minikube:
+      kind:
         imageName: ubuntu-16.04
-        qualifier: daemon
-        cluster: minikube
+        qualifier: kind
+        cluster: kind
         registry: docker-daemon
       dockerhub:
         imageName: ubuntu-16.04
-        qualifier: minikube
-        cluster: minikube
+        qualifier: dockerhub
+        cluster: kind
         registry: dockerhub
       gke:
         imageName: ubuntu-16.04
