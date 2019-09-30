@@ -59,14 +59,15 @@ There are four extension points for FATS:
 
 Support is provided for:
 
+- kind
 - gke
-- minikube
 - pks-gcp
 
 To add a new cluster, create a directory under `./clusters/` and add three files:
 
 - `configure.sh` - configuration shared by the start and cleanup scripts
   - define function `wait_for_ingress_ready` that blocks until the cluster ingress is fully available
+  - define function `registry_started` that is called after the registry is started
   - do any other one time configuration for the cluster
 - `start.sh` - start the kubernetes cluster and set it as the default kubectl context
 - `cleanup.sh` - shutdown the running cluster and clean up any shared or external resources
@@ -75,9 +76,9 @@ To add a new cluster, create a directory under `./clusters/` and add three files
 
 Support is provided for:
 
+- docker-daemon (unauthenticated)
 - dockerhub
 - gcr
-- minikube (local registry via minikube addon)
 
 To add a new registry, create a directory under `./registries/` and add three files:
 
@@ -106,17 +107,34 @@ To add a new function, create a directory anywhere, adding the following files:
   - `create` - CLI arguments to pass to `riff function create`, like `--artifact` or `--handler`
 - any other files for your function if using `--local-path .`
 
+### Applications
+
+Support is provided for:
+
+- uppercase
+  - java-boot
+  - node
+
+To add a new application, create a directory anywhere, adding the following files:
+
+- `.fats`
+  - `create` - CLI arguments to pass to `riff application create`, like `--artifact` or `--handler`
+- any other files for your function if using `--local-path .`
+
 ### Tools
 
 Support is provided for:
 
 - aws
+- duffle
 - glcoud
+- helm
+- kapp
+- kind
 - kubectl
-- minikube
 - pivnet
 - pks
 - riff
-- duffle
+- ytt
 
 To add a new tool, create a file under `./tools/` as `<toolname>.sh`. Add any logic needed to install and configure the tool.

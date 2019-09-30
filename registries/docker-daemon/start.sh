@@ -2,12 +2,10 @@
 
 # Enable local registry
 echo "Installing a daemon registry"
-docker run -d -p 80:5000 registry:2
+docker run -d -p 5000:5000 --name registry registry:2
 
-dev_ip=172.16.1.1
-sudo su -c "echo \"\" >> /etc/hosts"
-sudo su -c "echo \"$dev_ip       registry.kube-system.svc.cluster.local\" >> /etc/hosts"
-sudo ifconfig lo:0 $dev_ip
+registry_ip=$(docker inspect --format "{{.NetworkSettings.IPAddress }}" registry)
+sudo su -c "echo \"${registry_ip} registry.kube-system.svc.cluster.local\" >> /etc/hosts"
 
 cat <<EOF | kubectl create -f -
 ---
@@ -19,8 +17,8 @@ metadata:
 spec:
   ports:
   - protocol: TCP
-    port: 80
-    targetPort: 80
+    port: 5000
+    targetPort: 5000
 ---
 kind: Endpoints
 apiVersion: v1
@@ -29,7 +27,7 @@ metadata:
   namespace: kube-system
 subsets:
   - addresses:
-    - ip: $dev_ip
+    - ip: ${registry_ip}
     ports:
-      - port: 80
+      - port: 5000
 EOF

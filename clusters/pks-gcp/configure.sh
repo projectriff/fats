@@ -17,3 +17,9 @@ wait_for_ingress_ready() {
 
   wait_for_service_ip $name $namespace
 }
+
+registry_started() {
+  local registry=$1
+
+  # nothing to do
+}

@@ -18,4 +18,4 @@ sudo -E minikube start --memory=8192 --cpus=4 \
   --vm-driver=${vm_driver} \
   --bootstrapper=kubeadm \
   --extra-config=apiserver.enable-admission-plugins="LimitRanger,NamespaceExists,NamespaceLifecycle,ResourceQuota,ServiceAccount,DefaultStorageClass,MutatingAdmissionWebhook" \
-  --insecure-registry registry.kube-system.svc.cluster.local
+  --insecure-registry registry.kube-system.svc.cluster.local:5000

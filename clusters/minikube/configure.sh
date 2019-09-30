@@ -16,3 +16,9 @@ wait_for_ingress_ready() {
 
   # nothing to do
 }
+
+registry_started() {
+  local registry=$1
+
+  # nothing to do
+}
