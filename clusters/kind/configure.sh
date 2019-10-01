@@ -26,9 +26,9 @@ post_registry_start() {
       if [[ $line = *'[plugins.cri.registry.mirrors]'* ]] ; then
         spaces=$(echo "$line" | cut -d '[' -s -f 1)
         echo -n "$spaces" >> containerd-config-patched.toml
-        echo '  [plugins.cri.registry.mirrors."registry.kube-system.svc.cluster.local:5000"]' >> containerd-config-patched.toml
+        echo '  [plugins.cri.registry.mirrors."registry.kube-system.svc.cluster.local"]' >> containerd-config-patched.toml
         echo -n "$spaces" >> containerd-config-patched.toml
-        echo "    endpoint = [\"http://${registry_ip}:5000\"]" >> containerd-config-patched.toml
+        echo "    endpoint = [\"http://${registry_ip}\"]" >> containerd-config-patched.toml
       fi
     done < "containerd-config.toml"
     docker cp containerd-config-patched.toml kind-control-plane:/etc/containerd/config.toml
