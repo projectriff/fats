@@ -126,21 +126,23 @@ fats_echo() {
   echo -e "$ANSI_BLUE[`date -u +%Y-%m-%dT%H:%M:%SZ`]$ANSI_RESET $@"
 }
 
+# derived from https://github.com/travis-ci/travis-build/blob/4f580b238530108cdd08719c326cd571d4e7b99f/lib/travis/build/bash/travis_retry.bash
+# MIT licenced https://github.com/travis-ci/travis-build/blob/4f580b238530108cdd08719c326cd571d4e7b99f/LICENSE
 fats_retry() {
   local result=0
   local count=1
-  while [ $count -le 3 ]; do
-    [ $result -ne 0 ] && {
-      echo -e "\n${ANSI_RED}The command \"$@\" failed. Retrying, $count of 3.${ANSI_RESET}\n" >&2
+  while [[ "${count}" -le 3 ]]; do
+    [[ "${result}" -ne 0 ]] && {
+      echo -e "\\n${ANSI_RED}The command \"${*}\" failed. Retrying, ${count} of 3.${ANSI_RESET}\\n" >&2
     }
-    # ! { } ignores set -e, see https://stackoverflow.com/a/4073372
-    ! { "$@"; result=$?; }
-    [ $result -eq 0 ] && break
-    count=$(($count + 1))
+    "${@}" && { result=0 && break; } || result="${?}"
+    count="$((count + 1))"
     sleep 1
   done
-    [ $count -gt 3 ] && {
-      echo -e "\n${ANSI_RED}The command \"$@\" failed 3 times.${ANSI_RESET}\n" >&2
-    }
-  return $result
+
+  [[ "${count}" -gt 3 ]] && {
+    echo -e "\\n${ANSI_RED}The command \"${*}\" failed 3 times.${ANSI_RESET}\\n" >&2
+  }
+
+  return "${result}"
 }
