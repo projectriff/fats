@@ -11,7 +11,7 @@ else
   sudo systemctl restart docker
 fi
 
-IMAGE_REPOSITORY_PREFIX="registry.kube-system.svc.cluster.local:5000"
+IMAGE_REPOSITORY_PREFIX="registry.kube-system.svc.cluster.local:5000/fats"
 
 fats_image_repo() {
   local function_name=$1
