@@ -30,7 +30,7 @@ FATS will:
 
 You need to:
 
-- pick the cluster (set as $CLUSTER, e.g. 'minikube') and registry (set as $REGISTRY, e.g. 'dockerhub') to use, suppling any custom config they require.
+- pick the cluster (set as $CLUSTER, e.g. 'kind') and registry (set as $REGISTRY, e.g. 'dockerhub') to use, supplying any custom config they require.
 - start FATS, typically:
   - `source ./start.sh`
 - install and configure riff
