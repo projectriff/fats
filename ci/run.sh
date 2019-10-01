@@ -20,7 +20,7 @@ if [ $(kubectl get nodes -oname | wc -l) = "1" ]; then
   wait_pod_selector_ready app.kubernetes.io/name=cert-manager cert-manager
   wait_pod_selector_ready app.kubernetes.io/name=cainjector cert-manager
   wait_pod_selector_ready app.kubernetes.io/name=webhook cert-manager
-  kubectl apply -f https://storage.googleapis.com/projectriff/no-resource-requests-webhook/no-resource-requests-webhook.yaml
+  fats_retry kubectl apply -f https://storage.googleapis.com/projectriff/no-resource-requests-webhook/no-resource-requests-webhook.yaml
   wait_pod_selector_ready app=webhook no-resource-requests
 fi
 
