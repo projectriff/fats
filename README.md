@@ -131,6 +131,7 @@ Support is provided for:
 - helm
 - kapp
 - kind
+- ko
 - kubectl
 - pivnet
 - pks
