@@ -77,7 +77,6 @@ jobs:
     continueOnError: true
     condition: always()
     displayName: 'Dump diagnostics'
-  - template: ci/dump-diagnostics-steps.yml
 
   - bash: ./ci/cleanup.sh
     env:
