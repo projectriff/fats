@@ -2,24 +2,30 @@ steps:
   - bash: kubectl logs -n riff-system -l component=build.projectriff.io,control-plane=controller-manager -c manager --tail 10000 || true
     timeoutInMinutes: 1
     continueOnError: true
+    condition: always()
     displayName: 'Dump riff Build logs'
   - bash: kubectl logs -n riff-system -l component=core.projectriff.io,control-plane=controller-manager -c manager --tail 10000 || true
     timeoutInMinutes: 1
     continueOnError: true
+    condition: always()
     displayName: 'Dump riff Core Runtime logs'
   - bash: kubectl logs -n riff-system -l component=knative.projectriff.io,control-plane=controller-manager -c manager --tail 10000 || true
     timeoutInMinutes: 1
     continueOnError: true
+    condition: always()
     displayName: 'Dump riff Knative Runtime logs'
   - bash: kubectl logs -n riff-system -l component=streaming.projectriff.io,control-plane=controller-manager -c manager --tail 10000 || true
     timeoutInMinutes: 1
     continueOnError: true
+    condition: always()
     displayName: 'Dump riff Streaming Runtime logs'
   - bash: kubectl logs -n kpack -l app=kpack-controller --tail 10000 || true
     timeoutInMinutes: 1
     continueOnError: true
+    condition: always()
     displayName: 'Dump kpack logs'
   - bash: kubectl logs -n knative-serving -l app=controller --tail 10000 || true
     timeoutInMinutes: 1
     continueOnError: true
+    condition: always()
     displayName: 'Dump Knative Serving logs'

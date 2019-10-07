@@ -75,6 +75,7 @@ jobs:
   - bash: ./diagnostics.sh
     timeoutInMinutes: 1
     continueOnError: true
+    condition: always()
     displayName: 'Dump diagnostics'
   - template: ci/dump-diagnostics-steps.yml
 
