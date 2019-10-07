@@ -75,6 +75,7 @@ jobs:
   - bash: ./diagnostics.sh
     timeoutInMinutes: 1
     continueOnError: true
+    displayName: 'Dump diagnostics'
   - template: ci/dump-diagnostics-steps.yml
 
   - bash: ./ci/cleanup.sh
