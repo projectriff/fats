@@ -18,6 +18,7 @@ An example config is provided in the `.travis.yml` file for this repo that doubl
 There are two scripts that are commonly defined for Travis based builds, other CI environments may be configured differently.
 
 - `script` - starts the cluster then runs your tests. Run `./start.sh` to start the cluster and registry.
+- `after_script` - runs after the script passes or fails or any time you want diagnostics, run `./diagnostics.sh`
 - `after_script` - runs after the script passes or fails. Run `./cleanup.sh` to cleanup the cluster and registry.
 
 FATS will:

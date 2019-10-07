@@ -72,6 +72,9 @@ jobs:
       PIVNET_REFRESH_TOKEN: '$(PivnetRefreshToken)'
     displayName: 'Run FATS'
 
+  - bash: ./diagnostics.sh
+    timeoutInMinutes: 1
+    continueOnError: true
   - template: ci/dump-diagnostics-steps.yml
 
   - bash: ./ci/cleanup.sh
