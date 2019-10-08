@@ -100,7 +100,7 @@ run_type() {
   local expected_data=$7
   local runtime=${8:-core}
 
-  echo "Run $type $name"
+  echo "##[group]Run $type $name"
 
   echo -e "${ANSI_BLUE}> path:${ANSI_RESET} ${path}"
   echo -e "${ANSI_BLUE}> name:${ANSI_RESET} ${name}"
@@ -119,4 +119,6 @@ run_type() {
     echo -e "   actual: $actual_data"
     exit 1
   fi
+
+  echo "##[endgroup]"
 }

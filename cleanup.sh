@@ -2,8 +2,10 @@
 
 source `dirname "${BASH_SOURCE[0]}"`/.configure.sh
 
-echo "Cleanup registry $REGISTRY"
+echo "##[group]Cleanup registry $REGISTRY"
 source `dirname "${BASH_SOURCE[0]}"`/registries/${REGISTRY}/cleanup.sh
+echo "##[endgroup]"
 
-echo "Cleanup cluster $CLUSTER"
+echo "##[group]Cleanup cluster $CLUSTER"
 source `dirname "${BASH_SOURCE[0]}"`/clusters/${CLUSTER}/cleanup.sh
+echo "##[endgroup]"
