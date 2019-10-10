@@ -12,28 +12,16 @@ source $fats_dir/start.sh
 $fats_dir/install.sh riff
 $fats_dir/install.sh helm
 
-if [ $(kubectl get nodes -oname | wc -l) = "1" ]; then
-  echo "Elimiate pod resource requests"
-  kubectl create namespace cert-manager
-  kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=true
-  kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v0.10.1/cert-manager.yaml
-  wait_pod_selector_ready app.kubernetes.io/name=cert-manager cert-manager
-  wait_pod_selector_ready app.kubernetes.io/name=cainjector cert-manager
-  wait_pod_selector_ready app.kubernetes.io/name=webhook cert-manager
-  fats_retry kubectl apply -f https://storage.googleapis.com/projectriff/no-resource-requests-webhook/no-resource-requests-webhook.yaml
-  wait_pod_selector_ready app=webhook no-resource-requests
-fi
-
 echo "Installing riff system"
 
-kubectl create serviceaccount tiller -n kube-system
-kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount kube-system:tiller
-helm init --wait --service-account tiller
+source $fats_dir/macros/no-resource-requests.sh
+source $fats_dir/macros/helm-init.sh
 
 helm repo add projectriff https://projectriff.storage.googleapis.com/charts/releases
 helm repo update
 
-helm install projectriff/istio --name istio --namespace istio-system --devel --wait --set gateways.istio-ingressgateway.type=${K8S_SERVICE_TYPE}
+helm install projectriff/istio --name istio --namespace istio-system --devel --wait \
+  --set gateways.istio-ingressgateway.type=${K8S_SERVICE_TYPE}
 helm install projectriff/riff --name riff --devel \
   --set riff.runtimes.core.enabled=true \
   --set riff.runtimes.knative.enabled=true
