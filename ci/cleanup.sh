@@ -2,14 +2,14 @@
 
 set -o nounset
 
-source `dirname "${BASH_SOURCE[0]}"`/../.util.sh
+fats_dir=`dirname "${BASH_SOURCE[0]}"`/..
 
-# attempt to cleanup riff and the cluster
-echo "Remove riff and Knative resources"
-kubectl delete riff --all-namespaces --all
-kubectl delete knative --all-namespaces --all
+source ${fats_dir}/.util.sh
 
 echo "Uninstall riff system"
+
+source $fats_dir/macros/cleanup-user-resources.sh
+
 helm delete --purge riff
 kubectl delete customresourcedefinitions.apiextensions.k8s.io -l app.kubernetes.io/managed-by=Tiller,app.kubernetes.io/instance=riff
 
@@ -17,10 +17,8 @@ helm delete --purge istio
 kubectl delete customresourcedefinitions.apiextensions.k8s.io -l app.kubernetes.io/managed-by=Tiller,app.kubernetes.io/instance=istio
 kubectl delete namespace istio-system
 
-helm reset
-kubectl delete serviceaccount tiller -n kube-system
-kubectl delete clusterrolebinding tiller
+source $fats_dir/macros/helm-reset.sh
 
 kubectl delete namespace $NAMESPACE
 
-source `dirname "${BASH_SOURCE[0]}"`/../cleanup.sh
+source ${fats_dir}/cleanup.sh
