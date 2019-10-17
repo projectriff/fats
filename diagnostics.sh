@@ -35,6 +35,7 @@ echo "##[endgroup]"
 
 echo "##[group]riff Build logs"
 kubectl logs -n riff-system -l component=build.projectriff.io,control-plane=controller-manager -c manager --tail 10000
+
 echo "##[endgroup]"
 echo "##[group]riff Build logs (previous)"
 kubectl logs -p -n riff-system -l component=build.projectriff.io,control-plane=controller-manager -c manager --tail 10000
@@ -73,4 +74,18 @@ kubectl logs -n knative-serving -l app=controller --tail 10000
 echo "##[endgroup]"
 echo "##[group]Knative Serving logs (previous)"
 kubectl logs -p -n knative-serving -l app=controller --tail 10000
+echo "##[endgroup]"
+
+echo "##[group]Kafka logs"
+kubectl logs -n test-1 -l app.kubernetes.io/component=kafka-broker --tail 10000
+echo "##[endgroup]"
+echo "##[group]Kafka logs (previous)"
+kubectl logs -p -n test-1 -l app.kubernetes.io/component=kafka-broker --tail 10000
+echo "##[endgroup]"
+
+echo "##[group]Kafka zookeeper logs"
+kubectl logs -n $NAMESPACE -l app=zookeeper --tail 10000
+echo "##[endgroup]"
+echo "##[group]Kafka zookeeper logs (previous)"
+kubectl logs -p -n $NAMESPACE -l app=zookeeper --tail 10000
 echo "##[endgroup]"

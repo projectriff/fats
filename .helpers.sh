@@ -1,5 +1,18 @@
 #!/bin/bash
 
+wait_portfwd() {
+  local port=${1:-8080}
+
+  if [ -x "$(command -v nc)" ]; then
+    while ! nc -z localhost $port; do
+      sleep 1
+    done
+    sleep 2
+  else
+    sleep 5
+  fi
+}
+
 create_type() {
   local type=$1
   local path=$2
@@ -17,12 +30,27 @@ create_type() {
 
     # create function/application
     fats_echo "Creating $name:"
-    riff $type create $name $args --image $image --namespace $NAMESPACE --tail &
-    riff $runtime deployer create $name --$type-ref $name --namespace $NAMESPACE --tail
+    riff $type create $name $args --image $image --namespace $NAMESPACE --tail
 
+  popd
+}
+
+create_deployer() {
+  local type=$1
+  local name=$2
+  local input_data=$3
+  local runtime=${4:-core}
+  local input_streams=""
+
+  if [ $runtime = "streaming" ]; then
+    echo "Create a streaming processor instead"
+    exit 1
+  else
+    echo "Creating deployer $name"
+    riff $runtime deployer create $name --$type-ref $name --namespace $NAMESPACE --tail
     # TODO reduce/eliminate this sleep
     sleep 5
-  popd
+  fi
 }
 
 invoke_type() {
@@ -39,15 +67,7 @@ invoke_type() {
     kubectl port-forward --namespace $NAMESPACE service/${svc} 8080:80 &
     pf_pid=$!
 
-    # wait for the port-forward to be ready
-    if [ -x "$(command -v nc)" ]; then
-      while ! nc -z localhost 8080; do
-        sleep 1
-      done
-      sleep 2
-    else
-      sleep 5
-    fi
+    wait_portfwd 8080
 
     curl localhost:8080 ${curl_opts} -v | tee $name.out
 
@@ -85,8 +105,15 @@ destroy_type() {
 
   echo "Destroy $type $name"
 
-  riff $runtime deployer delete $name --namespace $NAMESPACE
   riff $type delete $name --namespace $NAMESPACE
+
+  if [ $runtime = "streaming" ]; then
+    echo "Destroy a streaming processor instead"
+    exit 1
+  else
+    echo "Destroying deployer $name"
+    riff $runtime deployer delete $name --namespace $NAMESPACE
+  fi
   fats_delete_image $image
 }
 
@@ -109,16 +136,37 @@ run_type() {
   echo -e "${ANSI_BLUE}> runtime:${ANSI_RESET} ${runtime}"
 
   create_$type $path $name $image "$create_args" $runtime
+  create_deployer $type $name $input_data $runtime
   invoke_$type $name $input_data $expected_data $runtime
   destroy_$type $name $image $runtime
 
-  local actual_data=`cat $name.out | tail -1`
+  verify_results $type $name $expected_data
+
+  echo "##[endgroup]"
+}
+
+verify_results() {
+  local type=$1
+  local file=$2
+  local expected_data=$3
+
+  local cnt=1
+  local actual_data=""
+  while [ $cnt -lt 60 ]; do
+    cat $file.out
+    actual_data=`cat $file.out | tail -1`
+    echo "actual_data: $actual_data"
+    if [ "$actual_data" == "$expected_data" ]; then
+      echo "Check succedded!"
+      return 0
+    fi
+    sleep 1
+    cnt=$((cnt+1))
+  done
   if [ "$actual_data" != "$expected_data" ]; then
     echo -e "${ANSI_RED}$type did not produce expected result${ANSI_RESET}:";
     echo -e "   expected: $expected_data"
     echo -e "   actual: $actual_data"
     exit 1
   fi
-
-  echo "##[endgroup]"
 }

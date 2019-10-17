@@ -30,7 +30,8 @@ helm install projectriff/istio --name istio --namespace istio-system --devel --w
 helm install projectriff/riff --name riff --devel --wait \
   --set cert-manager.enabled=false \
   --set tags.core-runtime=true \
-  --set tags.knative-runtime=true
+  --set tags.knative-runtime=true \
+  --set tags.streaming-runtime=true
 
 # health checks
 echo "Checking for ready ingress"
@@ -39,6 +40,15 @@ wait_for_ingress_ready 'istio-ingressgateway' 'istio-system'
 # setup namespace
 kubectl create namespace $NAMESPACE
 fats_create_push_credentials $NAMESPACE
+
+echo "##[group]Install streaming prerequisites"
+helm repo add incubator http://storage.googleapis.com/kubernetes-charts-incubator
+helm install --name my-kafka incubator/kafka --set replicas=1,zookeeper.replicaCount=1,zookeeper.env.ZK_HEAP_SIZE=128m --namespace $NAMESPACE
+
+riff streaming kafka-provider create franz --bootstrap-servers my-kafka:9092 --namespace $NAMESPACE
+
+kubectl apply -f https://storage.googleapis.com/projectriff/riff-http-gateway/riff-http-gateway-0.5.0-snapshot.yaml
+echo "##[endgroup]"
 
 # run test functions
 source $fats_dir/functions/helpers.sh
@@ -92,3 +102,45 @@ for test in java-boot node; do
 
   run_application $path $application_name $image "$create_args" "$input_data" $expected_data $runtime
 done
+
+# streaming functions
+for test in java; do
+  path=$fats_dir/functions/repeater/${test}
+  function_name=fats-cluster-repeater-${test}
+  image=$(fats_image_repo ${function_name})
+  create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path functions/repeater/${test}"
+  input_data='letters=two%numbers=2'
+  expected_data='default_repeated: "[two, two]"'
+  runtime=streaming
+
+  letters="letters-$test"
+  numbers="numbers-$test"
+  repeated="repeated-$test"
+  create_stream $letters 'text/plain'
+  create_stream $numbers 'application/json'
+  create_stream $repeated 'application/json'
+
+  echo "##[group]Creating function $function_name"
+  create_function $path $function_name $image "$create_args"
+  echo "##[endgroup]"
+
+  processor_args="--input $letters --input $numbers --output $repeated"
+  create_processor $function_name "$processor_args"
+
+  log_stream  $repeated
+  post_stream $letters two "text/plain"
+  post_stream $numbers 2
+
+  expected_data="${NAMESPACE}_$repeated: \"[two, two]\""
+  verify_results "function" $repeated "$expected_data"
+done
+
+cleanup_portfwd
+
+echo "##[group]Uninstall streaming prerequisites"
+helm delete --purge my-kafka
+
+riff streaming kafka-provider delete franz --namespace $NAMESPACE
+
+kubectl delete -f https://storage.googleapis.com/projectriff/riff-http-gateway/riff-http-gateway-0.5.0-snapshot.yaml
+echo "##[endgroup]"
