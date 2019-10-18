@@ -24,7 +24,10 @@ helm install projectriff/istio --name istio --namespace istio-system --devel --w
   --set gateways.istio-ingressgateway.type=${K8S_SERVICE_TYPE}
 helm install projectriff/riff --name riff --devel \
   --set riff.runtimes.core.enabled=true \
-  --set riff.runtimes.knative.enabled=true
+  --set riff.runtimes.knative.enabled=true \
+  --set riff.runtimes.streaming.enabled=true
+
+source $fats_dir/macros/streaming-prereq-install.sh
 
 # health checks
 echo "Checking for ready ingress"
