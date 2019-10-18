@@ -22,7 +22,11 @@ helm repo update
 
 helm install projectriff/istio --name istio --namespace istio-system --devel --wait \
   --set gateways.istio-ingressgateway.type=${K8S_SERVICE_TYPE}
-helm install projectriff/riff --name riff --devel \
+
+# TODO revert to published chart before merging
+source $fats_dir/macros/helm-hack.sh
+
+helm install ../charts/repository/riff-0.5.0-snapshot.tgz --name riff --devel \
   --set riff.runtimes.core.enabled=true \
   --set riff.runtimes.knative.enabled=true \
   --set riff.runtimes.streaming.enabled=true
