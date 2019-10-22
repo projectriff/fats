@@ -14,11 +14,13 @@ $fats_dir/install.sh helm
 
 echo "Installing riff system"
 
-source $fats_dir/macros/no-resource-requests.sh
 source $fats_dir/macros/helm-init.sh
-
 helm repo add projectriff https://projectriff.storage.googleapis.com/charts/releases
 helm repo update
+
+helm install projectriff/cert-manager --name cert-manager --devel --wait
+
+source $fats_dir/macros/no-resource-requests.sh
 
 helm install projectriff/istio --name istio --namespace istio-system --devel --wait \
   --set gateways.istio-ingressgateway.type=${K8S_SERVICE_TYPE}
