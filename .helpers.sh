@@ -17,12 +17,38 @@ create_type() {
 
     # create function/application
     fats_echo "Creating $name:"
-    riff $type create $name $args --image $image --namespace $NAMESPACE --tail &
-    riff $runtime deployer create $name --$type-ref $name --namespace $NAMESPACE --tail
+    riff $type create $name $args --image $image --namespace $NAMESPACE --tail
 
+  popd
+}
+
+create_deployer() {
+  local type=$1
+  local name=$2
+  local input_data=$3
+  local runtime=${4:-core}
+  local input_streams=""
+  
+  echo "Creating deployer $name"
+
+  if [ $runtime = "streaming" ]; then
+    while :
+    do
+      input=$(echo ${input_data} | cut -d'%' -f ${idx})
+      if [[ -z ${input} ]]; then
+        break
+      fi
+      stream_name=$(echo ${input} | cut -d'=' -f 1)
+      riff streaming stream create $stream_name --provider franz-kafka-provisioner --content-type 'application/json'
+      input_streams=$input_streams+" --input $stream_name"
+      idx=$(( idx + 1))
+    done
+    riff streaming processor create $name $input_streams --output result --tail
+  elif
+    riff $runtime deployer create $name --$type-ref $name --namespace $NAMESPACE --tail
     # TODO reduce/eliminate this sleep
     sleep 5
-  popd
+  fi
 }
 
 invoke_type() {
@@ -81,7 +107,6 @@ invoke_type() {
     while :
     do
       input=$(echo ${curl_opts} | cut -d'%' -f ${idx})
-      echo ${input}
       if [[ -z ${input} ]]; then
         break
       fi
@@ -142,6 +167,7 @@ run_type() {
   echo -e "${ANSI_BLUE}> runtime:${ANSI_RESET} ${runtime}"
 
   create_$type $path $name $image "$create_args" $runtime
+  create_deployer $type $name $input_data $runtime
   invoke_$type $name $input_data $expected_data $runtime
   destroy_$type $name $image $runtime
 
