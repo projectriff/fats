@@ -26,7 +26,7 @@ helm install projectriff/istio --name istio --namespace istio-system --devel --w
 helm install projectriff/riff --name riff --devel \
   --set riff.runtimes.core.enabled=true \
   --set riff.runtimes.knative.enabled=true \
-  --set riff.runtimes.streaming.enabled=true
+  --set riff.runtimes.streaming.enabled=true --wait
 
 source $fats_dir/macros/streaming-prereq-install.sh
 
