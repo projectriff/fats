@@ -44,7 +44,7 @@ create_deployer() {
       idx=$(( idx + 1))
     done
     riff streaming processor create $name $input_streams --output result --tail
-  elif
+  else
     riff $runtime deployer create $name --$type-ref $name --namespace $NAMESPACE --tail
     # TODO reduce/eliminate this sleep
     sleep 5
