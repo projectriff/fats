@@ -71,6 +71,39 @@ invoke_type() {
       -H "Host: ${hostname}" \
       $curl_opts \
       -v | tee $name.out
+  elif [ $runtime = "streaming" ]; then
+    kubectl -n "riff-system" port-forward "svc/riff-streaming-http-gateway" "8080:80" &
+    pf_pid=$!
+
+    idx=1
+    # input is of the form:
+    # stream1=msg1,msg2%stream2=msg3,msg4
+    while :
+    do
+      input=$(echo ${curl_opts} | cut -d'%' -f ${idx})
+      echo ${input}
+      if [[ -z ${input} ]]; then
+        break
+      fi
+      stream_name=$(echo ${input} | cut -d'=' -f 1)
+      messages=$(echo ${input} | cut -d'=' -f 2)
+      msgidx=1
+      while :
+      do
+        message=$(echo ${messages} | cut -d',' -f ${msgidx})
+        if [[ -z ${message} ]]; then
+          break
+        fi
+        set -x
+        curl http://localhost:8080/default/${stream_name} -H "Content-Type: application/json" -d \'${message}\'
+        set +x
+        msgidx=$(( msgidx + 1))
+      done
+
+
+      idx=$(( idx + 1))
+    done
+    kill $pf_pid
   fi
 
   # add a new line after invoke, but without impacting the curl output
