@@ -24,26 +24,26 @@ jobs:
         qualifier: kind
         cluster: kind
         registry: docker-daemon
-      dockerhub:
-        imageName: ubuntu-16.04
-        qualifier: dockerhub
-        cluster: kind
-        registry: dockerhub
-      gke:
-        imageName: ubuntu-16.04
-        qualifier: gke
-        cluster: gke
-        registry: gcr
-      pks:
-        imageName: ubuntu-16.04
-        qualifier: pks
-        cluster: pks-gcp
-        registry: gcr
-      windows:
-        imageName: windows-2019
-        qualifier: windows
-        cluster: gke
-        registry: gcr
+      # dockerhub:
+      #   imageName: ubuntu-16.04
+      #   qualifier: dockerhub
+      #   cluster: kind
+      #   registry: dockerhub
+      # gke:
+      #   imageName: ubuntu-16.04
+      #   qualifier: gke
+      #   cluster: gke
+      #   registry: gcr
+      # pks:
+      #   imageName: ubuntu-16.04
+      #   qualifier: pks
+      #   cluster: pks-gcp
+      #   registry: gcr
+      # windows:
+      #   imageName: windows-2019
+      #   qualifier: windows
+      #   cluster: gke
+      #   registry: gcr
 
   timeoutInMinutes: 90
 
