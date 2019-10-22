@@ -76,11 +76,11 @@ for test in java java-boot; do
   function_name=fats-cluster-repeater-${test}
   image=$(fats_image_repo ${function_name})
   create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path functions/repeater/${test}"
-  input_data="letters=two,three%numbers=2,3"
-  expected_data="[two, two][three, three, three]"
+  input_data='letters=two,three%numbers=2,3'
+  expected_data='[two, two][three, three, three]'
   runtime=streaming
 
-  run_function $path $function_name $image "$create_args" $input_data $expected_data $runtime
+  run_function $path $function_name $image "$create_args" "$input_data" "$expected_data" $runtime
 done
 
 
