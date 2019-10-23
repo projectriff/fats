@@ -29,8 +29,8 @@ create_deployer() {
   local runtime=${4:-core}
   local input_streams=""
 
-  idx=1
   if [ $runtime = "streaming" ]; then
+    idx=1
     while :
     do
       input=$(echo ${input_data} | cut -d'%' -f ${idx})
@@ -137,6 +137,7 @@ invoke_type() {
 
       idx=$(( idx + 1))
     done
+    sleep 5
     kill $pf_pid
     kill $li_pf_pid
   fi
@@ -153,8 +154,29 @@ destroy_type() {
 
   echo "Destroy $type $name"
 
-  riff $runtime deployer delete $name --namespace $NAMESPACE
   riff $type delete $name --namespace $NAMESPACE
+
+  if [ $runtime = "streaming" ]; then
+    idx=1
+    while :
+    do
+      input=$(echo ${input_data} | cut -d'%' -f ${idx})
+      if [[ -z ${input} ]]; then
+        break
+      fi
+      stream_name=$(echo ${input} | cut -d'=' -f 1)
+      echo "Deleting stream ${stream_name}"
+      riff streaming stream delete $stream_name --namespace $NAMESPACE
+      idx=$(( idx + 1))
+    done
+    echo "Deleting stream result"
+    riff streaming stream delete result --namespace $NAMESPACE
+    echo "Deleting streaming processor $name"
+    riff streaming processor delete $name --namespace $NAMESPACE
+  else
+    echo "Destroying deployer $name"
+    riff $runtime deployer delete $name --namespace $NAMESPACE
+  fi
   fats_delete_image $image
 }
 
