@@ -46,7 +46,7 @@ create_deployer() {
     echo "Creating stream result"
     riff streaming stream create result --provider franz-kafka-provisioner --content-type 'application/json'
     echo "Creating streaming processor $name"
-    riff streaming processor create $name --function-ref $name $input_streams --output result --tail
+    riff streaming processor create $name --function-ref $name --namespace $NAMESPACE $input_streams --output result --tail
   else
     echo "Creating deployer $name"
     riff $runtime deployer create $name --$type-ref $name --namespace $NAMESPACE --tail
