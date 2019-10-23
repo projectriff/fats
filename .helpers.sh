@@ -39,12 +39,12 @@ create_deployer() {
       fi
       stream_name=$(echo ${input} | cut -d'=' -f 1)
       echo "Creating stream ${stream_name}"
-      riff streaming stream create $stream_name --provider franz-kafka-provisioner --content-type 'application/json'
+      riff streaming stream create $stream_name --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'application/json'
       input_streams=$input_streams" --input $stream_name"
       idx=$(( idx + 1))
     done
     echo "Creating stream result"
-    riff streaming stream create result --provider franz-kafka-provisioner --content-type 'application/json'
+    riff streaming stream create result --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'application/json'
     echo "Creating streaming processor $name"
     riff streaming processor create $name --function-ref $name --namespace $NAMESPACE $input_streams --output result --tail
   else
@@ -129,7 +129,7 @@ invoke_type() {
           break
         fi
         set -x
-        curl http://localhost:8080/default/${stream_name} -H "Content-Type: application/json" -d \'${message}\'
+        curl http://localhost:8080/${NAMESPACE}/${stream_name} -H "Content-Type: application/json" -d \'${message}\'
         set +x
         msgidx=$(( msgidx + 1))
       done
