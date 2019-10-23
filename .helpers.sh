@@ -28,9 +28,8 @@ create_deployer() {
   local input_data=$3
   local runtime=${4:-core}
   local input_streams=""
-  
-  echo "Creating deployer $name"
 
+  idx=1
   if [ $runtime = "streaming" ]; then
     while :
     do
@@ -39,12 +38,17 @@ create_deployer() {
         break
       fi
       stream_name=$(echo ${input} | cut -d'=' -f 1)
+      echo "Creating stream ${stream_name}"
       riff streaming stream create $stream_name --provider franz-kafka-provisioner --content-type 'application/json'
       input_streams=$input_streams+" --input $stream_name"
       idx=$(( idx + 1))
     done
+    echo "Creating stream result"
+    riff streaming stream create result --provider franz-kafka-provisioner --content-type 'application/json'
+    echo "Creating streaming processor $name"
     riff streaming processor create $name $input_streams --output result --tail
   else
+    echo "Creating deployer $name"
     riff $runtime deployer create $name --$type-ref $name --namespace $NAMESPACE --tail
     # TODO reduce/eliminate this sleep
     sleep 5
