@@ -102,10 +102,13 @@ invoke_type() {
       $curl_opts \
       -v | tee $name.out
   elif [ $runtime = "streaming" ]; then
+    set -x
     curl -LO https://github.com/projectriff-samples/liiklus-client/releases/download/v0.1.0/liiklus-client-0.1.0.jar
     kubectl port-forward "svc/$(kubectl get svc -lstreaming.projectriff.io/kafka-provider-liiklus -otemplate --template="{{(index .items 0).metadata.name}}")" "6565:6565" &
     li_pf_pid=$!
+
     java -jar liiklus-client-0.1.0.jar --consumer localhost:6565 default_result > $name.out &
+    li_pid=$!
 
     kubectl -n "riff-system" port-forward "svc/riff-streaming-http-gateway" "8080:80" &
     pf_pid=$!
@@ -139,7 +142,9 @@ invoke_type() {
     done
     sleep 5
     kill $pf_pid
+    kill $li_pid
     kill $li_pf_pid
+    set +x
   fi
 
   # add a new line after invoke, but without impacting the curl output
