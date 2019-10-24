@@ -71,7 +71,7 @@ source `dirname "${BASH_SOURCE[0]}"`/../functions/helpers.sh
 # fi
 
 # streaming functions
-for test in java java-boot; do
+for test in java-boot java; do
   path=`dirname "${BASH_SOURCE[0]}"`/../functions/repeater/${test}
   function_name=fats-cluster-repeater-${test}
   image=$(fats_image_repo ${function_name})
