@@ -80,7 +80,18 @@ for test in java-boot java; do
   expected_data='[two, two]'
   runtime=streaming
 
-  run_function $path $function_name $image "$create_args" "$input_data" "$expected_data" $runtime
+  create_stream letters 'text/plain'
+  create_stream numbers 'application/json'
+  create_stream result 'application/json'
+
+  create_function $path $function_name $image "$create_args" "$input_data" "$expected_data" $runtime
+
+  processor_args="--input letters --input numbers --output results"
+  create_processor $name "$processor_args"
+
+  post_stream letters two
+  post_stream numbers 2
+
 done
 
 
