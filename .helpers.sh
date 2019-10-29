@@ -208,13 +208,20 @@ run_type() {
   invoke_$type $name $input_data $expected_data $runtime
   destroy_$type $name $image $runtime
 
-  local actual_data=`cat $name.out | tail -1`
+  verify_results $name $expected_data
+
+  echo "##[endgroup]"
+}
+
+verify_results() {
+  local file=$1
+  local expected_data=$2
+
+  local actual_data=`cat $file.out | tail -1`
   if [ "$actual_data" != "$expected_data" ]; then
     echo -e "${ANSI_RED}$type did not produce expected result${ANSI_RESET}:";
     echo -e "   expected: $expected_data"
     echo -e "   actual: $actual_data"
     exit 1
   fi
-
-  echo "##[endgroup]"
 }

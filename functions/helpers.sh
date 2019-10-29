@@ -38,9 +38,18 @@ post_stream() {
   curl http://localhost:8080/${NAMESPACE}/${name} -H "Content-Type: ${encoding}" -d $message
 }
 
-create_streams() {
+create_processor() {
   local name=$1
   local args=$2
 
   riff streaming processor create $name --function-ref $name --namespace $NAMESPACE $2 --tail
+}
+
+log_stream() {
+  local name=$1
+  local leeklusclientversion=0.1.0
+
+  curl -LO https://github.com/projectriff-samples/liiklus-client/releases/download/v${leeklusclientversion}/liiklus-client-${leeklusclientversion}.jar
+  java -jar liiklus-client-0.1.0.jar --consumer localhost:6565 default_${name} > $name.out &
+  li_pid=$!
 }

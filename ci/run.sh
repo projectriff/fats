@@ -82,15 +82,18 @@ for test in java-boot java; do
 
   create_stream letters 'text/plain'
   create_stream numbers 'application/json'
-  create_stream result 'application/json'
+  create_stream repeated 'application/json'
 
   create_function $path $function_name $image "$create_args" "$input_data" "$expected_data" $runtime
 
-  processor_args="--input letters --input numbers --output results"
-  create_processor $name "$processor_args"
+  processor_args="--input letters --input numbers --output repeated"
+  create_processor $function_name "$processor_args"
 
+  log_stream  repeated
   post_stream letters two
   post_stream numbers 2
+
+  verify_results repeated "[two, two]"
 
 done
 
