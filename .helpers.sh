@@ -30,23 +30,8 @@ create_deployer() {
   local input_streams=""
 
   if [ $runtime = "streaming" ]; then
-    idx=1
-    while :
-    do
-      input=$(echo ${input_data} | cut -d'%' -f ${idx})
-      if [[ -z ${input} ]]; then
-        break
-      fi
-      stream_name=$(echo ${input} | cut -d'=' -f 1)
-      echo "Creating stream ${stream_name}"
-      riff streaming stream create $stream_name --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'application/json'
-      input_streams=$input_streams" --input $stream_name"
-      idx=$(( idx + 1))
-    done
-    echo "Creating stream result"
-    riff streaming stream create result --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'application/json'
-    echo "Creating streaming processor $name"
-    riff streaming processor create $name --function-ref $name --namespace $NAMESPACE $input_streams --output result --tail
+    echo "Create a streaming processor instead"
+    exit 1
   else
     echo "Creating deployer $name"
     riff $runtime deployer create $name --$type-ref $name --namespace $NAMESPACE --tail
@@ -101,50 +86,7 @@ invoke_type() {
       -H "Host: ${hostname}" \
       $curl_opts \
       -v | tee $name.out
-  elif [ $runtime = "streaming" ]; then
-    set -x
-    curl -LO https://github.com/projectriff-samples/liiklus-client/releases/download/v0.1.0/liiklus-client-0.1.0.jar
-    kubectl port-forward "svc/$(kubectl get svc -lstreaming.projectriff.io/kafka-provider-liiklus -otemplate --template="{{(index .items 0).metadata.name}}")" "6565:6565" &
-    li_pf_pid=$!
 
-    java -jar liiklus-client-0.1.0.jar --consumer localhost:6565 default_result > $name.out &
-    li_pid=$!
-
-    kubectl -n "riff-system" port-forward "svc/riff-streaming-http-gateway" "8080:80" &
-    pf_pid=$!
-
-    idx=1
-    # input is of the form:
-    # stream1=msg1,msg2%stream2=msg3,msg4
-    while :
-    do
-      input=$(echo ${curl_opts} | cut -d'%' -f ${idx})
-      if [[ -z ${input} ]]; then
-        break
-      fi
-      stream_name=$(echo ${input} | cut -d'=' -f 1)
-      messages=$(echo ${input} | cut -d'=' -f 2)
-      msgidx=1
-      while :
-      do
-        message=$(echo ${messages} | cut -d',' -f ${msgidx})
-        if [[ -z ${message} ]]; then
-          break
-        fi
-        set -x
-        curl http://localhost:8080/${NAMESPACE}/${stream_name} -H "Content-Type: application/json" -d \'${message}\'
-        set +x
-        msgidx=$(( msgidx + 1))
-      done
-
-
-      idx=$(( idx + 1))
-    done
-    sleep 5
-    kill $pf_pid
-    kill $li_pid
-    kill $li_pf_pid
-    set +x
   fi
 
   # add a new line after invoke, but without impacting the curl output

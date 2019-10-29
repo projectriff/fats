@@ -76,8 +76,6 @@ for test in java-boot java; do
   function_name=fats-cluster-repeater-${test}
   image=$(fats_image_repo ${function_name})
   create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path functions/repeater/${test}"
-  input_data='letters=two%numbers=2'
-  expected_data='[two, two]'
   runtime=streaming
 
   create_stream letters 'text/plain'
