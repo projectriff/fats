@@ -51,6 +51,6 @@ log_stream() {
 
   curl -LO https://github.com/projectriff-samples/liiklus-client/releases/download/v${leeklusclientversion}/liiklus-client-${leeklusclientversion}.jar
   # needs java 11
-  #java -jar liiklus-client-0.1.0.jar --consumer localhost:6565 default_${name} > $name.out &
+  java -jar liiklus-client-0.1.0.jar --consumer localhost:6565 default_${name} > $name.out &
   li_pid=$!
 }

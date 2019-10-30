@@ -64,6 +64,15 @@ jobs:
     condition: and(succeeded(), eq(variables['CLUSTER'], 'pks-gcp'))
     displayName: 'Load credentials'
 
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: "11"
+      jdkArchitectureOption: x64
+      jdkSourceOption: LocalDirectory
+      jdkFile: "/builds/openjdk-11.0.2_linux-x64_bin.tar.gz"
+      jdkDestinationDirectory: "/builds/binaries/externals"
+      cleanDestinationDirectory: true
+
   - bash: ./ci/run.sh
     env:
       DOCKER_USERNAME: '$(DockerUsername)'
