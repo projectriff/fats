@@ -45,12 +45,21 @@ create_processor() {
   riff streaming processor create $name --function-ref $name --namespace $NAMESPACE $2 --tail
 }
 
+use_java11() {
+  if [ ! -f `dirname "${BASH_SOURCE[0]}"`/.jdk11 ]; then
+    touch `dirname "${BASH_SOURCE[0]}"`/.jdk11
+    export JAVA_HOME=$JAVA_HOME_11_X64
+    export PATH=$JAVA_HOME/bin:$PATH
+  fi
+}
+
 log_stream() {
   local name=$1
   local leeklusclientversion=0.1.0
 
   curl -LO https://github.com/projectriff-samples/liiklus-client/releases/download/v${leeklusclientversion}/liiklus-client-${leeklusclientversion}.jar
-  # needs java 11
+
+  use_java11
   java -jar liiklus-client-0.1.0.jar --consumer localhost:6565 default_${name} > $name.out &
   li_pid=$!
 }

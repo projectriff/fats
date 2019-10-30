@@ -7,7 +7,6 @@ set -o pipefail
 fats_dir=`dirname "${BASH_SOURCE[0]}"`/..
 
 source `dirname "${BASH_SOURCE[0]}"`/../functions/helpers.sh
-log_stream  repeated
 
 source $fats_dir/start.sh
 
