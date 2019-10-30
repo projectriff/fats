@@ -24,7 +24,8 @@ source $fats_dir/macros/no-resource-requests.sh
 
 helm install projectriff/istio --name istio --namespace istio-system --devel --wait \
   --set gateways.istio-ingressgateway.type=${K8S_SERVICE_TYPE}
-helm install projectriff/riff --name riff --devel \
+helm install projectriff/riff --name riff --devel --wait \
+  --set cert-manager.enabled=false \
   --set riff.runtimes.core.enabled=true \
   --set riff.runtimes.knative.enabled=true
 
