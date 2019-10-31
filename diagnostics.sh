@@ -35,24 +35,36 @@ echo "##[endgroup]"
 
 echo "##[group]riff Build logs"
 kubectl logs -n riff-system -l component=build.projectriff.io,control-plane=controller-manager -c manager --tail 10000
+echo "PREVIOUS"
+kubectl logs -p -n riff-system -l component=build.projectriff.io,control-plane=controller-manager -c manager --tail 10000
 echo "##[endgroup]"
 
 echo "##[group]riff Core Runtime logs"
 kubectl logs -n riff-system -l component=core.projectriff.io,control-plane=controller-manager -c manager --tail 10000
+echo "PREVIOUS"
+kubectl logs -p -n riff-system -l component=core.projectriff.io,control-plane=controller-manager -c manager --tail 10000
 echo "##[endgroup]"
 
 echo "##[group]riff Knative Runtime logs"
 kubectl logs -n riff-system -l component=knative.projectriff.io,control-plane=controller-manager -c manager --tail 10000
+echo "PREVIOUS"
+kubectl logs -p -n riff-system -l component=knative.projectriff.io,control-plane=controller-manager -c manager --tail 10000
 echo "##[endgroup]"
 
 echo "##[group]riff Streaming Runtime logs"
 kubectl logs -n riff-system -l component=streaming.projectriff.io,control-plane=controller-manager -c manager --tail 10000
+echo "PREVIOUS"
+kubectl logs -p -n riff-system -l component=streaming.projectriff.io,control-plane=controller-manager -c manager --tail 10000
 echo "##[endgroup]"
 
 echo "##[group]kpack logs"
 kubectl logs -n kpack -l app=kpack-controller --tail 10000
+echo "PREVIOUS"
+kubectl logs -p -n kpack -l app=kpack-controller --tail 10000
 echo "##[endgroup]"
 
 echo "##[group]Knative Serving logs"
 kubectl logs -n knative-serving -l app=controller --tail 10000
+echo "PREVIOUS"
+kubectl logs -p -n knative-serving -l app=controller --tail 10000
 echo "##[endgroup]"
