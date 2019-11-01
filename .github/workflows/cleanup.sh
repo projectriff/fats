@@ -2,7 +2,7 @@
 
 set -o nounset
 
-fats_dir=`dirname "${BASH_SOURCE[0]}"`/..
+fats_dir=`dirname "${BASH_SOURCE[0]}"`/../..
 
 source ${fats_dir}/.util.sh
 
