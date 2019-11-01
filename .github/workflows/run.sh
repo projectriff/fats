@@ -4,7 +4,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-fats_dir=`dirname "${BASH_SOURCE[0]}"`/..
+fats_dir=`dirname "${BASH_SOURCE[0]}"`/../..
 
 source $fats_dir/start.sh
 
@@ -19,6 +19,9 @@ helm repo add projectriff https://projectriff.storage.googleapis.com/charts/rele
 helm repo update
 
 helm install projectriff/cert-manager --name cert-manager --devel --wait
+sleep 5
+wait_pod_selector_ready app=cert-manager cert-manager
+wait_pod_selector_ready app=webhook cert-manager
 
 source $fats_dir/macros/no-resource-requests.sh
 
@@ -26,8 +29,8 @@ helm install projectriff/istio --name istio --namespace istio-system --devel --w
   --set gateways.istio-ingressgateway.type=${K8S_SERVICE_TYPE}
 helm install projectriff/riff --name riff --devel --wait \
   --set cert-manager.enabled=false \
-  --set riff.runtimes.core.enabled=true \
-  --set riff.runtimes.knative.enabled=true
+  --set tags.core-runtime=true \
+  --set tags.knative-runtime=true
 
 # health checks
 echo "Checking for ready ingress"
@@ -38,7 +41,7 @@ kubectl create namespace $NAMESPACE
 fats_create_push_credentials $NAMESPACE
 
 # run test functions
-source `dirname "${BASH_SOURCE[0]}"`/../functions/helpers.sh
+source $fats_dir/functions/helpers.sh
 
 # in cluster builds
 # workaround for https://github.com/projectriff/node-function-invoker/issues/113
@@ -48,7 +51,7 @@ else
   languages="java java-boot node npm command"
 fi
 for test in $languages; do
-  path=`dirname "${BASH_SOURCE[0]}"`/../functions/uppercase/${test}
+  path=$fats_dir/functions/uppercase/${test}
   function_name=fats-cluster-uppercase-${test}
   image=$(fats_image_repo ${function_name})
   create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path functions/uppercase/${test}"
@@ -63,7 +66,7 @@ done
 if [ "$machine" != "MinGw" ]; then
   # TODO enable for windows once we have a linux docker daemon available
   for test in $languages; do
-    path=`dirname "${BASH_SOURCE[0]}"`/../functions/uppercase/${test}
+    path=$fats_dir/functions/uppercase/${test}
     function_name=fats-local-uppercase-${test}
     image=$(fats_image_repo ${function_name})
     create_args="--local-path ."
@@ -76,10 +79,10 @@ if [ "$machine" != "MinGw" ]; then
 fi
 
 # run application
-source `dirname "${BASH_SOURCE[0]}"`/../applications/helpers.sh
+source $fats_dir/applications/helpers.sh
 
 for test in java-boot node; do
-  path=`dirname "${BASH_SOURCE[0]}"`/../applications/uppercase/${test}
+  path=$fats_dir/applications/uppercase/${test}
   application_name=fats-application-uppercase-${test}
   image=$(fats_image_repo ${application_name})
   create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path applications/uppercase/${test}"
