@@ -53,6 +53,7 @@ jobs:
       shell: bash
     - name: Run FATS
       run: .github/workflows/run.sh
+      timeout-minutes: 90
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -62,9 +63,11 @@ jobs:
     - name: Collect diagnostics
       run: ./diagnostics.sh
       if: always()
+      timeout-minutes: 1
     - name: Cleanup FATS
       run: .github/workflows/cleanup.sh
       if: always()
+      timeout-minutes: 30
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
