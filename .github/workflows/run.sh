@@ -19,6 +19,9 @@ helm repo add projectriff https://projectriff.storage.googleapis.com/charts/rele
 helm repo update
 
 helm install projectriff/cert-manager --name cert-manager --devel --wait
+sleep 5
+wait_pod_selector_ready app=cert-manager cert-manager
+wait_pod_selector_ready app=webhook cert-manager
 
 source $fats_dir/macros/no-resource-requests.sh
 
