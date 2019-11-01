@@ -41,7 +41,13 @@ fats_create_push_credentials $NAMESPACE
 source `dirname "${BASH_SOURCE[0]}"`/../functions/helpers.sh
 
 # in cluster builds
-for test in java java-boot node npm command; do
+# workaround for https://github.com/projectriff/node-function-invoker/issues/113
+if [ $CLUSTER = "pks" ]; then
+  languages="java java-boot npm command"
+else
+  languages="java java-boot node npm command"
+fi
+for test in $languages; do
   path=`dirname "${BASH_SOURCE[0]}"`/../functions/uppercase/${test}
   function_name=fats-cluster-uppercase-${test}
   image=$(fats_image_repo ${function_name})
@@ -56,7 +62,7 @@ done
 # local builds
 if [ "$machine" != "MinGw" ]; then
   # TODO enable for windows once we have a linux docker daemon available
-  for test in java java-boot node npm command; do
+  for test in $languages; do
     path=`dirname "${BASH_SOURCE[0]}"`/../functions/uppercase/${test}
     function_name=fats-local-uppercase-${test}
     image=$(fats_image_repo ${function_name})
