@@ -29,8 +29,8 @@ helm install projectriff/istio --name istio --namespace istio-system --devel --w
   --set gateways.istio-ingressgateway.type=${K8S_SERVICE_TYPE}
 helm install projectriff/riff --name riff --devel --wait \
   --set cert-manager.enabled=false \
-  --set riff.runtimes.core.enabled=true \
-  --set riff.runtimes.knative.enabled=true
+  --set tags.core-runtime=true \
+  --set tags.knative-runtime=true
 
 # health checks
 echo "Checking for ready ingress"
