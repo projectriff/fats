@@ -43,7 +43,7 @@ source `dirname "${BASH_SOURCE[0]}"`/../functions/helpers.sh
 # in cluster builds
 # workaround for https://github.com/projectriff/node-function-invoker/issues/113
 if [ $CLUSTER = "pks" ]; then
-  languages="java java-boot npm command"
+  languages="java java-boot command"
 else
   languages="java java-boot node npm command"
 fi
