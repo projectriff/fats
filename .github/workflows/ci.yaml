@@ -48,8 +48,8 @@ jobs:
 
         echo "##[set-env name=CLUSTER]${{ matrix.config.cluster }}"
         echo "##[set-env name=REGISTRY]${{ matrix.config.registry }}"
-        echo "##[set-env name=CLUSTER_NAME]riff-${job}-${{ matrix.config.qualifier }}"
-        echo "##[set-env name=NAMESPACE]riff-${job}-${{ matrix.config.qualifier }}"
+        echo "##[set-env name=CLUSTER_NAME]fats-${job}-${{ matrix.config.qualifier }}"
+        echo "##[set-env name=NAMESPACE]fats-${job}-${{ matrix.config.qualifier }}"
       shell: bash
     - name: Run FATS
       run: .github/workflows/run.sh
