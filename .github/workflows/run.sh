@@ -38,7 +38,7 @@ kubectl create namespace $NAMESPACE
 fats_create_push_credentials $NAMESPACE
 
 # run test functions
-source `dirname "${BASH_SOURCE[0]}"`/../functions/helpers.sh
+source $fats_dir/functions/helpers.sh
 
 # in cluster builds
 # workaround for https://github.com/projectriff/node-function-invoker/issues/113
@@ -48,7 +48,7 @@ else
   languages="java java-boot node npm command"
 fi
 for test in $languages; do
-  path=`dirname "${BASH_SOURCE[0]}"`/../functions/uppercase/${test}
+  path=$fats_dir/functions/uppercase/${test}
   function_name=fats-cluster-uppercase-${test}
   image=$(fats_image_repo ${function_name})
   create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path functions/uppercase/${test}"
@@ -63,7 +63,7 @@ done
 if [ "$machine" != "MinGw" ]; then
   # TODO enable for windows once we have a linux docker daemon available
   for test in $languages; do
-    path=`dirname "${BASH_SOURCE[0]}"`/../functions/uppercase/${test}
+    path=$fats_dir/functions/uppercase/${test}
     function_name=fats-local-uppercase-${test}
     image=$(fats_image_repo ${function_name})
     create_args="--local-path ."
@@ -76,10 +76,10 @@ if [ "$machine" != "MinGw" ]; then
 fi
 
 # run application
-source `dirname "${BASH_SOURCE[0]}"`/../applications/helpers.sh
+source $fats_dir/applications/helpers.sh
 
 for test in java-boot node; do
-  path=`dirname "${BASH_SOURCE[0]}"`/../applications/uppercase/${test}
+  path=$fats_dir/applications/uppercase/${test}
   application_name=fats-application-uppercase-${test}
   image=$(fats_image_repo ${application_name})
   create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path applications/uppercase/${test}"
