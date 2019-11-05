@@ -1,6 +1,6 @@
 #!/bin/bash
 
-duffle_version="${1:-0.3.2-beta.1}"
+duffle_version="${1:-0.3.5-beta.1}"
 base_url="${2:-https://github.com/deislabs/duffle/releases/download}"
 
 if [ "$machine" == "MinGw" ]; then

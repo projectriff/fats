@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ytt_version="${1:-0.15.0}"
+ytt_version="${1:-0.22.0}"
 base_url="${2:-https://github.com/k14s/ytt/releases/download}"
 
 if [ "$machine" == "MinGw" ]; then
