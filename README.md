@@ -46,6 +46,9 @@ You need to:
 - cleanup FATS, typically:
   - `source ./cleanup.sh`
 
+### Running locally
+
+To skip installing the tools that have been installed locally set the environment variable SKIP_INSTALLED to true
 
 ## Extending FATS
 
