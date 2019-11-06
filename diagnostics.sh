@@ -89,3 +89,31 @@ echo "##[endgroup]"
 echo "##[group]Kafka zookeeper logs (previous)"
 kubectl logs -p -n $NAMESPACE -l app=zookeeper --tail 10000
 echo "##[endgroup]"
+
+echo "##[group]Kafka topic contents"
+cat <<EOF | kubectl create -f -
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: testclient
+  namespace: $NAMESPACE
+spec:
+  containers:
+  - name: kafka
+    image: confluentinc/cp-kafka:5.0.1
+    command:
+      - sh
+      - -c
+      - "exec tail -f /dev/null"
+EOF
+
+kubectl wait --for=condition=Ready pod/testclient -n $NAMESPACE
+
+STREAMS=$(kubectl -n $NAMESPACE exec testclient -- kafka-topics --zookeeper my-kafka-zookeeper:2181 --list | grep -v __)
+
+for str_name in $STREAMS; do
+  echo "dumping contents of $str_name"
+  kubectl -n $NAMESPACE exec -ti testclient -- kafka-console-consumer --bootstrap-server my-kafka:9092 --from-beginning --timeout-ms 5000 --topic $str_name
+done
+echo "##[endgroup]"
