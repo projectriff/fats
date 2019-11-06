@@ -18,7 +18,7 @@ echo "##[endgroup]"
 
 echo "##[group]failing pods"
 kubectl get pods --all-namespaces --field-selector=status.phase!=Running \
-  | tail -n +2 | awk '{print "-n", $1, $2}' | xargs -L 1 kubectl describe pod
+  | tail -n +2 | awk '{print "-n", $1, $2}' | xargs kubectl describe pod
 echo "##[endgroup]"
 
 echo "##[group]describe nodes"
