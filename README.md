@@ -38,10 +38,11 @@ You need to:
 - create and configure the target namespace, typically:
   - `kubectl create namespace $NAMESPACE`
   - `fats_create_push_credentials $NAMESPACE`
-- specify functions to test, typically:
-  - `source ./functions/helpers.sh`
-  - per function `run_function <path-to-function> <name> <image> <create_args> <input_data> <expected_output>` (name and image often include the CLUSTER_NAME for uniqueness)
-    - create_args must specify the source to use with either `--git-repo <git-url>` or `--local-path <path>`
+- create functions, applications and deployers to test:
+  - `riff function create ${function_name} ...`
+  - `riff ${runtime} deployer create ${deployer_name} --function-ref ${function_name}`
+  - invoke deployer
+    - `source ./macros/invoker-${runtime}-deployer.sh ${deployer_name} "${curl_opts}" ${expected_value}`
 - cleanup riff
 - cleanup FATS, typically:
   - `source ./cleanup.sh`

@@ -40,9 +40,6 @@ wait_for_ingress_ready 'istio-ingressgateway' 'istio-system'
 kubectl create namespace $NAMESPACE
 fats_create_push_credentials $NAMESPACE
 
-# run test functions
-source $fats_dir/functions/helpers.sh
-
 # in cluster builds
 # workaround for https://github.com/projectriff/node-function-invoker/issues/113
 if [ $CLUSTER = "pks-gcp" ]; then
@@ -51,44 +48,62 @@ else
   languages="java java-boot node npm command"
 fi
 for test in $languages; do
-  path=$fats_dir/functions/uppercase/${test}
-  function_name=fats-cluster-uppercase-${test}
-  image=$(fats_image_repo ${function_name})
-  create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path functions/uppercase/${test}"
-  input_data=fats
-  expected_data=FATS
-  runtime=core
+  name=fats-cluster-uppercase-${test}
+  image=$(fats_image_repo ${name})
 
-  run_function $path $function_name $image "$create_args" $input_data $expected_data $runtime
+  echo "##[group]Run function $name"
+
+  riff function create $name --image $image --namespace $NAMESPACE --tail \
+    --git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path functions/uppercase/${test} &
+  riff core deployer create $name --function-ref $name --namespace $NAMESPACE --tail
+
+  source $fats_dir/macros/invoke_core_deployer.sh $name "-H Content-Type:text/plain -H Accept:text/plain -d fats" FATS
+
+  riff core deployer delete $name --namespace $NAMESPACE
+  riff function delete $name --namespace $NAMESPACE
+  fats_delete_image $image
+
+  echo "##[endgroup]"
 done
 
 # local builds
 if [ "$machine" != "MinGw" ]; then
   # TODO enable for windows once we have a linux docker daemon available
   for test in $languages; do
-    path=$fats_dir/functions/uppercase/${test}
-    function_name=fats-local-uppercase-${test}
-    image=$(fats_image_repo ${function_name})
-    create_args="--local-path ."
-    input_data=fats
-    expected_data=FATS
-    runtime=knative
+    name=fats-local-uppercase-${test}
+    image=$(fats_image_repo ${name})
 
-    run_function $path $function_name $image "$create_args" $input_data $expected_data $runtime
+    echo "##[group]Run function $name"
+
+    riff function create $name --image $image --namespace $NAMESPACE --tail \
+      --local-path $fats_dir/functions/uppercase/${test} &
+    riff knative deployer create $name --function-ref $name --namespace $NAMESPACE --tail
+
+    source $fats_dir/macros/invoke_knative_deployer.sh $name "-H Content-Type:text/plain -H Accept:text/plain -d fats" FATS
+
+    riff knative deployer delete $name --namespace $NAMESPACE
+    riff function delete $name --namespace $NAMESPACE
+    fats_delete_image $image
+
+    echo "##[endgroup]"
   done
 fi
 
-# run application
-source $fats_dir/applications/helpers.sh
-
 for test in java-boot node; do
-  path=$fats_dir/applications/uppercase/${test}
-  application_name=fats-application-uppercase-${test}
-  image=$(fats_image_repo ${application_name})
-  create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path applications/uppercase/${test}"
-  input_data="application"
-  expected_data=APPLICATION
-  runtime=core
+  name=fats-application-uppercase-${test}
+  image=$(fats_image_repo ${name})
 
-  run_application $path $application_name $image "$create_args" "$input_data" $expected_data $runtime
+  echo "##[group]Run application $name"
+
+  riff application create $name --image $image --namespace $NAMESPACE --tail \
+    --git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path applications/uppercase/${test} &
+  riff core deployer create $name --application-ref $name --namespace $NAMESPACE --tail
+
+  source $fats_dir/macros/invoke_core_deployer.sh $name "--get --data-urlencode input=fats" FATS
+
+  riff core deployer delete $name --namespace $NAMESPACE
+  riff application delete $name --namespace $NAMESPACE
+  fats_delete_image $image
+
+  echo "##[endgroup]"
 done
