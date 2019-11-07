@@ -2,6 +2,7 @@
 
 name=$1
 curl_opts=$2
+expected_data=$3
 
 echo "Invoke knative deployer $name"
 
