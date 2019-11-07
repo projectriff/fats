@@ -104,35 +104,32 @@ for test in java-boot node; do
 done
 
 # streaming functions
-for test in java; do
-  path=$fats_dir/functions/repeater/${test}
-  function_name=fats-cluster-repeater-${test}
+for test in java-boot; do
+  path=$fats_dir/functions/streaming-uppercase/${test}
+  function_name=fats-cluster-streaming-uppercase-${test}
   image=$(fats_image_repo ${function_name})
-  create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path functions/repeater/${test}"
-  input_data='letters=two%numbers=2'
-  expected_data='default_repeated: "[two, two]"'
+  create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path functions/streaming-uppercase/${test}"
   runtime=streaming
 
-  letters="letters-$test"
-  numbers="numbers-$test"
-  repeated="repeated-$test"
-  create_stream $letters 'text/plain'
-  create_stream $numbers 'application/json'
-  create_stream $repeated 'application/json'
+  stringin="stringin-$test"
+  stringout="stringout-$test"
+  create_stream $stringin 'text/plain'
+  create_stream $stringout 'text/plain'
 
   echo "##[group]Creating function $function_name"
   create_function $path $function_name $image "$create_args"
   echo "##[endgroup]"
 
-  processor_args="--input $letters --input $numbers --output $repeated"
+  processor_args="--input $stringin --output $stringout"
   create_processor $function_name "$processor_args"
 
-  log_stream  $repeated
-  post_stream $letters two "text/plain"
-  post_stream $numbers 2
+  log_stream $stringout
+  post_stream $stringin foo "text/plain"
+  post_stream $stringin bar "text/plain"
 
-  expected_data="${NAMESPACE}_$repeated: \"[two, two]\""
-  verify_results "function" $repeated "$expected_data"
+  expected_data="${NAMESPACE}_${stringout}: FOO${NAMESPACE}_${stringout}: BAR"
+
+  verify_results "function" $stringout "$expected_data"
 done
 
 cleanup_portfwd

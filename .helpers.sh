@@ -154,7 +154,7 @@ verify_results() {
   local actual_data=""
   while [ $cnt -lt 60 ]; do
     cat $file.out
-    actual_data=`cat $file.out | tail -1`
+    actual_data=`cat $file.out | tr -d '\n'`
     echo "actual_data: $actual_data"
     if [ "$actual_data" == "$expected_data" ]; then
       echo "Check succedded!"

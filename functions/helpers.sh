@@ -89,4 +89,6 @@ cleanup_portfwd() {
   kill $li_pid || true
   kill $portfwd_pid || true
   kill $li_portfwd_pid || true
+  rm `dirname "${BASH_SOURCE[0]}"`/.portfwd
+  rm `dirname "${BASH_SOURCE[0]}"`/.liportfwd
 }
