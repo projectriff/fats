@@ -50,11 +50,11 @@ fi
 for test in $languages; do
   name=fats-cluster-uppercase-${test}
   image=$(fats_image_repo ${name})
-  create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path functions/uppercase/${test}"
 
   echo "##[group]Run function $name"
 
-  riff function create $name $args --image $image --namespace $NAMESPACE --tail &
+  riff function create $name --image $image --namespace $NAMESPACE --tail \
+    --git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path functions/uppercase/${test} &
   riff core deployer create $name --function-ref $name --namespace $NAMESPACE --tail
 
   source $fats_dir/macros/invoke_core_deployer.sh $name "-H Content-Type:text/plain -H Accept:text/plain -d fats" FATS
@@ -72,11 +72,11 @@ if [ "$machine" != "MinGw" ]; then
   for test in $languages; do
     name=fats-local-uppercase-${test}
     image=$(fats_image_repo ${name})
-    create_args="--local-path $fats_dir/functions/uppercase/${test}"
 
     echo "##[group]Run function $name"
 
-    riff function create $name $args --image $image --namespace $NAMESPACE --tail &
+    riff function create $name --image $image --namespace $NAMESPACE --tail \
+      --local-path $fats_dir/functions/uppercase/${test} &
     riff knative deployer create $name --function-ref $name --namespace $NAMESPACE --tail
 
     source $fats_dir/macros/invoke_knative_deployer.sh $name "-H Content-Type:text/plain -H Accept:text/plain -d fats" FATS
@@ -92,11 +92,11 @@ fi
 for test in java-boot node; do
   name=fats-application-uppercase-${test}
   image=$(fats_image_repo ${name})
-  create_args="--git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path applications/uppercase/${test}"
 
   echo "##[group]Run application $name"
 
-  riff application create $name $args --image $image --namespace $NAMESPACE --tail &
+  riff application create $name --image $image --namespace $NAMESPACE --tail \
+    --git-repo $(git remote get-url origin) --git-revision $(git rev-parse HEAD) --sub-path applications/uppercase/${test} &
   riff core deployer create $name --application-ref $name --namespace $NAMESPACE --tail
 
   source $fats_dir/macros/invoke_core_deployer.sh $name "--get --data-urlencode input=fats" FATS
