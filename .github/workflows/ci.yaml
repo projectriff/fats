@@ -7,6 +7,16 @@ on:
     - '!dependabot/**'
   pull_request: {}
 
+env:
+  FATS_DIR: "."
+  FATS_REPO: ${{ github.repository }}
+  FATS_REFSPEC: ${{ github.sha }}
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  GCLOUD_CLIENT_SECRET: ${{ secrets.GCLOUD_CLIENT_SECRET }}
+  PIVNET_REFRESH_TOKEN: ${{ secrets.PIVNET_REFRESH_TOKEN }}
+  TOOLSMITH_ENV: ${{ secrets.PKS_15_GCP_ENV }}
+
 jobs:
 
   fats:
@@ -51,29 +61,30 @@ jobs:
         echo "##[set-env name=CLUSTER_NAME]fats-${job}-${{ matrix.config.qualifier }}"
         echo "##[set-env name=NAMESPACE]fats-${job}-${{ matrix.config.qualifier }}"
       shell: bash
-    - name: Run FATS
+    - name: Start FATS
+      run: ${FATS_DIR}/start.sh
+      shell: bash
+      timeout-minutes: 45
+    - name: Install riff
+      run: .github/workflows/install.sh
+      shell: bash
+      timeout-minutes: 10
+    - name: Run Tests
       run: .github/workflows/run.sh
       shell: bash
-      timeout-minutes: 90
-      env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        GCLOUD_CLIENT_SECRET: ${{ secrets.GCLOUD_CLIENT_SECRET }}
-        PIVNET_REFRESH_TOKEN: ${{ secrets.PIVNET_REFRESH_TOKEN }}
-        TOOLSMITH_ENV: ${{ secrets.PKS_15_GCP_ENV }}
+      timeout-minutes: 30
     - name: Collect diagnostics
-      run: ./diagnostics.sh
+      run: ${FATS_DIR}/diagnostics.sh
       shell: bash
       if: always()
       timeout-minutes: 1
-    - name: Cleanup FATS
+    - name: Cleanup riff
       run: .github/workflows/cleanup.sh
       shell: bash
       if: always()
+      timeout-minutes: 10
+    - name: Cleanup FATS
+      run: ${FATS_DIR}/cleanup.sh
+      shell: bash
+      if: always()
       timeout-minutes: 30
-      env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        GCLOUD_CLIENT_SECRET: ${{ secrets.GCLOUD_CLIENT_SECRET }}
-        PIVNET_REFRESH_TOKEN: ${{ secrets.PIVNET_REFRESH_TOKEN }}
-        TOOLSMITH_ENV: ${{ secrets.PKS_15_GCP_ENV }}

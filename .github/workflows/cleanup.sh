@@ -2,13 +2,11 @@
 
 set -o nounset
 
-fats_dir=`dirname "${BASH_SOURCE[0]}"`/../..
-
-source ${fats_dir}/.util.sh
+source ${FATS_DIR}/.util.sh
 
 echo "Uninstall riff system"
 
-source $fats_dir/macros/cleanup-user-resources.sh
+source ${FATS_DIR}/macros/cleanup-user-resources.sh
 
 helm delete --purge riff
 kubectl delete customresourcedefinitions.apiextensions.k8s.io -l app.kubernetes.io/managed-by=Tiller,app.kubernetes.io/instance=riff
@@ -20,8 +18,6 @@ kubectl delete namespace istio-system
 helm delete --purge cert-manager
 kubectl delete customresourcedefinitions.apiextensions.k8s.io -l app.kubernetes.io/managed-by=Tiller,app.kubernetes.io/instance=cert-manager
 
-source $fats_dir/macros/helm-reset.sh
+source ${FATS_DIR}/macros/helm-reset.sh
 
-kubectl delete namespace $NAMESPACE
-
-source ${fats_dir}/cleanup.sh
+kubectl delete namespace ${NAMESPACE}
