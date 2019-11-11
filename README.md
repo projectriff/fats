@@ -8,18 +8,23 @@ FATS is a suite of scripts that support testing riff against various Kubernetes 
 
 FATS is expected to be driven by the repository being tested.
 
-An example config is provided in the `.travis.yml` file for this repo that doubles as a test suite for FATS itself. The configuration defines environment variables and scripts to invoke.
+An example config is provided in the `.github/workflows/ci.yaml` file for this repo that doubles as a test suite for FATS itself. The configuration defines environment variables and scripts to invoke.
 
 - `CLUSTER_NAME` a short, url safe, unique name (e.g. fats-123-4) used to distinguish resource between concurrent runs.
 - `NAMESPACE` the namespace to install resources into. May be hard coded for clusters that are provisioned on demand or dynamic for clusters that are reused between runs. (Note: if resources are shared jobs should not run concurrently)
 - `CLUSTER` the type of cluster to use. Some clusters will require additional environment variables
 - `REGISTRY` the type of registry to use. Some registries will require additional environment variables
 
-There are two scripts that are commonly defined for Travis based builds, other CI environments may be configured differently.
+There are several scripts that are commonly defined for FATS runs, environments may be configured differently.
 
-- `script` - starts the cluster then runs your tests. Run `./start.sh` to start the cluster and registry.
-- `after_script` - runs after the script passes or fails or any time you want diagnostics, run `./diagnostics.sh`
-- `after_script` - runs after the script passes or fails. Run `./cleanup.sh` to cleanup the cluster and registry.
+- `start.sh` - starts the cluster and registry
+- `.github/workflows/install.sh` - installs riff and dependencies into the cluster
+- `.github/workflows/run.sh` - runs the tests against the cluster
+- `diagnostics.sh` - dumps diagnostics information about the state of resources on the cluster and controller logs.
+- `.github/workflows/cleanup.sh` - removes resources created by the tests run and removes riff
+- `cleanup.sh` - shutting down the cluster and registry
+
+Note: scripts in the `.github` directory are expected to be provided by each consumer of FATS, these scripts can be used as a starting point.
 
 FATS will:
 
@@ -61,9 +66,17 @@ There are four extension points for FATS:
 
 Support is provided for:
 
-- kind
-- gke
-- pks-gcp
+- `kind`
+  - Required credentials:
+    - *none*
+- `gke`
+  - Required credentials:
+    - `GCLOUD_CLIENT_SECRET`: base64 encoded json GCP service account token
+- `pks-gcp`
+  - Required credentials:
+    - `GCLOUD_CLIENT_SECRET`: base64 encoded json GCP service account token
+    - `TOOLSMITH_ENV`: base64 encoded toolsmiths credential file
+    - `PIVNET_REFRESH_TOKEN` PivNet refresh token able to download the PKS CLI
 
 To add a new cluster, create a directory under `./clusters/` and add three files:
 
@@ -78,9 +91,16 @@ To add a new cluster, create a directory under `./clusters/` and add three files
 
 Support is provided for:
 
-- docker-daemon (unauthenticated)
-- dockerhub
-- gcr
+- `docker-daemon`
+  - Credentials:
+    - *none*
+- `dockerhub`
+  - Credentials:
+    - `DOCKER_USERNAME` DockerHub username
+    - `DOCKER_PASSWORD` DockerHub password
+- `gcr`
+  - Required credentials:
+    - `GCLOUD_CLIENT_SECRET`: base64 encoded json GCP service account token
 
 To add a new registry, create a directory under `./registries/` and add three files:
 
@@ -103,10 +123,9 @@ Support is provided for:
   - node
   - npm
 
-To add a new function, create a directory anywhere, adding the following files:
+To add a new function, create a directory, adding the following files:
 
-- `.fats`
-  - `create` - CLI arguments to pass to `riff function create`, like `--artifact` or `--handler`
+- `riff.toml` - containing values for `artifact` and `handler`, if needed
 - any other files for your function if using `--local-path .`
 
 ### Applications
@@ -117,11 +136,9 @@ Support is provided for:
   - java-boot
   - node
 
-To add a new application, create a directory anywhere, adding the following files:
+To add a new application, create a directory, adding the following files:
 
-- `.fats`
-  - `create` - CLI arguments to pass to `riff application create`, like `--artifact` or `--handler`
-- any other files for your function if using `--local-path .`
+- any other files for your application if using `--local-path .`
 
 ### Tools
 
