@@ -4,6 +4,8 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+source ${FATS_DIR}/.configure.sh
+
 # install tools
 ${FATS_DIR}/install.sh riff
 ${FATS_DIR}/install.sh kubectl
