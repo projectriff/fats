@@ -9,7 +9,7 @@ if [ -z "${CI:-}" ] && [ -z "${GITHUB_WORKSPACE:-}" ]; then
   exit 0
 fi
 
-fi [ -f `dirname "${BASH_SOURCE[0]}"`/tools/$1.installed ]; then
+if [ -f `dirname "${BASH_SOURCE[0]}"`/tools/$1.installed ]; then
   # tool previously installed
   exit 0
 fi
