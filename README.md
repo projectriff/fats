@@ -126,7 +126,7 @@ Support is provided for:
 To add a new function, create a directory, adding the following files:
 
 - `riff.toml` - containing values for `artifact` and `handler`, if needed
-- any other files for your function if using `--local-path .`
+- files for your function
 
 ### Applications
 
@@ -138,7 +138,7 @@ Support is provided for:
 
 To add a new application, create a directory, adding the following files:
 
-- any other files for your application if using `--local-path .`
+- files for your application
 
 ### Tools
 
