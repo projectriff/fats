@@ -1,3 +1,3 @@
 #!/bin/bash
 
-kind delete cluster
+kind delete cluster --name fats
