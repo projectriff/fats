@@ -11,3 +11,7 @@ gcloud container clusters create $CLUSTER_NAME \
 kubectl create clusterrolebinding cluster-admin-binding \
   --clusterrole=cluster-admin \
   --user=$(gcloud config get-value core/account)
+
+echo "Wait for GKE to be fully ready"
+fats_retry kubectl wait pods --for=condition=Ready --all --namespace kube-system --timeout=60s
+fats_retry kubectl wait apiservices --for=condition=Available --all --timeout=60s
