@@ -1,3 +1,4 @@
 #!/bin/bash
 
-kind delete cluster
+CLUSTER_NAME=${CLUSTER_NAME-fats}
+kind delete cluster --name ${CLUSTER_NAME}

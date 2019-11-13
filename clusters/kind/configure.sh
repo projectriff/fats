@@ -4,6 +4,7 @@
 `dirname "${BASH_SOURCE[0]}"`/../../install.sh kind
 
 export K8S_SERVICE_TYPE=NodePort
+CLUSTER_NAME=${CLUSTER_NAME-fats}
 
 wait_for_ingress_ready() {
   local name=$1
@@ -19,7 +20,7 @@ post_registry_start() {
     local registry_ip=$(docker inspect --format "{{.NetworkSettings.IPAddress }}" registry)
 
     # patch /etc/containerd/config.toml
-    docker cp kind-control-plane:/etc/containerd/config.toml containerd-config.toml
+    docker cp ${CLUSTER_NAME}-control-plane:/etc/containerd/config.toml containerd-config.toml
     while IFS= read -r line
     do
       echo "$line" >> containerd-config-patched.toml
@@ -31,15 +32,15 @@ post_registry_start() {
         echo "    endpoint = [\"http://${registry_ip}:5000\"]" >> containerd-config-patched.toml
       fi
     done < "containerd-config.toml"
-    docker cp containerd-config-patched.toml kind-control-plane:/etc/containerd/config.toml
+    docker cp containerd-config-patched.toml ${CLUSTER_NAME}-control-plane:/etc/containerd/config.toml
 
     # add to /etc/hosts
-    docker exec kind-control-plane bash -c "echo \"${registry_ip} registry.kube-system.svc.cluster.local\" >> /etc/hosts"
+    docker exec ${CLUSTER_NAME}-control-plane bash -c "echo \"${registry_ip} registry.kube-system.svc.cluster.local\" >> /etc/hosts"
 
     # restart containerd
-    docker exec kind-control-plane bash -c 'systemctl daemon-reload'
-    docker exec kind-control-plane bash -c 'systemctl restart containerd'
-    docker exec kind-control-plane bash -c 'systemctl restart kubelet'
+    docker exec ${CLUSTER_NAME}-control-plane bash -c 'systemctl daemon-reload'
+    docker exec ${CLUSTER_NAME}-control-plane bash -c 'systemctl restart containerd'
+    docker exec ${CLUSTER_NAME}-control-plane bash -c 'systemctl restart kubelet'
     # TODO figure out what to watch instead of sleep
     sleep 60
   fi
