@@ -4,6 +4,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+test -z ${FATS_DIR-} && FATS_DIR=`dirname "${BASH_SOURCE[0]}"`/../..
 source ${FATS_DIR}/.configure.sh
 
 # install tools

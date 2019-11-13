@@ -5,7 +5,10 @@ echo "Installing a daemon registry"
 docker run -d -p 5000:5000 --name registry registry:2
 
 registry_ip=$(docker inspect --format "{{.NetworkSettings.IPAddress }}" registry)
-sudo su -c "echo \"${registry_ip} registry.kube-system.svc.cluster.local\" >> /etc/hosts"
+if ! grep registry /etc/hosts; then
+  # Still a bug here if the address changes
+  sudo su -c "echo \"${registry_ip} registry.kube-system.svc.cluster.local\" >> /etc/hosts"
+fi
 
 cat <<EOF | kubectl create -f -
 ---
