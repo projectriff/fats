@@ -1,6 +1,6 @@
 #!/bin/bash
 
-helm_version="${1:-2.14.2}"
+helm_version="${1:-2.16.0}"
 base_url="${2:-https://get.helm.sh}"
 
 if [ "$machine" == "MinGw" ]; then

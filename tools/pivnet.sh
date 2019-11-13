@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pivnet_version="${1:-0.0.60}"
+pivnet_version="${1:-0.0.72}"
 base_url="${2:-https://github.com/pivotal-cf/pivnet-cli/releases/download}"
 
 # Install pivnet cli
