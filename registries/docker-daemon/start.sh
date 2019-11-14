@@ -8,6 +8,9 @@ registry_ip=$(docker inspect --format "{{.NetworkSettings.IPAddress }}" registry
 if ! grep registry /etc/hosts; then
   # Still a bug here if the address changes
   sudo su -c "echo \"${registry_ip} registry.kube-system.svc.cluster.local\" >> /etc/hosts"
+else
+  sudo sed -i -e "s/[0-9]*.[0-9]*.[0-9]*.[0-9] registry/${registry_ip} registry/" /etc/hosts \
+    || echo "Cannot edit /etc/hosts trying to add registry ${registry_ip}"
 fi
 
 cat <<EOF | kubectl create -f -
