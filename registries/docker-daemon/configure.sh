@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o nounset
+
 daemonConfig='/etc/docker/daemon.json'
 if test -f ${daemonConfig} && grep -q registry.kube-system.svc.cluster.local ${daemonConfig}; then
   echo "insecure registry previously configured"
@@ -17,7 +19,6 @@ elif which systemctl > /dev/null; then
 fi
 
 IMAGE_REPOSITORY_PREFIX="registry.kube-system.svc.cluster.local:5000"
-CLUSTER_NAME=${CLUSTER_NAME-fats}
 
 fats_image_repo() {
   local function_name=$1

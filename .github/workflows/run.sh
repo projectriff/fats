@@ -4,14 +4,12 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-test -z ${FATS_DIR-} && FATS_DIR=`dirname "${BASH_SOURCE[0]}"`/../..
 source ${FATS_DIR}/.configure.sh
 
 # install tools
 ${FATS_DIR}/install.sh riff
 ${FATS_DIR}/install.sh kubectl
 
-NAMESPACE=${NAMESPACE-fats}
 FATS_REPO=${FATS_REPO-projectriff/fats}
 FATS_REFSPEC=${FATS_REFSPEC-master}
 # setup namespace

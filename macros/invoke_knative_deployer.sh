@@ -1,10 +1,11 @@
 #!/bin/bash
 
+set -o nounset
+
 name=$1
 curl_opts=$2
 expected_data=$3
 
-NAMESPACE=${NAMESPACE:-fats}
 echo "Invoke knative deployer $name"
 
 ip=$(kubectl get service -n istio-system istio-ingressgateway -o jsonpath='{$.status.loadBalancer.ingress[0].ip}')

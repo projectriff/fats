@@ -1,10 +1,11 @@
 #!/bin/bash
 
+set -o nounset
+
 name=$1
 curl_opts=$2
 expected_data=$3
 
-NAMESPACE=${NAMESPACE:-fats}
 echo "Invoke core deployer $name"
 
 svc=$(kubectl get deployers.core.projectriff.io --namespace $NAMESPACE ${name} -o jsonpath='{$.status.serviceName}')
