@@ -10,4 +10,5 @@ if grep -q docker /proc/1/cgroup; then
 fi
 
 # move kubeconfig to expected location
+mkdir -p ~/.kube
 cp <(kind get kubeconfig --name ${CLUSTER_NAME} $flags) ~/.kube/config
