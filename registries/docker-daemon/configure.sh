@@ -10,7 +10,7 @@ if ! grep -q docker /proc/1/cgroup; then
       sudo mkdir -p /etc/docker
       echo '{}' | sudo tee ${daemonConfig} > /dev/null
     fi
-    jq -s '.[0] * .[1]' <( cat ${daemonConfig}) <(echo '{ "insecure-registries": [ "registry.kube-system.svc.cluster.local:5000" ] }') | sudo tee ${daemonConfig} > /dev/null
+    jq -s '.[0] * .[1]' <(cat ${daemonConfig}) <(echo '{ "insecure-registries": [ "registry.kube-system.svc.cluster.local:5000" ] }') | sudo tee ${daemonConfig} > /dev/null
     sudo systemctl daemon-reload
     sudo systemctl restart docker
   fi
