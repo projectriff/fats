@@ -13,12 +13,12 @@ if ! grep -q docker /proc/1/cgroup; then
     jq -s '.[0] * .[1]' <( cat ${daemonConfig}) <(echo '{ "insecure-registries": [ "registry.kube-system.svc.cluster.local:5000" ] }') | sudo tee ${daemonConfig} > /dev/null
     sudo systemctl daemon-reload
     sudo systemctl restart docker
-  else
-    # test that registry is configured correctly
-    docker pull cloudfoundry/run:tiny \
-      && docker tag cloudfoundry/run:tiny registry.kube-system.svc.cluster.local:5000/run:tiny \
-      && docker push registry.kube-system.svc.cluster.local:5000/run:tiny
   fi
+else
+  # test that registry is configured correctly
+  docker pull cloudfoundry/run:tiny \
+    && docker tag cloudfoundry/run:tiny registry.kube-system.svc.cluster.local:5000/run:tiny \
+    && docker push registry.kube-system.svc.cluster.local:5000/run:tiny
 fi
 
 IMAGE_REPOSITORY_PREFIX="registry.kube-system.svc.cluster.local:5000"
