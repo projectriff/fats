@@ -2,12 +2,12 @@
 
 set -o nounset
 
-daemonConfig='/etc/docker/daemon.json'
-if test -f ${daemonConfig} && grep -q registry.kube-system.svc.cluster.local ${daemonConfig}; then
-  echo "insecure registry previously configured"
-elif which systemctl > /dev/null; then
-  if systemctl status docker 2>&1 > /dev/null; then
-    # Allow for insecure registries as long as docker daemon is actually running
+# Allow for insecure registries as long as docker daemon is actually running
+if ! grep -q docker /proc/1/cgroup; then
+  daemonConfig='/etc/docker/daemon.json'
+  if test -f ${daemonConfig} && grep -q registry.kube-system.svc.cluster.local ${daemonConfig}; then
+    echo "insecure registry previously configured"
+  else
     if ! test -f ${daemonConfig} || test -s ${daemonConfig}; then
       sudo mkdir -p /etc/docker
       echo '{}' | sudo tee ${daemonConfig} > /dev/null
