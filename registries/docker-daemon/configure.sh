@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -o nounset
-
 # Allow for insecure registries as long as docker daemon is actually running
 if ! grep -q docker /proc/1/cgroup; then
   daemonConfig='/etc/docker/daemon.json'
