@@ -10,8 +10,6 @@ source ${FATS_DIR}/.configure.sh
 ${FATS_DIR}/install.sh riff
 ${FATS_DIR}/install.sh kubectl
 
-FATS_REPO=${FATS_REPO-projectriff/fats}
-FATS_REFSPEC=${FATS_REFSPEC-master}
 # setup namespace
 kubectl create namespace ${NAMESPACE}
 fats_create_push_credentials ${NAMESPACE}
