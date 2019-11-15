@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -o nounset
-
 name=$1
 curl_opts=$2
 expected_data=$3
