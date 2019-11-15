@@ -74,3 +74,10 @@ echo "##[endgroup]"
 echo "##[group]Knative Serving logs (previous)"
 kubectl logs -p -n knative-serving -l app=controller --tail 10000
 echo "##[endgroup]"
+
+echo "##[group]Knative Serving Activator logs"
+kubectl logs -n knative-serving -l app=activator --tail 10000
+echo "##[endgroup]"
+echo "##[group]Knative Serving Activator logs (previous)"
+kubectl logs -p -n knative-serving -l app=activator --tail 10000
+echo "##[endgroup]"
