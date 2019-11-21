@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o nounset
+
 source `dirname "${BASH_SOURCE[0]}"`/.configure.sh
 
 echo "##[group]Cleanup registry $REGISTRY"

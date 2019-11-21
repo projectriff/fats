@@ -20,6 +20,7 @@ post_registry_start() {
     local registry_ip=$(docker inspect --format "{{.NetworkSettings.IPAddress }}" registry)
 
     # patch /etc/containerd/config.toml
+    rm -f containerd-config-patched.toml
     docker cp ${CLUSTER_NAME}-control-plane:/etc/containerd/config.toml containerd-config.toml
     while IFS= read -r line
     do
