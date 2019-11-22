@@ -7,10 +7,13 @@ if ! grep -q docker /proc/1/cgroup; then
     echo "insecure registry previously configured"
   else
     if ! test -f ${daemonConfig} || test -s ${daemonConfig}; then
-      sudo mkdir -p /etc/docker
+      sudo mkdir -p $(dirname $daemonConfig)
       echo '{}' | sudo tee ${daemonConfig} > /dev/null
     fi
-    jq -s '.[0] * .[1]' <(cat ${daemonConfig}) <(echo '{ "insecure-registries": [ "registry.kube-system.svc.cluster.local:5000" ] }') | sudo tee ${daemonConfig} > /dev/null
+    injectConfig=$(mktemp)
+    echo '{ "insecure-registries": [ "registry.kube-system.svc.cluster.local:5000" ] }' > $injectConfig
+    jq -s '.[0] * .[1]' ${daemonConfig} ${injectConfig} | sudo tee ${daemonConfig} > /dev/null
+    rm $injectConfig
     sudo systemctl daemon-reload
     sudo systemctl restart docker
   fi
