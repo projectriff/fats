@@ -6,7 +6,7 @@ if ! grep -q docker /proc/1/cgroup; then
   if test -f ${daemonConfig} && grep -q registry.kube-system.svc.cluster.local ${daemonConfig}; then
     echo "insecure registry previously configured"
   else
-    if test ! -s ${daemonConfig}; then
+    if test ! -f ${daemonConfig} || ! grep -q '{' ${daemonConfig}; then
       sudo mkdir -p $(dirname $daemonConfig)
       echo '{}' | sudo tee ${daemonConfig} > /dev/null
     fi
