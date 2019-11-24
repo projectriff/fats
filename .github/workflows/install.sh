@@ -27,8 +27,12 @@ helm install projectriff/istio --name istio --namespace istio-system --devel --w
 helm install projectriff/riff --name riff --devel --wait \
   --set cert-manager.enabled=false \
   --set tags.core-runtime=true \
-  --set tags.knative-runtime=true
+  --set tags.knative-runtime=true \
+  --set tags.streaming-runtime=true
 
 # health checks
 echo "Checking for ready ingress"
 wait_for_ingress_ready 'istio-ingressgateway' 'istio-system'
+
+source ${FATS_DIR}/macros/install-kafka.sh
+source ${FATS_DIR}/macros/install-dev-utils.sh

@@ -10,8 +10,6 @@ source ${FATS_DIR}/.configure.sh
 ${FATS_DIR}/install.sh riff
 ${FATS_DIR}/install.sh kubectl
 
-# setup namespace
-kubectl create namespace ${NAMESPACE}
 fats_create_push_credentials ${NAMESPACE}
 
 # in cluster builds
@@ -80,4 +78,38 @@ for test in java-boot node; do
   fats_delete_image ${image}
 
   echo "##[endgroup]"
+done
+
+# test streaming
+riff streaming kafka-provider create franz --bootstrap-servers my-kafka:9092 --namespace $NAMESPACE
+for test in java java-boot; do
+  name=fats-cluster-repeater-${test}
+  image=$(fats_image_repo ${name})
+
+  echo "##[group]Run function ${name}"
+
+  riff function create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
+    --git-repo https://github.com/${FATS_REPO} --git-revision ${FATS_REFSPEC} --sub-path functions/repeater/${test} &
+
+  letters=letters-${test}
+  numbers=numbers-${test}
+  result=result-${test}
+
+  riff streaming stream create ${letters} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
+  riff streaming stream create ${numbers} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'application/json'
+  riff streaming stream create ${result} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
+
+  riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${letters} --input ${numbers} --output ${result} --tail
+
+  kubectl exec dev-utils -- publish ${letters} --payload foo
+  kubectl exec dev-utils -- publish ${numbers} --payload 2 --content-type "application/json"
+  kubectl exec dev-utils -- subscribe ${result} --payload-as-string > result.txt &
+  verify_payload result.txt "[foo foo]"
+
+  riff streaming stream delete ${numbers} --namespace $NAMESPACE
+  riff streaming stream delete ${letters} --namespace $NAMESPACE
+  riff streaming stream delete ${results} --namespace $NAMESPACE
+  riff streaming processor delete $name --namespace $NAMESPACE
+  riff function delete ${name} --namespace ${NAMESPACE}
+  fats_delete_image ${image}
 done

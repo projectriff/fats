@@ -146,3 +146,26 @@ fats_retry() {
 
   return "${result}"
 }
+
+verify_payload() {
+  local filename=$1
+  local expected=$2
+
+  cnt=1
+  while [ $cnt -lt 60 ]; do
+    actual_data=`cat $filename | jq -r .payload`
+    echo "actual_data: $actual_data"
+    if [ "$actual_data" == "$expected" ]; then
+      echo "Check succedded!"
+      return 0
+    fi
+    sleep 1
+    cnt=$((cnt+1))
+  done
+  echo "Actual data not same as expected"
+  echo "Actual:"
+  cat $filename
+  echo "Expected:"
+  echo $expected
+  return 1
+}
