@@ -101,9 +101,10 @@ for test in java java-boot; do
 
   riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${letters} --input ${numbers} --output ${result} --tail
 
-  kubectl exec dev-utils -- publish ${letters} --payload foo
-  kubectl exec dev-utils -- publish ${numbers} --payload 2 --content-type "application/json"
-  kubectl exec dev-utils -- subscribe ${result} --payload-as-string > result.txt &
+  kubectl exec dev-utils -n $NAMESPACE -- subscribe ${result} -n $NAMESPACE --payload-as-string > result.txt &
+  kubectl exec dev-utils -n $NAMESPACE -- publish ${letters} -n $NAMESPACE --payload foo --content-type "text/plain"
+  kubectl exec dev-utils -n $NAMESPACE -- publish ${numbers} -n $NAMESPACE --payload 2 --content-type "application/json"
+  
   verify_payload result.txt "[foo foo]"
 
   riff streaming stream delete ${numbers} --namespace $NAMESPACE
@@ -113,3 +114,4 @@ for test in java java-boot; do
   riff function delete ${name} --namespace ${NAMESPACE}
   fats_delete_image ${image}
 done
+riff streaming kafka-provider delete franz --namespace $NAMESPACE
