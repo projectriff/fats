@@ -152,7 +152,7 @@ verify_payload() {
   local expected=$2
 
   cnt=1
-  while [ $cnt -lt 60 ]; do
+  while [ $cnt -lt 180 ]; do
     actual_data=`cat $filename | jq -r .payload`
     echo "actual_data: $actual_data"
     if [ "$actual_data" == "$expected" ]; then
