@@ -69,16 +69,20 @@ for mode in ${modes}; do
 
     riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${input} --output ${output} --tail
 
-    kubectl exec dev-utils -n $NAMESPACE -- subscribe ${output} -n $NAMESPACE --payload-as-string > result.txt &
+    kubectl exec dev-utils -n $NAMESPACE -- subscribe ${output} -n $NAMESPACE --payload-as-string | tee result.txt &
+    subscribe_exec=$?
+    sleep 5
     kubectl exec dev-utils -n $NAMESPACE -- publish ${input} -n $NAMESPACE --payload "fats" --content-type "text/plain"
 
     verify_payload result.txt "FATS"
+    kill $subscribe_exec
 
     riff streaming stream delete ${input} --namespace $NAMESPACE
     riff streaming stream delete ${output} --namespace $NAMESPACE
     riff streaming processor delete $name --namespace $NAMESPACE
 
     # cleanup
+
     riff function delete ${name} --namespace ${NAMESPACE}
     fats_delete_image ${image}
 
