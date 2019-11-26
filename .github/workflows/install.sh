@@ -14,6 +14,7 @@ readonly riff_version=0.5.0-snapshot
 source ${FATS_DIR}/.configure.sh
 
 ${FATS_DIR}/install.sh kapp
+${FATS_DIR}/install.sh ytt
 ${FATS_DIR}/install.sh kubectl
 
 kubectl create ns apps
