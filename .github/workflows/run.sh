@@ -91,20 +91,25 @@ for test in java java-boot; do
   riff function create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
     --git-repo https://github.com/${FATS_REPO} --git-revision ${FATS_REFSPEC} --sub-path functions/repeater/${test} &
 
-  letters=letters-${test}
-  numbers=numbers-${test}
-  result=result-${test}
+  letters=${name}-letters
+  numbers=${name}-numbers
+  result=${name}-result
 
   riff streaming stream create ${letters} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
   riff streaming stream create ${numbers} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'application/json'
   riff streaming stream create ${result} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
+
+  # TODO remove once riff streaming stream supports --tail
+  kubectl wait streams.streaming.projectriff.io ${letters} --for=condition=Ready--namespace $NAMESPACE --timeout=60s
+  kubectl wait streams.streaming.projectriff.io ${numbers} --for=condition=Ready--namespace $NAMESPACE --timeout=60s
+  kubectl wait streams.streaming.projectriff.io ${result} --for=condition=Ready--namespace $NAMESPACE --timeout=60s
 
   riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${letters} --input ${numbers} --output ${result} --tail
 
   kubectl exec dev-utils -n $NAMESPACE -- subscribe ${result} -n $NAMESPACE --payload-as-string > result.txt &
   kubectl exec dev-utils -n $NAMESPACE -- publish ${letters} -n $NAMESPACE --payload foo --content-type "text/plain"
   kubectl exec dev-utils -n $NAMESPACE -- publish ${numbers} -n $NAMESPACE --payload 2 --content-type "application/json"
-  
+
   verify_payload result.txt "[foo foo]"
 
   riff streaming stream delete ${numbers} --namespace $NAMESPACE
