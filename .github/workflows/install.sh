@@ -35,4 +35,3 @@ echo "Checking for ready ingress"
 wait_for_ingress_ready 'istio-ingressgateway' 'istio-system'
 
 source ${FATS_DIR}/macros/install-kafka.sh
-source ${FATS_DIR}/macros/install-dev-utils.sh
