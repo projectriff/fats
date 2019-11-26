@@ -83,39 +83,71 @@ fats_create_push_credentials ${NAMESPACE}
 
 # test streaming
 riff streaming kafka-provider create franz --bootstrap-servers my-kafka:9092 --namespace $NAMESPACE
-for test in java java-boot; do
-  name=fats-cluster-repeater-${test}
+# for test in java java-boot; do
+#   name=fats-cluster-repeater-${test}
+#   image=$(fats_image_repo ${name})
+
+#   echo "##[group]Run function ${name}"
+
+#   riff function create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
+#     --git-repo https://github.com/${FATS_REPO} --git-revision ${FATS_REFSPEC} --sub-path functions/repeater/${test} &
+
+#   letters=${name}-letters
+#   numbers=${name}-numbers
+#   result=${name}-result
+
+#   riff streaming stream create ${letters} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
+#   riff streaming stream create ${numbers} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'application/json'
+#   riff streaming stream create ${result} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
+
+#   # TODO remove once riff streaming stream supports --tail
+#   kubectl wait streams.streaming.projectriff.io ${letters} --for=condition=Ready--namespace $NAMESPACE --timeout=60s
+#   kubectl wait streams.streaming.projectriff.io ${numbers} --for=condition=Ready--namespace $NAMESPACE --timeout=60s
+#   kubectl wait streams.streaming.projectriff.io ${result} --for=condition=Ready--namespace $NAMESPACE --timeout=60s
+
+#   riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${letters} --input ${numbers} --output ${result} --tail
+
+#   kubectl exec dev-utils -n $NAMESPACE -- subscribe ${result} -n $NAMESPACE --payload-as-string > result.txt &
+#   kubectl exec dev-utils -n $NAMESPACE -- publish ${letters} -n $NAMESPACE --payload foo --content-type "text/plain"
+#   kubectl exec dev-utils -n $NAMESPACE -- publish ${numbers} -n $NAMESPACE --payload 2 --content-type "application/json"
+
+#   verify_payload result.txt "[foo foo]"
+
+#   riff streaming stream delete ${numbers} --namespace $NAMESPACE
+#   riff streaming stream delete ${letters} --namespace $NAMESPACE
+#   riff streaming stream delete ${results} --namespace $NAMESPACE
+#   riff streaming processor delete $name --namespace $NAMESPACE
+#   riff function delete ${name} --namespace ${NAMESPACE}
+#   fats_delete_image ${image}
+# done
+for test in node; do
+  name=fats-cluster-echo-${test}
   image=$(fats_image_repo ${name})
 
   echo "##[group]Run function ${name}"
 
   riff function create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
-    --git-repo https://github.com/${FATS_REPO} --git-revision ${FATS_REFSPEC} --sub-path functions/repeater/${test} &
+    --git-repo https://github.com/${FATS_REPO} --git-revision ${FATS_REFSPEC} --sub-path functions/echo/${test} &
 
-  letters=${name}-letters
-  numbers=${name}-numbers
-  result=${name}-result
+  input=${name}-input
+  output=${name}-output
 
-  riff streaming stream create ${letters} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
-  riff streaming stream create ${numbers} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'application/json'
-  riff streaming stream create ${result} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
+  riff streaming stream create ${input} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
+  riff streaming stream create ${output} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
 
   # TODO remove once riff streaming stream supports --tail
-  kubectl wait streams.streaming.projectriff.io ${letters} --for=condition=Ready--namespace $NAMESPACE --timeout=60s
-  kubectl wait streams.streaming.projectriff.io ${numbers} --for=condition=Ready--namespace $NAMESPACE --timeout=60s
-  kubectl wait streams.streaming.projectriff.io ${result} --for=condition=Ready--namespace $NAMESPACE --timeout=60s
+  kubectl wait streams.streaming.projectriff.io ${input} --for=condition=Ready--namespace $NAMESPACE --timeout=60s
+  kubectl wait streams.streaming.projectriff.io ${output} --for=condition=Ready--namespace $NAMESPACE --timeout=60s
 
-  riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${letters} --input ${numbers} --output ${result} --tail
+  riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${input} --output ${output} --tail
 
-  kubectl exec dev-utils -n $NAMESPACE -- subscribe ${result} -n $NAMESPACE --payload-as-string > result.txt &
-  kubectl exec dev-utils -n $NAMESPACE -- publish ${letters} -n $NAMESPACE --payload foo --content-type "text/plain"
-  kubectl exec dev-utils -n $NAMESPACE -- publish ${numbers} -n $NAMESPACE --payload 2 --content-type "application/json"
+  kubectl exec dev-utils -n $NAMESPACE -- subscribe ${output} -n $NAMESPACE --payload-as-string > result.txt &
+  kubectl exec dev-utils -n $NAMESPACE -- publish ${input} -n $NAMESPACE --payload "fats" --content-type "text/plain"
 
-  verify_payload result.txt "[foo foo]"
+  verify_payload result.txt "fats"
 
-  riff streaming stream delete ${numbers} --namespace $NAMESPACE
-  riff streaming stream delete ${letters} --namespace $NAMESPACE
-  riff streaming stream delete ${results} --namespace $NAMESPACE
+  riff streaming stream delete ${input} --namespace $NAMESPACE
+  riff streaming stream delete ${output} --namespace $NAMESPACE
   riff streaming processor delete $name --namespace $NAMESPACE
   riff function delete ${name} --namespace ${NAMESPACE}
   fats_delete_image ${image}
