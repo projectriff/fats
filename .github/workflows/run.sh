@@ -64,8 +64,8 @@ for mode in ${modes}; do
     riff streaming stream create ${output} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
 
     # TODO remove once riff streaming stream supports --tail
-    kubectl wait streams.streaming.projectriff.io ${input} --for=condition=Ready--namespace $NAMESPACE --timeout=60s
-    kubectl wait streams.streaming.projectriff.io ${output} --for=condition=Ready--namespace $NAMESPACE --timeout=60s
+    kubectl wait streams.streaming.projectriff.io ${input} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
+    kubectl wait streams.streaming.projectriff.io ${output} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
 
     riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${input} --output ${output} --tail
 
