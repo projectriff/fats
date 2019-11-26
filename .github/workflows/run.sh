@@ -15,21 +15,22 @@ fats_create_push_credentials ${NAMESPACE}
 source ${FATS_DIR}/macros/install-dev-utils.sh
 riff streaming kafka-provider create franz --bootstrap-servers kafka.kafka.svc.cluster.local:9092 --namespace $NAMESPACE
 
-# in cluster builds
+if [ "${machine}" != "MinGw" ]; then
+  modes="cluster local"
+else
+  modes="cluster"
+fi
+
 # workaround for https://github.com/projectriff/node-function-invoker/issues/113
 if [ ${CLUSTER} = "pks-gcp" ]; then
   languages="command java java-boot"
 else
   languages="command node npm java java-boot"
 fi
-if [ "${machine}" != "MinGw" ]; then
-  modes="cluster local"
-else
-  modes="cluster"
-fi
 for mode in ${modes}; do
+  # functions
   for test in ${languages}; do
-    name=fats-${mode}-uppercase-${test}
+    name=fats-${mode}-fn-uppercase-${test}
     image=$(fats_image_repo ${name})
 
     echo "##[group]Run function ${name}"
@@ -79,6 +80,41 @@ for mode in ${modes}; do
 
     # cleanup
     riff function delete ${name} --namespace ${NAMESPACE}
+    fats_delete_image ${image}
+
+    echo "##[endgroup]"
+  done
+
+  # applications
+  for test in ${languages}; do
+    name=fats-${mode}-app-uppercase-${test}
+    image=$(fats_image_repo ${name})
+
+    echo "##[group]Run application ${name}"
+
+    if [ "${mode}" == "cluster" ]; then
+      riff application create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
+        --git-repo https://github.com/${FATS_REPO} --git-revision ${FATS_REFSPEC} --sub-path applications/uppercase/${test}
+    elif [ "${mode}" == "local" ]; then
+      riff application create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
+        --local-path ${FATS_DIR}/applications/uppercase/${test}
+    else
+      echo "Unknown mode: ${mode}"
+      exit 1
+    fi
+
+    # core runtime
+    riff core deployer create ${name} --application-ref ${name} --namespace ${NAMESPACE} --tail
+    source ${FATS_DIR}/macros/invoke_core_deployer.sh ${name} "--get --data-urlencode input=fats" FATS
+    riff core deployer delete ${name} --namespace ${NAMESPACE}
+
+    # knative runtime
+    riff knative deployer create ${name} --application-ref ${name} --namespace ${NAMESPACE} --tail
+    source ${FATS_DIR}/macros/invoke_knative_deployer.sh ${name} "--get --data-urlencode input=fats" FATS
+    riff knative deployer delete ${name} --namespace ${NAMESPACE}
+
+    # cleanup
+    riff application delete ${name} --namespace ${NAMESPACE}
     fats_delete_image ${image}
 
     echo "##[endgroup]"
