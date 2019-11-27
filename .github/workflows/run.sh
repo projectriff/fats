@@ -68,7 +68,7 @@ for mode in ${modes}; do
     kubectl wait streams.streaming.projectriff.io ${upper_stream} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
 
     riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${lower_stream} --output ${upper_stream}
-    riff streaming processor tail $name --namespace $NAMESPACE > processor.log &
+    riff streaming processor tail $name --namespace $NAMESPACE > processor.log || true &
     processor_pid=$?
     kubectl wait processors.streaming.projectriff.io $name --for=condition=Ready --namespace $NAMESPACE --timeout=60s
 
