@@ -18,11 +18,10 @@ riff streaming kafka-provider create franz --bootstrap-servers kafka.kafka.svc.c
 # streaming runtime (debug)
 riff streaming stream create echo --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
 kubectl wait streams.streaming.projectriff.io echo --for=condition=Ready --namespace $NAMESPACE --timeout=60s
-kubectl exec dev-utils -n $NAMESPACE -- subscribe echo -n $NAMESPACE --payload-as-string | tee result.txt || true &
-subscribe_exec=$?
+kubectl exec dev-utils -n $NAMESPACE -- subscribe echo -n $NAMESPACE --payload-as-string &
 kubectl exec dev-utils -n $NAMESPACE -- publish echo -n $NAMESPACE --payload "fats" --content-type "text/plain"
 verify_payload result.txt "fats"
-kill $subscribe_exec
+kubectl exec dev-utils -n $NAMESPACE -- sh -c 'kill $(pidof subscription)'
 riff streaming stream delete echo --namespace $NAMESPACE
 
 
@@ -81,11 +80,12 @@ for mode in ${modes}; do
 
     riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${input} --output ${output} --tail
 
-    kubectl exec dev-utils -n $NAMESPACE -- subscribe ${output} -n $NAMESPACE --payload-as-string | tee result.txt || true &
-    subscribe_exec=$?
+    kubectl exec dev-utils -n $NAMESPACE -- subscribe ${output} -n $NAMESPACE --payload-as-string | tee result.txt &
     kubectl exec dev-utils -n $NAMESPACE -- publish ${input} -n $NAMESPACE --payload "fats" --content-type "text/plain"
 
     verify_payload result.txt "FATS"
+    kubectl exec dev-utils -n $NAMESPACE -- sh -c 'kill $(pidof subscription)'
+
     kill $subscribe_exec
 
     riff streaming stream delete ${input} --namespace $NAMESPACE
