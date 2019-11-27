@@ -15,17 +15,6 @@ fats_create_push_credentials ${NAMESPACE}
 source ${FATS_DIR}/macros/create-riff-dev-pod.sh
 riff streaming kafka-provider create franz --bootstrap-servers kafka.kafka.svc.cluster.local:9092 --namespace $NAMESPACE
 
-# streaming runtime (debug)
-riff streaming stream create echo --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
-kubectl wait streams.streaming.projectriff.io echo --for=condition=Ready --namespace $NAMESPACE --timeout=60s
-kubectl exec riff-dev -n $NAMESPACE -- subscribe echo -n $NAMESPACE --payload-as-string > result.txt &
-kubectl exec riff-dev -n $NAMESPACE -- publish echo -n $NAMESPACE --payload "fats" --content-type "text/plain"
-verify_payload result.txt "fats"
-kubectl exec riff-dev -n $NAMESPACE -- sh -c 'kill $(pidof subscribe)'
-riff streaming stream delete echo --namespace $NAMESPACE
-
-
-
 if [ "${machine}" != "MinGw" ]; then
   modes="cluster local"
 else
