@@ -21,7 +21,7 @@ kubectl wait streams.streaming.projectriff.io echo --for=condition=Ready --names
 kubectl exec dev-utils -n $NAMESPACE -- subscribe echo -n $NAMESPACE --payload-as-string > result.txt &
 kubectl exec dev-utils -n $NAMESPACE -- publish echo -n $NAMESPACE --payload "fats" --content-type "text/plain"
 verify_payload result.txt "fats"
-kubectl exec dev-utils -n $NAMESPACE -- sh -c 'kill $(pidof subscription)'
+kubectl exec dev-utils -n $NAMESPACE -- sh -c 'kill $(pidof subscribe)'
 riff streaming stream delete echo --namespace $NAMESPACE
 
 
@@ -84,7 +84,7 @@ for mode in ${modes}; do
     kubectl exec dev-utils -n $NAMESPACE -- publish ${input} -n $NAMESPACE --payload "fats" --content-type "text/plain"
 
     verify_payload result.txt "FATS"
-    kubectl exec dev-utils -n $NAMESPACE -- sh -c 'kill $(pidof subscription)'
+    kubectl exec dev-utils -n $NAMESPACE -- sh -c 'kill $(pidof subscribe)'
 
     kill $subscribe_exec
 
