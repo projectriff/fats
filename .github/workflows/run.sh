@@ -68,32 +68,29 @@ for mode in ${modes}; do
     riff knative deployer delete ${name} --namespace ${NAMESPACE}
 
     # streaming runtime
-    input=${name}-input
-    output=${name}-output
+    lower_stream=${name}-lower
+    upper_stream=${name}-upper
 
-    riff streaming stream create ${input} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
-    riff streaming stream create ${output} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
+    riff streaming stream create ${lower_stream} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
+    riff streaming stream create ${upper_stream} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
 
     # TODO remove once riff streaming stream supports --tail
-    kubectl wait streams.streaming.projectriff.io ${input} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
-    kubectl wait streams.streaming.projectriff.io ${output} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
+    kubectl wait streams.streaming.projectriff.io ${lower_stream} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
+    kubectl wait streams.streaming.projectriff.io ${upper_stream} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
 
-    riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${input} --output ${output} --tail
+    riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${lower_stream} --output ${upper_stream} --tail
 
-    kubectl exec dev-utils -n $NAMESPACE -- subscribe ${output} -n $NAMESPACE --payload-as-string | tee result.txt &
-    kubectl exec dev-utils -n $NAMESPACE -- publish ${input} -n $NAMESPACE --payload "fats" --content-type "text/plain"
+    kubectl exec dev-utils -n $NAMESPACE -- subscribe ${upper_stream} -n $NAMESPACE --payload-as-string | tee result.txt &
+    kubectl exec dev-utils -n $NAMESPACE -- publish ${lower_stream} -n $NAMESPACE --payload "fats" --content-type "text/plain"
 
     verify_payload result.txt "FATS"
     kubectl exec dev-utils -n $NAMESPACE -- sh -c 'kill $(pidof subscribe)'
 
-    kill $subscribe_exec
-
-    riff streaming stream delete ${input} --namespace $NAMESPACE
-    riff streaming stream delete ${output} --namespace $NAMESPACE
+    riff streaming stream delete ${lower_stream} --namespace $NAMESPACE
+    riff streaming stream delete ${upper_stream} --namespace $NAMESPACE
     riff streaming processor delete $name --namespace $NAMESPACE
 
     # cleanup
-
     riff function delete ${name} --namespace ${NAMESPACE}
     fats_delete_image ${image}
 
