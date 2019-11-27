@@ -21,14 +21,15 @@ else
   modes="cluster"
 fi
 
-# workaround for https://github.com/projectriff/node-function-invoker/issues/113
-if [ ${CLUSTER} = "pks-gcp" ]; then
-  languages="java java-boot command"
-else
-  languages="node npm java java-boot command"
-fi
+
 for mode in ${modes}; do
   # functions
+  # workaround for https://github.com/projectriff/node-function-invoker/issues/113
+  if [ ${CLUSTER} = "pks-gcp" ]; then
+    languages="command java java-boot"
+  else
+    languages="command node npm java java-boot"
+  fi
   for test in ${languages}; do
     name=fats-${mode}-fn-uppercase-${test}
     image=$(fats_image_repo ${name})
@@ -115,7 +116,7 @@ for mode in ${modes}; do
   done
 
   # applications
-  for test in ${languages}; do
+  for test in node java-boot; do
     name=fats-${mode}-app-uppercase-${test}
     image=$(fats_image_repo ${name})
 
