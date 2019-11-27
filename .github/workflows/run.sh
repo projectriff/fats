@@ -78,12 +78,38 @@ for mode in ${modes}; do
     kubectl wait streams.streaming.projectriff.io ${lower_stream} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
     kubectl wait streams.streaming.projectriff.io ${upper_stream} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
 
-    riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${lower_stream} --output ${upper_stream} --tail
+    riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${lower_stream} --output ${upper_stream}
+    riff streaming processor tail $name --namespace $NAMESPACE > processor.log &
+    processor_pid=$?
+    kubectl wait processors.streaming.projectriff.io $name --for=condition=Ready --namespace $NAMESPACE --timeout=60s
 
     kubectl exec riff-dev -n $NAMESPACE -- subscribe ${upper_stream} -n $NAMESPACE --payload-as-string | tee result.txt &
     kubectl exec riff-dev -n $NAMESPACE -- publish ${lower_stream} -n $NAMESPACE --payload "fats" --content-type "text/plain"
 
-    verify_payload result.txt "FATS"
+    actual_data=""
+    expected_data="FATS"
+    cnt=1
+    while [ $cnt -lt 60 ] && [ $expected_data != $actual_data ]; do
+      sleep 1
+      cnt=$((cnt+1))
+
+      actual_data=`cat result.txt | jq -r .payload`
+      echo -n "."
+    done
+
+    kill $processor_pid
+    echo ""
+    echo "Processor log:"
+    cat processor.log
+    echo ""
+
+    if [ "$actual_data" != "$expected_data" ]; then
+      echo -e "${ANSI_RED}did not produce expected result${ANSI_RESET}:";
+      echo -e "   expected: $expected_data"
+      echo -e "   actual: $actual_data"
+      exit 1
+    fi
+
     kubectl exec riff-dev -n $NAMESPACE -- sh -c 'kill $(pidof subscribe)'
 
     riff streaming stream delete ${lower_stream} --namespace $NAMESPACE
