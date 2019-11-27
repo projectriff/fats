@@ -2,7 +2,7 @@
 
 set -o errexit
 set -o nounset
-# set -o pipefail
+set -o pipefail
 
 source ${FATS_DIR}/.configure.sh
 
@@ -68,7 +68,7 @@ for mode in ${modes}; do
     kubectl wait streams.streaming.projectriff.io ${upper_stream} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
 
     riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${lower_stream} --output ${upper_stream}
-    riff streaming processor tail $name --namespace $NAMESPACE > processor.log || true &
+    riff streaming processor tail $name --namespace $NAMESPACE > processor.${name}.log &
     processor_pid=$?
     kubectl wait processors.streaming.projectriff.io $name --for=condition=Ready --namespace $NAMESPACE --timeout=60s
 
@@ -90,11 +90,11 @@ for mode in ${modes}; do
       sleep 1
     done
 
-    kill $processor_pid
     echo ""
     echo "Processor log:"
-    cat processor.log
+    cat processor.${name}.log
     echo ""
+    # kill $processor_pid
 
     fats_assert "$expected_data" "$actual_data"
 
