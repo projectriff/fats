@@ -18,7 +18,7 @@ riff streaming kafka-provider create franz --bootstrap-servers kafka.kafka.svc.c
 # streaming runtime (debug)
 riff streaming stream create echo --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
 kubectl wait streams.streaming.projectriff.io echo --for=condition=Ready --namespace $NAMESPACE --timeout=60s
-kubectl exec dev-utils -n $NAMESPACE -- subscribe echo -n $NAMESPACE --payload-as-string &
+kubectl exec dev-utils -n $NAMESPACE -- subscribe echo -n $NAMESPACE --payload-as-string > result.txt &
 kubectl exec dev-utils -n $NAMESPACE -- publish echo -n $NAMESPACE --payload "fats" --content-type "text/plain"
 verify_payload result.txt "fats"
 kubectl exec dev-utils -n $NAMESPACE -- sh -c 'kill $(pidof subscription)'
