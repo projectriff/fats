@@ -47,12 +47,12 @@ for mode in ${modes}; do
     fi
 
     # core runtime
-    riff core deployer create ${name} --function-ref ${name} --namespace ${NAMESPACE} --tail
+    riff core deployer create ${name} --function-ref ${name} --ingress-policy ClusterLocal --namespace ${NAMESPACE} --tail
     source ${FATS_DIR}/macros/invoke_core_deployer.sh ${name} "-H Content-Type:text/plain -H Accept:text/plain -d fats" FATS
     riff core deployer delete ${name} --namespace ${NAMESPACE}
 
     # knative runtime
-    riff knative deployer create ${name} --function-ref ${name} --namespace ${NAMESPACE} --tail
+    riff knative deployer create ${name} --function-ref ${name} --ingress-policy External --namespace ${NAMESPACE} --tail
     source ${FATS_DIR}/macros/invoke_knative_deployer.sh ${name} "-H Content-Type:text/plain -H Accept:text/plain -d fats" FATS
     riff knative deployer delete ${name} --namespace ${NAMESPACE}
 
