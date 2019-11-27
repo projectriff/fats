@@ -31,9 +31,4 @@ rm $name.out
 # add a new line after invoke, but without impacting the curl output
 echo ""
 
-if [ "$actual_data" != "$expected_data" ]; then
-  echo -e "${ANSI_RED}did not produce expected result${ANSI_RESET}:";
-  echo -e "   expected: $expected_data"
-  echo -e "   actual: $actual_data"
-  exit 1
-fi
+fats_assert "$expected_data" "$actual_data"

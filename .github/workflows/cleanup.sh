@@ -4,21 +4,8 @@ set -o nounset
 
 source ${FATS_DIR}/.util.sh
 
-echo "Uninstall riff system"
-
 source ${FATS_DIR}/macros/cleanup-user-resources.sh
-
-
-
-
-
-#!/usr/bin/env bash
-
-set -o errexit
-set -o nounset
-set -o pipefail
-
-source ${FATS_DIR}/.configure.sh
+kubectl delete namespace ${NAMESPACE}
 
 echo "Removing Kafka"
 kapp delete -n apps -a kafka -y
@@ -50,5 +37,3 @@ kapp delete -n apps -a kpack -y
 
 echo "Removing Cert Manager"
 kapp delete -n apps -a cert-manager -y
-
-kubectl delete namespace ${NAMESPACE}

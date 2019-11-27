@@ -146,3 +146,15 @@ fats_retry() {
 
   return "${result}"
 }
+
+fats_assert() {
+  local expected_data=${1}
+  local actual_data=${2}
+
+  if [ "$actual_data" != "$expected_data" ]; then
+    echo -e "${ANSI_RED}did not produce expected result${ANSI_RESET}:";
+    echo -e "   expected: $expected_data"
+    echo -e "   actual: $actual_data"
+    exit 1
+  fi
+}

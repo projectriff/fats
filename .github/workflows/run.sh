@@ -10,74 +10,145 @@ source ${FATS_DIR}/.configure.sh
 ${FATS_DIR}/install.sh riff
 ${FATS_DIR}/install.sh kubectl
 
-# setup namespace
-kubectl create namespace ${NAMESPACE}
+kubectl create ns $NAMESPACE
 fats_create_push_credentials ${NAMESPACE}
+source ${FATS_DIR}/macros/create-riff-dev-pod.sh
+riff streaming kafka-provider create franz --bootstrap-servers kafka.kafka.svc.cluster.local:9092 --namespace $NAMESPACE
 
-# in cluster builds
-# workaround for https://github.com/projectriff/node-function-invoker/issues/113
-if [ ${CLUSTER} = "pks-gcp" ]; then
-  languages="java java-boot command"
-else
-  languages="java java-boot node npm command"
-fi
-for test in ${languages}; do
-  name=fats-cluster-uppercase-${test}
-  image=$(fats_image_repo ${name})
-
-  echo "##[group]Run function ${name}"
-
-  riff function create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
-    --git-repo https://github.com/${FATS_REPO} --git-revision ${FATS_REFSPEC} --sub-path functions/uppercase/${test} &
-  riff core deployer create ${name} --function-ref ${name} --namespace ${NAMESPACE} --tail
-
-  source ${FATS_DIR}/macros/invoke_core_deployer.sh ${name} "-H Content-Type:text/plain -H Accept:text/plain -d fats" FATS
-
-  riff core deployer delete ${name} --namespace ${NAMESPACE}
-  riff function delete ${name} --namespace ${NAMESPACE}
-  fats_delete_image ${image}
-
-  echo "##[endgroup]"
-done
-
-# local builds
 if [ "${machine}" != "MinGw" ]; then
-  # TODO enable for windows once we have a linux docker daemon available
+  modes="cluster local"
+else
+  modes="cluster"
+fi
+
+
+for mode in ${modes}; do
+  # functions
+  # workaround for https://github.com/projectriff/node-function-invoker/issues/113
+  if [ ${CLUSTER} = "pks-gcp" ]; then
+    languages="command java java-boot"
+  else
+    languages="command node npm java java-boot"
+  fi
   for test in ${languages}; do
-    name=fats-local-uppercase-${test}
+    name=fats-${mode}-fn-uppercase-${test}
     image=$(fats_image_repo ${name})
 
     echo "##[group]Run function ${name}"
 
-    riff function create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
-      --local-path ${FATS_DIR}/functions/uppercase/${test} &
-    riff knative deployer create ${name} --function-ref ${name} --namespace ${NAMESPACE} --tail
+    if [ "${mode}" == "cluster" ]; then
+      riff function create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
+        --git-repo https://github.com/${FATS_REPO} --git-revision ${FATS_REFSPEC} --sub-path functions/uppercase/${test}
+    elif [ "${mode}" == "local" ]; then
+      riff function create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
+        --local-path ${FATS_DIR}/functions/uppercase/${test}
+    else
+      echo "Unknown mode: ${mode}"
+      exit 1
+    fi
 
+    # core runtime
+    riff core deployer create ${name} --function-ref ${name} --ingress-policy ClusterLocal --namespace ${NAMESPACE} --tail
+    source ${FATS_DIR}/macros/invoke_core_deployer.sh ${name} "-H Content-Type:text/plain -H Accept:text/plain -d fats" FATS
+    riff core deployer delete ${name} --namespace ${NAMESPACE}
+
+    # knative runtime
+    riff knative deployer create ${name} --function-ref ${name} --ingress-policy External --namespace ${NAMESPACE} --tail
     source ${FATS_DIR}/macros/invoke_knative_deployer.sh ${name} "-H Content-Type:text/plain -H Accept:text/plain -d fats" FATS
-
     riff knative deployer delete ${name} --namespace ${NAMESPACE}
+
+    # TODO enable streaming tests
+    # # streaming runtime
+    # if [ "$test" != "commnd" ]; then
+    #   lower_stream=${name}-lower
+    #   upper_stream=${name}-upper
+
+    #   riff streaming stream create ${lower_stream} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
+    #   riff streaming stream create ${upper_stream} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
+
+    #   # TODO remove once riff streaming stream supports --tail
+    #   kubectl wait streams.streaming.projectriff.io ${lower_stream} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
+    #   kubectl wait streams.streaming.projectriff.io ${upper_stream} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
+
+    #   riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${lower_stream} --output ${upper_stream}
+    #   riff streaming processor tail $name --namespace $NAMESPACE > processor.${name}.log &
+    #   processor_pid=$?
+    #   kubectl wait processors.streaming.projectriff.io $name --for=condition=Ready --namespace $NAMESPACE --timeout=60s
+
+    #   kubectl exec riff-dev -n $NAMESPACE -- subscribe ${upper_stream} -n $NAMESPACE --payload-as-string | tee result.txt &
+    #   kubectl exec riff-dev -n $NAMESPACE -- publish ${lower_stream} -n $NAMESPACE --payload "fats" --content-type "text/plain"
+
+    #   actual_data=""
+    #   expected_data="FATS"
+    #   cnt=1
+    #   while [ $cnt -lt 60 ]; do
+    #     echo -n "."
+    #     cnt=$((cnt+1))
+
+    #     actual_data=`cat result.txt | jq -r .payload`
+    #     if [ "$actual_data" == "$expected_data" ]; then
+    #       break
+    #     fi
+
+    #     sleep 1
+    #   done
+
+    #   echo ""
+    #   echo "Processor log:"
+    #   cat processor.${name}.log
+    #   echo ""
+    #   # kill $processor_pid
+
+    #   fats_assert "$expected_data" "$actual_data"
+
+    #   kubectl exec riff-dev -n $NAMESPACE -- sh -c 'kill $(pidof subscribe)'
+
+    #   riff streaming stream delete ${lower_stream} --namespace $NAMESPACE
+    #   riff streaming stream delete ${upper_stream} --namespace $NAMESPACE
+    #   riff streaming processor delete $name --namespace $NAMESPACE
+    # fi
+
+    # cleanup
     riff function delete ${name} --namespace ${NAMESPACE}
     fats_delete_image ${image}
 
     echo "##[endgroup]"
   done
-fi
 
-for test in java-boot node; do
-  name=fats-application-uppercase-${test}
-  image=$(fats_image_repo ${name})
+  # applications
+  for test in node java-boot; do
+    name=fats-${mode}-app-uppercase-${test}
+    image=$(fats_image_repo ${name})
 
-  echo "##[group]Run application ${name}"
+    echo "##[group]Run application ${name}"
 
-  riff application create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
-    --git-repo https://github.com/${FATS_REPO} --git-revision ${FATS_REFSPEC} --sub-path applications/uppercase/${test} &
-  riff core deployer create ${name} --application-ref ${name} --namespace ${NAMESPACE} --tail
+    if [ "${mode}" == "cluster" ]; then
+      riff application create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
+        --git-repo https://github.com/${FATS_REPO} --git-revision ${FATS_REFSPEC} --sub-path applications/uppercase/${test}
+    elif [ "${mode}" == "local" ]; then
+      riff application create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
+        --local-path ${FATS_DIR}/applications/uppercase/${test}
+    else
+      echo "Unknown mode: ${mode}"
+      exit 1
+    fi
 
-  source ${FATS_DIR}/macros/invoke_core_deployer.sh ${name} "--get --data-urlencode input=fats" FATS
+    # core runtime
+    riff core deployer create ${name} --application-ref ${name} --namespace ${NAMESPACE} --tail
+    source ${FATS_DIR}/macros/invoke_core_deployer.sh ${name} "--get --data-urlencode input=fats" FATS
+    riff core deployer delete ${name} --namespace ${NAMESPACE}
 
-  riff core deployer delete ${name} --namespace ${NAMESPACE}
-  riff application delete ${name} --namespace ${NAMESPACE}
-  fats_delete_image ${image}
+    # knative runtime
+    riff knative deployer create ${name} --application-ref ${name} --namespace ${NAMESPACE} --tail
+    source ${FATS_DIR}/macros/invoke_knative_deployer.sh ${name} "--get --data-urlencode input=fats" FATS
+    riff knative deployer delete ${name} --namespace ${NAMESPACE}
 
-  echo "##[endgroup]"
+    # cleanup
+    riff application delete ${name} --namespace ${NAMESPACE}
+    fats_delete_image ${image}
+
+    echo "##[endgroup]"
+  done
 done
+
+riff streaming kafka-provider delete franz --namespace $NAMESPACE
