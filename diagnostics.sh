@@ -83,9 +83,9 @@ kubectl logs -p -n knative-serving -l app=activator --tail 10000
 echo "##[endgroup]"
 
 echo "##[group]Keda logs"
-kubectl logs -n keda -l app=keda-operator --tail 10000
+kubectl logs -n keda -l app=keda-operator -c keda-operator --tail 10000
 echo "##[endgroup]"
 echo "##[group]Keda logs (previous)"
-kubectl logs -p -n keda -l app=keda-operator --tail 10000
+kubectl logs -p -n keda -l app=keda-operator -c keda-operator --tail 10000
 echo "##[endgroup]"
 
