@@ -1,34 +1,49 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -o errexit
 set -o nounset
 set -o pipefail
 
+readonly riff_version=0.5.0-snapshot
+
 source ${FATS_DIR}/.configure.sh
 
-# install tools
-${FATS_DIR}/install.sh helm
+${FATS_DIR}/install.sh kapp
+${FATS_DIR}/install.sh ytt
+${FATS_DIR}/install.sh kubectl
 
-echo "Installing riff system"
+kubectl create ns apps
 
-source ${FATS_DIR}/macros/helm-init.sh
-helm repo add projectriff https://projectriff.storage.googleapis.com/charts/releases
-helm repo update
+echo "Installing Cert Manager"
+kapp deploy -n apps -a cert-manager -f https://storage.googleapis.com/projectriff/charts/uncharted/${riff_version}/cert-manager.yaml -y
 
-helm install projectriff/cert-manager --name cert-manager --devel --wait
-sleep 5
-wait_pod_selector_ready app=cert-manager cert-manager
-wait_pod_selector_ready app=webhook cert-manager
+source $FATS_DIR/macros/no-resource-requests.sh
 
-source ${FATS_DIR}/macros/no-resource-requests.sh
+echo "Installing kpack"
+kapp deploy -n apps -a kpack -f https://storage.googleapis.com/projectriff/charts/uncharted/${riff_version}/kpack.yaml -y
 
-helm install projectriff/istio --name istio --namespace istio-system --devel --wait \
-  --set gateways.istio-ingressgateway.type=${K8S_SERVICE_TYPE}
-helm install projectriff/riff --name riff --devel --wait \
-  --set cert-manager.enabled=false \
-  --set tags.core-runtime=true \
-  --set tags.knative-runtime=true
+echo "Installing riff Build"
+kapp deploy -n apps -a riff-build -f https://storage.googleapis.com/projectriff/charts/uncharted/${riff_version}/riff-build.yaml -y
+kapp deploy -n apps -a riff-builders -f https://storage.googleapis.com/projectriff/charts/uncharted/${riff_version}/riff-builders.yaml -y
 
-# health checks
-echo "Checking for ready ingress"
-wait_for_ingress_ready 'istio-ingressgateway' 'istio-system'
+echo "Installing riff Core Runtime"
+kapp deploy -n apps -a riff-core-runtime -f https://storage.googleapis.com/projectriff/charts/uncharted/${riff_version}/riff-core-runtime.yaml -y
+
+echo "Installing Istio"
+ytt -f https://storage.googleapis.com/projectriff/charts/uncharted/${riff_version}/istio.yaml -f https://storage.googleapis.com/projectriff/charts/overlays/service-$(echo ${K8S_SERVICE_TYPE} | tr '[A-Z]' '[a-z]').yaml --file-mark istio.yaml:type=yaml-plain \
+  | kapp deploy -n apps -a istio -f - -y
+
+echo "Installing Knative Serving"
+kapp deploy -n apps -a knative -f https://storage.googleapis.com/projectriff/charts/uncharted/${riff_version}/knative.yaml -y
+
+echo "Installing riff Knative Runtime"
+kapp deploy -n apps -a riff-knative-runtime -f https://storage.googleapis.com/projectriff/charts/uncharted/${riff_version}/riff-knative-runtime.yaml -y
+
+echo "Installing KEDA"
+kapp deploy -n apps -a keda -f https://storage.googleapis.com/projectriff/charts/uncharted/${riff_version}/keda.yaml -y
+
+echo "Installing riff Streaming Runtime"
+kapp deploy -n apps -a riff-streaming-runtime -f https://storage.googleapis.com/projectriff/charts/uncharted/${riff_version}/riff-streaming-runtime.yaml -y
+
+echo "Installing Kafka"
+kapp deploy -n apps -a kafka -f https://storage.googleapis.com/projectriff/charts/uncharted/${riff_version}/kafka.yaml -y
