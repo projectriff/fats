@@ -18,3 +18,5 @@ spec:
   - name: dev-utils
     image: projectriff/dev-utils:${utils_version}
 EOF
+kubectl wait pods --for=condition=Ready dev-utils --namespace $NAMESPACE --timeout=60s
+
