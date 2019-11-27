@@ -78,12 +78,16 @@ for mode in ${modes}; do
     actual_data=""
     expected_data="FATS"
     cnt=1
-    while [ $cnt -lt 60 ] && [ $expected_data != $actual_data ]; do
-      sleep 1
+    while [ $cnt -lt 60 ]; do
+      echo -n "."
       cnt=$((cnt+1))
 
       actual_data=`cat result.txt | jq -r .payload`
-      echo -n "."
+      if [ "$actual_data" == "$expected_data" ]; then
+        break
+      fi
+
+      sleep 1
     done
 
     kill $processor_pid
