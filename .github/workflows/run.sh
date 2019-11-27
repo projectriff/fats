@@ -12,16 +12,16 @@ ${FATS_DIR}/install.sh kubectl
 
 kubectl create ns $NAMESPACE
 fats_create_push_credentials ${NAMESPACE}
-source ${FATS_DIR}/macros/install-dev-utils.sh
+source ${FATS_DIR}/macros/create-riff-dev-pod.sh
 riff streaming kafka-provider create franz --bootstrap-servers kafka.kafka.svc.cluster.local:9092 --namespace $NAMESPACE
 
 # streaming runtime (debug)
 riff streaming stream create echo --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
 kubectl wait streams.streaming.projectriff.io echo --for=condition=Ready --namespace $NAMESPACE --timeout=60s
-kubectl exec dev-utils -n $NAMESPACE -- subscribe echo -n $NAMESPACE --payload-as-string > result.txt &
-kubectl exec dev-utils -n $NAMESPACE -- publish echo -n $NAMESPACE --payload "fats" --content-type "text/plain"
+kubectl exec riff-dev -n $NAMESPACE -- subscribe echo -n $NAMESPACE --payload-as-string > result.txt &
+kubectl exec riff-dev -n $NAMESPACE -- publish echo -n $NAMESPACE --payload "fats" --content-type "text/plain"
 verify_payload result.txt "fats"
-kubectl exec dev-utils -n $NAMESPACE -- sh -c 'kill $(pidof subscribe)'
+kubectl exec riff-dev -n $NAMESPACE -- sh -c 'kill $(pidof subscribe)'
 riff streaming stream delete echo --namespace $NAMESPACE
 
 
@@ -80,11 +80,11 @@ for mode in ${modes}; do
 
     riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${lower_stream} --output ${upper_stream} --tail
 
-    kubectl exec dev-utils -n $NAMESPACE -- subscribe ${upper_stream} -n $NAMESPACE --payload-as-string | tee result.txt &
-    kubectl exec dev-utils -n $NAMESPACE -- publish ${lower_stream} -n $NAMESPACE --payload "fats" --content-type "text/plain"
+    kubectl exec riff-dev -n $NAMESPACE -- subscribe ${upper_stream} -n $NAMESPACE --payload-as-string | tee result.txt &
+    kubectl exec riff-dev -n $NAMESPACE -- publish ${lower_stream} -n $NAMESPACE --payload "fats" --content-type "text/plain"
 
     verify_payload result.txt "FATS"
-    kubectl exec dev-utils -n $NAMESPACE -- sh -c 'kill $(pidof subscribe)'
+    kubectl exec riff-dev -n $NAMESPACE -- sh -c 'kill $(pidof subscribe)'
 
     riff streaming stream delete ${lower_stream} --namespace $NAMESPACE
     riff streaming stream delete ${upper_stream} --namespace $NAMESPACE
