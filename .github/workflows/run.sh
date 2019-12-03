@@ -13,7 +13,9 @@ ${FATS_DIR}/install.sh kubectl
 kubectl create ns $NAMESPACE
 fats_create_push_credentials ${NAMESPACE}
 source ${FATS_DIR}/macros/create-riff-dev-pod.sh
-riff streaming kafka-provider create franz --bootstrap-servers kafka.kafka.svc.cluster.local:9092 --namespace $NAMESPACE
+riff streaming kafka-provider create franz \
+  --bootstrap-servers kafka.kafka.svc.cluster.local:9092 \
+  --namespace $NAMESPACE
 
 if [ "${machine}" != "MinGw" ]; then
   modes="cluster local"
@@ -37,23 +39,39 @@ for mode in ${modes}; do
     echo "##[group]Run function ${name}"
 
     if [ "${mode}" == "cluster" ]; then
-      riff function create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
-        --git-repo https://github.com/${FATS_REPO} --git-revision ${FATS_REFSPEC} --sub-path functions/uppercase/${test}
+      riff function create ${name} \
+        --image ${image} \
+        --namespace ${NAMESPACE} \
+        --git-repo https://github.com/${FATS_REPO} \
+        --git-revision ${FATS_REFSPEC} \
+        --sub-path functions/uppercase/${test} \
+        --tail
     elif [ "${mode}" == "local" ]; then
-      riff function create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
-        --local-path ${FATS_DIR}/functions/uppercase/${test}
+      riff function create ${name} \
+        --image ${image} \
+        --namespace ${NAMESPACE} \
+        --local-path ${FATS_DIR}/functions/uppercase/${test} \
+        --tail
     else
       echo "Unknown mode: ${mode}"
       exit 1
     fi
 
     # core runtime
-    riff core deployer create ${name} --function-ref ${name} --ingress-policy ClusterLocal --namespace ${NAMESPACE} --tail
+    riff core deployer create ${name} \
+      --function-ref ${name} \
+      --ingress-policy ClusterLocal \
+      --namespace ${NAMESPACE} \
+      --tail
     source ${FATS_DIR}/macros/invoke_core_deployer.sh ${name} "-H Content-Type:text/plain -H Accept:text/plain -d fats" FATS
     riff core deployer delete ${name} --namespace ${NAMESPACE}
 
     # knative runtime
-    riff knative deployer create ${name} --function-ref ${name} --ingress-policy External --namespace ${NAMESPACE} --tail
+    riff knative deployer create ${name} \
+      --function-ref ${name} \
+      --ingress-policy External \
+      --namespace ${NAMESPACE} \
+      --tail
     source ${FATS_DIR}/macros/invoke_knative_deployer.sh ${name} "-H Content-Type:text/plain -H Accept:text/plain -d fats" FATS
     riff knative deployer delete ${name} --namespace ${NAMESPACE}
 
@@ -123,23 +141,39 @@ for mode in ${modes}; do
     echo "##[group]Run application ${name}"
 
     if [ "${mode}" == "cluster" ]; then
-      riff application create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
-        --git-repo https://github.com/${FATS_REPO} --git-revision ${FATS_REFSPEC} --sub-path applications/uppercase/${test}
+      riff application create ${name} \
+        --image ${image} \
+        --namespace ${NAMESPACE} \
+        --git-repo https://github.com/${FATS_REPO} \
+        --git-revision ${FATS_REFSPEC} \
+        --sub-path applications/uppercase/${test} \
+        --tail
     elif [ "${mode}" == "local" ]; then
-      riff application create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
-        --local-path ${FATS_DIR}/applications/uppercase/${test}
+      riff application create ${name} \
+        --image ${image} \
+        --namespace ${NAMESPACE} \
+        --local-path ${FATS_DIR}/applications/uppercase/${test} \
+        --tail
     else
       echo "Unknown mode: ${mode}"
       exit 1
     fi
 
     # core runtime
-    riff core deployer create ${name} --application-ref ${name} --namespace ${NAMESPACE} --tail
+    riff core deployer create ${name} \
+      --application-ref ${name} \
+      --ingress-policy External \
+      --namespace ${NAMESPACE} \
+      --tail
     source ${FATS_DIR}/macros/invoke_core_deployer.sh ${name} "--get --data-urlencode input=fats" FATS
     riff core deployer delete ${name} --namespace ${NAMESPACE}
 
     # knative runtime
-    riff knative deployer create ${name} --application-ref ${name} --namespace ${NAMESPACE} --tail
+    riff knative deployer create ${name} \
+      --application-ref ${name} \
+      --ingress-policy External \
+      --namespace ${NAMESPACE} \
+      --tail
     source ${FATS_DIR}/macros/invoke_knative_deployer.sh ${name} "--get --data-urlencode input=fats" FATS
     riff knative deployer delete ${name} --namespace ${NAMESPACE}
 
