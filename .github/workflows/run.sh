@@ -134,12 +134,20 @@ for mode in ${modes}; do
     fi
 
     # core runtime
-    riff core deployer create ${name} --application-ref ${name} --namespace ${NAMESPACE} --tail
+    riff core deployer create ${name} \
+      --application-ref ${name} \
+      --ingress-policy External \
+      --namespace ${NAMESPACE} \
+      --tail
     source ${FATS_DIR}/macros/invoke_core_deployer.sh ${name} "--get --data-urlencode input=fats" FATS
     riff core deployer delete ${name} --namespace ${NAMESPACE}
 
     # knative runtime
-    riff knative deployer create ${name} --application-ref ${name} --namespace ${NAMESPACE} --tail
+    riff knative deployer create ${name} \
+      --application-ref ${name} \
+      --ingress-policy External \
+      --namespace ${NAMESPACE} \
+      --tail
     source ${FATS_DIR}/macros/invoke_knative_deployer.sh ${name} "--get --data-urlencode input=fats" FATS
     riff knative deployer delete ${name} --namespace ${NAMESPACE}
 
