@@ -28,7 +28,8 @@ for mode in ${modes}; do
   if [ ${CLUSTER} = "pks-gcp" ]; then
     languages="command java java-boot"
   else
-    languages="command node npm java java-boot"
+    languages="java java-boot"
+    # languages="command node npm java java-boot"
   fi
   for test in ${languages}; do
     name=fats-${mode}-fn-uppercase-${test}
@@ -47,66 +48,58 @@ for mode in ${modes}; do
       exit 1
     fi
 
-    # core runtime
-    riff core deployer create ${name} --function-ref ${name} --ingress-policy ClusterLocal --namespace ${NAMESPACE} --tail
-    source ${FATS_DIR}/macros/invoke_core_deployer.sh ${name} "-H Content-Type:text/plain -H Accept:text/plain -d fats" FATS
-    riff core deployer delete ${name} --namespace ${NAMESPACE}
+  #   # core runtime
+  #   riff core deployer create ${name} --function-ref ${name} --ingress-policy ClusterLocal --namespace ${NAMESPACE} --tail
+  #   source ${FATS_DIR}/macros/invoke_core_deployer.sh ${name} "-H Content-Type:text/plain -H Accept:text/plain -d fats" FATS
+  #   riff core deployer delete ${name} --namespace ${NAMESPACE}
 
-    # knative runtime
-    riff knative deployer create ${name} --function-ref ${name} --ingress-policy External --namespace ${NAMESPACE} --tail
-    source ${FATS_DIR}/macros/invoke_knative_deployer.sh ${name} "-H Content-Type:text/plain -H Accept:text/plain -d fats" FATS
-    riff knative deployer delete ${name} --namespace ${NAMESPACE}
+  #   # knative runtime
+  #   riff knative deployer create ${name} --function-ref ${name} --ingress-policy External --namespace ${NAMESPACE} --tail
+  #   source ${FATS_DIR}/macros/invoke_knative_deployer.sh ${name} "-H Content-Type:text/plain -H Accept:text/plain -d fats" FATS
+  #   riff knative deployer delete ${name} --namespace ${NAMESPACE}
 
     # TODO enable streaming tests
-    # # streaming runtime
-    # if [ "$test" != "commnd" ]; then
-    #   lower_stream=${name}-lower
-    #   upper_stream=${name}-upper
+    # streaming runtime
+    if [ "$test" != "commnd" ]; then
+      lower_stream=${name}-lower
+      upper_stream=${name}-upper
 
-    #   riff streaming stream create ${lower_stream} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
-    #   riff streaming stream create ${upper_stream} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
+      riff streaming stream create ${lower_stream} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
+      riff streaming stream create ${upper_stream} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
 
-    #   # TODO remove once riff streaming stream supports --tail
-    #   kubectl wait streams.streaming.projectriff.io ${lower_stream} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
-    #   kubectl wait streams.streaming.projectriff.io ${upper_stream} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
+      # TODO remove once riff streaming stream supports --tail
+      kubectl wait streams.streaming.projectriff.io ${lower_stream} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
+      kubectl wait streams.streaming.projectriff.io ${upper_stream} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
 
-    #   riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${lower_stream} --output ${upper_stream}
-    #   riff streaming processor tail $name --namespace $NAMESPACE > processor.${name}.log &
-    #   processor_pid=$?
-    #   kubectl wait processors.streaming.projectriff.io $name --for=condition=Ready --namespace $NAMESPACE --timeout=60s
+      riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${lower_stream} --output ${upper_stream} --tail
+      kubectl wait processors.streaming.projectriff.io $name --for=condition=Ready --namespace $NAMESPACE --timeout=60s
+      sleep 10
+      kubectl exec riff-dev -n $NAMESPACE -- subscribe ${upper_stream} -n $NAMESPACE --payload-as-string | tee result.txt &
+      kubectl exec riff-dev -n $NAMESPACE -- publish ${lower_stream} -n $NAMESPACE --payload "fats" --content-type "text/plain"
 
-    #   kubectl exec riff-dev -n $NAMESPACE -- subscribe ${upper_stream} -n $NAMESPACE --payload-as-string | tee result.txt &
-    #   kubectl exec riff-dev -n $NAMESPACE -- publish ${lower_stream} -n $NAMESPACE --payload "fats" --content-type "text/plain"
+      actual_data=""
+      expected_data="FATS"
+      cnt=1
+      while [ $cnt -lt 60 ]; do
+        echo -n "."
+        cnt=$((cnt+1))
 
-    #   actual_data=""
-    #   expected_data="FATS"
-    #   cnt=1
-    #   while [ $cnt -lt 60 ]; do
-    #     echo -n "."
-    #     cnt=$((cnt+1))
+        actual_data=`cat result.txt | jq -r .payload`
+        if [ "$actual_data" == "$expected_data" ]; then
+          break
+        fi
 
-    #     actual_data=`cat result.txt | jq -r .payload`
-    #     if [ "$actual_data" == "$expected_data" ]; then
-    #       break
-    #     fi
+        sleep 1
+      done
 
-    #     sleep 1
-    #   done
+      fats_assert "$expected_data" "$actual_data"
 
-    #   echo ""
-    #   echo "Processor log:"
-    #   cat processor.${name}.log
-    #   echo ""
-    #   # kill $processor_pid
+      kubectl exec riff-dev -n $NAMESPACE -- sh -c 'kill $(pidof subscribe)'
 
-    #   fats_assert "$expected_data" "$actual_data"
-
-    #   kubectl exec riff-dev -n $NAMESPACE -- sh -c 'kill $(pidof subscribe)'
-
-    #   riff streaming stream delete ${lower_stream} --namespace $NAMESPACE
-    #   riff streaming stream delete ${upper_stream} --namespace $NAMESPACE
-    #   riff streaming processor delete $name --namespace $NAMESPACE
-    # fi
+      riff streaming stream delete ${lower_stream} --namespace $NAMESPACE
+      riff streaming stream delete ${upper_stream} --namespace $NAMESPACE
+      riff streaming processor delete $name --namespace $NAMESPACE
+    fi
 
     # cleanup
     riff function delete ${name} --namespace ${NAMESPACE}
