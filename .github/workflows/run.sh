@@ -110,8 +110,8 @@ spec:
       - -c
       - "exec tail -f /dev/null"
 EOF
-      kubectl -n kafka exec -ti testclient -- kafka-console-consumer --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test1_fats-cluster-fn-uppercase-java-lower --from-beginning --timeout-ms 10000
-      kubectl -n kafka exec -ti testclient -- kafka-console-consumer --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test1_fats-cluster-fn-uppercase-java-upper --from-beginning --timeout-ms 10000
+      kubectl -n kafka exec testclient -- kafka-console-consumer --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test1_fats-cluster-fn-uppercase-java-lower --from-beginning --timeout-ms 10000
+      kubectl -n kafka exec testclient -- kafka-console-consumer --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test1_fats-cluster-fn-uppercase-java-upper --from-beginning --timeout-ms 10000
 
       fats_assert "$expected_data" "$actual_data"
 
