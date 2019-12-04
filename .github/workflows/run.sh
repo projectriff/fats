@@ -72,6 +72,7 @@ for mode in ${modes}; do
       kubectl wait streams.streaming.projectriff.io ${upper_stream} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
 
       riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${lower_stream} --output ${upper_stream} --tail
+      kubectl get processors.streaming.projectriff.io $name --namespace $NAMESPACE --watch &
       kubectl wait processors.streaming.projectriff.io $name --for=condition=Ready --namespace $NAMESPACE --timeout=60s
       kubectl get scaledobjects.keda.k8s.io --selector streaming.projectriff.io/processor --namespace $NAMESPACE -o custom-columns='NAME:.metadata.name,LAST ACTIVE:.status.lastActiveTime' --watch &
       # sleep 10
@@ -110,8 +111,8 @@ spec:
       - -c
       - "exec tail -f /dev/null"
 EOF
-      kubectl -n kafka exec testclient -- kafka-console-consumer --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test1_fats-cluster-fn-uppercase-java-lower --from-beginning --timeout-ms 10000
-      kubectl -n kafka exec testclient -- kafka-console-consumer --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test1_fats-cluster-fn-uppercase-java-upper --from-beginning --timeout-ms 10000
+      kubectl exec testclient -n kafka -- kafka-console-consumer --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test1_fats-cluster-fn-uppercase-java-lower --from-beginning --timeout-ms 10000
+      kubectl exec testclient -n kafka -- kafka-console-consumer --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test1_fats-cluster-fn-uppercase-java-upper --from-beginning --timeout-ms 10000
 
       fats_assert "$expected_data" "$actual_data"
 
