@@ -64,6 +64,7 @@ for mode in ${modes}; do
       lower_stream=${name}-lower
       upper_stream=${name}-upper
 
+      set -x
       riff streaming stream create ${lower_stream} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
       riff streaming stream create ${upper_stream} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
 
@@ -75,10 +76,12 @@ for mode in ${modes}; do
       kubectl get processors.streaming.projectriff.io $name --namespace $NAMESPACE --watch &
       kubectl wait processors.streaming.projectriff.io $name --for=condition=Ready --namespace $NAMESPACE --timeout=60s
       kubectl get scaledobjects.keda.k8s.io --selector streaming.projectriff.io/processor --namespace $NAMESPACE -o custom-columns='NAME:.metadata.name,LAST ACTIVE:.status.lastActiveTime' --watch &
-      # sleep 10
+      sleep 20
       kubectl exec riff-dev -n $NAMESPACE -- subscribe ${upper_stream} -n $NAMESPACE --payload-as-string | tee result.txt &
+      sleep 10
       kubectl exec riff-dev -n $NAMESPACE -- publish ${lower_stream} -n $NAMESPACE --payload "fats" --content-type "text/plain"
 
+      set +x
       actual_data=""
       expected_data="FATS"
       cnt=1
@@ -111,8 +114,10 @@ spec:
       - -c
       - "exec tail -f /dev/null"
 EOF
+      set -x
       kubectl exec testclient -n kafka -- kafka-console-consumer --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test1_fats-cluster-fn-uppercase-java-lower --from-beginning --timeout-ms 10000
       kubectl exec testclient -n kafka -- kafka-console-consumer --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test1_fats-cluster-fn-uppercase-java-upper --from-beginning --timeout-ms 10000
+      set +x
 
       fats_assert "$expected_data" "$actual_data"
 
