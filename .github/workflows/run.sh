@@ -73,7 +73,8 @@ for mode in ${modes}; do
 
       riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${lower_stream} --output ${upper_stream} --tail
       kubectl wait processors.streaming.projectriff.io $name --for=condition=Ready --namespace $NAMESPACE --timeout=60s
-      sleep 10
+      kubectl get scaledobjects.keda.k8s.io --selector streaming.projectriff.io/processor --namespace $NAMESPACE -o custom-columns='NAME:.metadata.name,LAST ACTIVE:.status.lastActiveTime' --watch &
+      # sleep 10
       kubectl exec riff-dev -n $NAMESPACE -- subscribe ${upper_stream} -n $NAMESPACE --payload-as-string | tee result.txt &
       kubectl exec riff-dev -n $NAMESPACE -- publish ${lower_stream} -n $NAMESPACE --payload "fats" --content-type "text/plain"
 
