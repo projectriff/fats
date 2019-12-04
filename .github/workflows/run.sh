@@ -99,26 +99,6 @@ for mode in ${modes}; do
         sleep 1
       done
 
-      cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Pod
-metadata:
-  name: testclient
-  namespace: kafka
-spec:
-  containers:
-  - name: kafka
-    image: confluentinc/cp-kafka:5.0.1
-    command:
-      - sh
-      - -c
-      - "exec tail -f /dev/null"
-EOF
-      set -x
-      kubectl exec testclient -n kafka -- kafka-console-consumer --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test1_fats-cluster-fn-uppercase-java-lower --from-beginning --timeout-ms 10000
-      kubectl exec testclient -n kafka -- kafka-console-consumer --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test1_fats-cluster-fn-uppercase-java-upper --from-beginning --timeout-ms 10000
-      set +x
-
       fats_assert "$expected_data" "$actual_data"
 
       kubectl exec riff-dev -n $NAMESPACE -- sh -c 'kill $(pidof subscribe)'
