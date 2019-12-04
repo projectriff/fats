@@ -89,7 +89,9 @@ for mode in ${modes}; do
         if [ "$actual_data" == "$expected_data" ]; then
           break
         fi
-
+        if [ $cnt -eq 25 ]; then
+          kubectl exec riff-dev -n $NAMESPACE -- publish ${lower_stream} -n $NAMESPACE --payload "retry" --content-type "text/plain"
+        fi
         sleep 1
       done
 
