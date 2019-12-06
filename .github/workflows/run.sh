@@ -61,8 +61,8 @@ for mode in ${modes}; do
     # TODO enable streaming tests
     # streaming runtime
     if [ "$test" != "commnd" ]; then
-      lower_stream=${name}-lower
-      upper_stream=${name}-upper
+      lower_stream=${test}-lower
+      upper_stream=${test}-upper
 
       set -x
       riff streaming stream create ${lower_stream} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
@@ -72,14 +72,17 @@ for mode in ${modes}; do
       kubectl wait streams.streaming.projectriff.io ${lower_stream} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
       kubectl wait streams.streaming.projectriff.io ${upper_stream} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
 
-      riff streaming processor create $name --function-ref $name --namespace $NAMESPACE --input ${lower_stream} --output ${upper_stream} --tail
-      kubectl get processors.streaming.projectriff.io $name --namespace $NAMESPACE --watch &
-      kubectl wait processors.streaming.projectriff.io $name --for=condition=Ready --namespace $NAMESPACE --timeout=60s
-      kubectl get scaledobjects.keda.k8s.io --selector streaming.projectriff.io/processor --namespace $NAMESPACE -o custom-columns='NAME:.metadata.name,LAST ACTIVE:.status.lastActiveTime' --watch &
-      sleep 20
+      processor=uppercase-${test}
+      riff streaming processor create ${processor} --function-ref $name --namespace $NAMESPACE --input ${lower_stream} --output ${upper_stream} --tail
+      # kubectl get processors.streaming.projectriff.io ${processor} --namespace $NAMESPACE --watch &
+      #kubectl wait processors.streaming.projectriff.io ${processor} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
+      # kubectl get scaledobjects.keda.k8s.io --selector streaming.projectriff.io/processor --namespace $NAMESPACE -o custom-columns='NAME:.metadata.name,LAST ACTIVE:.status.lastActiveTime' --watch &
+      
+      # sleep 20
       kubectl exec riff-dev -n $NAMESPACE -- subscribe ${upper_stream} -n $NAMESPACE --payload-as-string | tee result.txt &
-      sleep 10
+      #sleep 10
       kubectl exec riff-dev -n $NAMESPACE -- publish ${lower_stream} -n $NAMESPACE --payload "fats" --content-type "text/plain"
+      # wait_pod_selector_ready "streaming.projectriff.io/processor=${processor}" $NAMESPACE
 
       set +x
       actual_data=""
@@ -93,9 +96,7 @@ for mode in ${modes}; do
         if [ "$actual_data" == "$expected_data" ]; then
           break
         fi
-        if [ $cnt -eq 25 ]; then
-          kubectl exec riff-dev -n $NAMESPACE -- publish ${lower_stream} -n $NAMESPACE --payload "retry" --content-type "text/plain"
-        fi
+
         sleep 1
       done
 
@@ -105,7 +106,7 @@ for mode in ${modes}; do
 
       riff streaming stream delete ${lower_stream} --namespace $NAMESPACE
       riff streaming stream delete ${upper_stream} --namespace $NAMESPACE
-      riff streaming processor delete $name --namespace $NAMESPACE
+      riff streaming processor delete ${processor} --namespace $NAMESPACE
     fi
 
     # cleanup
@@ -116,39 +117,39 @@ for mode in ${modes}; do
   done
 
   # applications
-  for test in node java-boot; do
-    name=fats-${mode}-app-uppercase-${test}
-    image=$(fats_image_repo ${name})
+#   for test in node java-boot; do
+#     name=fats-${mode}-app-uppercase-${test}
+#     image=$(fats_image_repo ${name})
 
-    echo "##[group]Run application ${name}"
+#     echo "##[group]Run application ${name}"
 
-    if [ "${mode}" == "cluster" ]; then
-      riff application create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
-        --git-repo https://github.com/${FATS_REPO} --git-revision ${FATS_REFSPEC} --sub-path applications/uppercase/${test}
-    elif [ "${mode}" == "local" ]; then
-      riff application create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
-        --local-path ${FATS_DIR}/applications/uppercase/${test}
-    else
-      echo "Unknown mode: ${mode}"
-      exit 1
-    fi
+#     if [ "${mode}" == "cluster" ]; then
+#       riff application create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
+#         --git-repo https://github.com/${FATS_REPO} --git-revision ${FATS_REFSPEC} --sub-path applications/uppercase/${test}
+#     elif [ "${mode}" == "local" ]; then
+#       riff application create ${name} --image ${image} --namespace ${NAMESPACE} --tail \
+#         --local-path ${FATS_DIR}/applications/uppercase/${test}
+#     else
+#       echo "Unknown mode: ${mode}"
+#       exit 1
+#     fi
 
-    # core runtime
-    riff core deployer create ${name} --application-ref ${name} --namespace ${NAMESPACE} --tail
-    source ${FATS_DIR}/macros/invoke_core_deployer.sh ${name} "--get --data-urlencode input=fats" FATS
-    riff core deployer delete ${name} --namespace ${NAMESPACE}
+#     # core runtime
+#     riff core deployer create ${name} --application-ref ${name} --namespace ${NAMESPACE} --tail
+#     source ${FATS_DIR}/macros/invoke_core_deployer.sh ${name} "--get --data-urlencode input=fats" FATS
+#     riff core deployer delete ${name} --namespace ${NAMESPACE}
 
-    # knative runtime
-    riff knative deployer create ${name} --application-ref ${name} --namespace ${NAMESPACE} --tail
-    source ${FATS_DIR}/macros/invoke_knative_deployer.sh ${name} "--get --data-urlencode input=fats" FATS
-    riff knative deployer delete ${name} --namespace ${NAMESPACE}
+#     # knative runtime
+#     riff knative deployer create ${name} --application-ref ${name} --namespace ${NAMESPACE} --tail
+#     source ${FATS_DIR}/macros/invoke_knative_deployer.sh ${name} "--get --data-urlencode input=fats" FATS
+#     riff knative deployer delete ${name} --namespace ${NAMESPACE}
 
-    # cleanup
-    riff application delete ${name} --namespace ${NAMESPACE}
-    fats_delete_image ${image}
+#     # cleanup
+#     riff application delete ${name} --namespace ${NAMESPACE}
+#     fats_delete_image ${image}
 
-    echo "##[endgroup]"
-  done
+#     echo "##[endgroup]"
+#   done
 done
 
 riff streaming kafka-provider delete franz --namespace $NAMESPACE
