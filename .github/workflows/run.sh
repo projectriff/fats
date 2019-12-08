@@ -23,7 +23,6 @@ else
   modes="cluster"
 fi
 
-
 for mode in ${modes}; do
   # functions
   # workaround for https://github.com/projectriff/node-function-invoker/issues/113
@@ -63,7 +62,10 @@ for mode in ${modes}; do
       --ingress-policy ClusterLocal \
       --namespace ${NAMESPACE} \
       --tail
-    source ${FATS_DIR}/macros/invoke_core_deployer.sh ${name} "-H Content-Type:text/plain -H Accept:text/plain -d fats" FATS
+    source ${FATS_DIR}/macros/invoke_incluster.sh \
+      $(kubectl get deployers.core.projectriff.io ${name} --namespace ${NAMESPACE} -ojsonpath='{.status.address.url}') \
+      "-H Content-Type:text/plain -H Accept:text/plain -d fats" \
+      FATS
     riff core deployer delete ${name} --namespace ${NAMESPACE}
 
     # knative runtime
@@ -72,7 +74,10 @@ for mode in ${modes}; do
       --ingress-policy External \
       --namespace ${NAMESPACE} \
       --tail
-    source ${FATS_DIR}/macros/invoke_knative_deployer.sh ${name} "-H Content-Type:text/plain -H Accept:text/plain -d fats" FATS
+    source ${FATS_DIR}/macros/invoke_knative_deployer.sh \
+      ${name} \
+      "-H Content-Type:text/plain -H Accept:text/plain -d fats" \
+      FATS
     riff knative deployer delete ${name} --namespace ${NAMESPACE}
 
     # TODO enable streaming tests
@@ -186,3 +191,5 @@ for mode in ${modes}; do
 done
 
 riff streaming kafka-provider delete franz --namespace $NAMESPACE
+
+
