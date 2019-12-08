@@ -1,6 +1,6 @@
 #!/bin/bash
 
-host=$1
+url=$1
 curl_opts=$2
 expected_data=$3
 
