@@ -6,7 +6,7 @@ expected_data=$3
 
 echo "Invoke core deployer $name"
 
-svc=$(kubectl get deployers.core.projectriff.io --namespace $NAMESPACE ${name} -o jsonpath='{$.status.serviceName}')
+svc=$(kubectl get deployers.core.projectriff.io --namespace $NAMESPACE ${name} -o jsonpath='{$.status.serviceRef.name}')
 kubectl port-forward --namespace $NAMESPACE service/${svc} 8080:80 &
 pf_pid=$!
 
