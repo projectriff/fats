@@ -4,7 +4,9 @@
 utils_version=latest
 
 kubectl create serviceaccount riff-dev --namespace $NAMESPACE
-kubectl create rolebinding riff-dev --namespace $NAMESPACE --clusterrole=view --serviceaccount=${NAMESPACE}:riff-dev
+kubectl create role view-secrets --namespace $NAMESPACE --resource secrets --verb get,watch,list
+kubectl create rolebinding riff-dev-view --namespace $NAMESPACE --clusterrole=view --serviceaccount=${NAMESPACE}:riff-dev
+kubectl create rolebinding riff-dev-view-secrets --namespace $NAMESPACE --role=view-secrets --serviceaccount=${NAMESPACE}:riff-dev
 
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
