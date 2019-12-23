@@ -2,8 +2,7 @@
 
 if ! [ -x "$(command -v gcloud)" ]; then
   if hash choco 2>/dev/null; then
-    env
-
+    # choco install reports as failed, even though it installed
     choco install gcloudsdk --ignore-checksums || true
 
     # add to current and future PATH

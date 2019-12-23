@@ -60,6 +60,9 @@ jobs:
         echo "##[set-env name=REGISTRY]${{ matrix.config.registry }}"
         echo "##[set-env name=CLUSTER_NAME]fats-${job}-${{ matrix.config.qualifier }}"
         echo "##[set-env name=NAMESPACE]fats-${job}-${{ matrix.config.qualifier }}"
+
+        # pre-install so the path will be correct when we need it
+        ${FATS_DIR}/install.sh gcloud
       shell: bash
     - name: Start FATS
       run: ${FATS_DIR}/start.sh
