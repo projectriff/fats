@@ -26,23 +26,23 @@ jobs:
     if: "!(github.event_name == 'pull_request' && startsWith(github.repository, 'projectriff/'))"
     strategy:
       matrix:
-        config:
-        - os: ubuntu-latest
-          qualifier: kind
-          cluster: kind
-          registry: docker-daemon
-        - os: ubuntu-latest
-          qualifier: dockerhub
-          cluster: kind
-          registry: dockerhub
-        - os: ubuntu-latest
-          qualifier: gke
-          cluster: gke
-          registry: gcr
-        - os: ubuntu-latest
-          qualifier: pks
-          cluster: pks-gcp
-          registry: gcr
+        # config:
+        # - os: ubuntu-latest
+        #   qualifier: kind
+        #   cluster: kind
+        #   registry: docker-daemon
+        # - os: ubuntu-latest
+        #   qualifier: dockerhub
+        #   cluster: kind
+        #   registry: dockerhub
+        # - os: ubuntu-latest
+        #   qualifier: gke
+        #   cluster: gke
+        #   registry: gcr
+        # - os: ubuntu-latest
+        #   qualifier: pks
+        #   cluster: pks-gcp
+        #   registry: gcr
         - os: windows-latest
           qualifier: windows
           cluster: gke

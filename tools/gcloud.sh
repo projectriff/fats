@@ -1,8 +1,12 @@
 #!/bin/bash
 
 if ! [ -x "$(command -v gcloud)" ]; then
-  if hash choco 2>/dev/null; then
-    choco install gcloudsdk --ignore-checksums
+  if [ "$machine" == "MinGw" ]; then
+    curl https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe -o GoogleCloudSDKInstaller.exe
+    ./GoogleCloudSDKInstaller /S /allusers
+    rm GoogleCloudSDKInstaller.exe
+
+    env
 
     # expose gcloud to the path
     cat <<EOF > /usr/bin/gcloud
