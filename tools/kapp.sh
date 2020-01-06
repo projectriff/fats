@@ -1,6 +1,6 @@
 #!/bin/bash
 
-kapp_version="${1:-0.15.0}"
+kapp_version="${1:-0.17.0}"
 base_url="${2:-https://github.com/k14s/kapp/releases/download}"
 
 if [ "$machine" == "MinGw" ]; then
