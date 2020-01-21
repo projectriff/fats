@@ -13,7 +13,7 @@ ${FATS_DIR}/install.sh kubectl
 kubectl create ns $NAMESPACE
 fats_create_push_credentials ${NAMESPACE}
 source ${FATS_DIR}/macros/create-riff-dev-pod.sh
-riff streaming kafka-provider create franz \
+riff streaming kafka-gateway create franz \
   --bootstrap-servers kafka.kafka.svc.cluster.local:9092 \
   --namespace $NAMESPACE
 
@@ -86,8 +86,8 @@ for mode in ${modes}; do
     #   lower_stream=${name}-lower
     #   upper_stream=${name}-upper
 
-    #   riff streaming stream create ${lower_stream} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
-    #   riff streaming stream create ${upper_stream} --namespace $NAMESPACE --provider franz-kafka-provisioner --content-type 'text/plain'
+    #   riff streaming stream create ${lower_stream} --namespace $NAMESPACE --gateway franz --content-type 'text/plain'
+    #   riff streaming stream create ${upper_stream} --namespace $NAMESPACE --gateway franz --content-type 'text/plain'
 
     #   # TODO remove once riff streaming stream supports --tail
     #   kubectl wait streams.streaming.projectriff.io ${lower_stream} --for=condition=Ready --namespace $NAMESPACE --timeout=60s
@@ -190,6 +190,6 @@ for mode in ${modes}; do
   done
 done
 
-riff streaming kafka-provider delete franz --namespace $NAMESPACE
+riff streaming kafka-gateway delete franz --namespace $NAMESPACE
 
 
