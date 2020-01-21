@@ -17,6 +17,7 @@ unameOut="$(uname -s)"
 case "${unameOut}" in
     Linux*)     machine=Linux;;
     MINGW*)     machine=MinGw;;
+    MSYS_NT*)   machine=MinGw;;
     *)          machine="UNKNOWN:${unameOut}"
 esac
 

@@ -1,5 +1,10 @@
 #!/bin/bash
 
+echo "##[group]OS env"
+unameOut="$(uname -s)"
+echo "OS: $unameOut"
+echo "##[endgroup]"
+
 echo "##[group]K8s resources"
 kubectl get deployments,services,pods --all-namespaces
 echo "##[endgroup]"
