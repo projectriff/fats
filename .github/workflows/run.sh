@@ -62,8 +62,8 @@ for mode in ${modes}; do
       --ingress-policy ClusterLocal \
       --namespace ${NAMESPACE} \
       --tail
-    source ${FATS_DIR}/macros/invoke_incluster.sh \
-      $(kubectl get deployers.core.projectriff.io ${name} --namespace ${NAMESPACE} -ojsonpath='{.status.address.url}') \
+    source ${FATS_DIR}/macros/invoke_core_deployer.sh \
+      ${name} \
       "-H Content-Type:text/plain -H Accept:text/plain -d fats" \
       FATS
     riff core deployer delete ${name} --namespace ${NAMESPACE}
