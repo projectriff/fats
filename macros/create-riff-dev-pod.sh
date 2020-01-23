@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# TODO pin to an appropriate tag
-utils_version=latest
+utils_version=0.5.0-snapshot-20200116110522-3c8772342bd5cc9f
 
 kubectl create serviceaccount riff-dev --namespace $NAMESPACE
 kubectl create role view-secrets --namespace $NAMESPACE --resource secrets --verb get,watch,list
