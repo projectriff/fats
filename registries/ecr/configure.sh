@@ -17,7 +17,7 @@ fats_image_repo() {
   # allow to fail since the repository may already exist
   aws ecr create-repository --repository-name $function_name --region us-west-2 1>&2 || true
 
-  echo -n "${IMAGE_REPOSITORY_PREFIX}/${function_name}:${CLUSTER_NAME}"
+  echo -n "${IMAGE_REPOSITORY_PREFIX}/${function_name}/${CLUSTER_NAME}"
 }
 
 fats_delete_image() {
