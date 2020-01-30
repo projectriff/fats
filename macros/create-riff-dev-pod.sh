@@ -1,6 +1,6 @@
 #!/bin/bash
 
-utils_version=0.5.0-snapshot-20200128184245-26294c4d71be20f1
+utils_version=0.5.0-snapshot-20200130172055-8fbd19b833ad0af6
 
 kubectl create serviceaccount riff-dev --namespace=${NAMESPACE}
 kubectl create rolebinding riff-dev-edit --namespace=${NAMESPACE} --clusterrole=edit --serviceaccount=${NAMESPACE}:riff-dev
