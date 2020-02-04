@@ -46,8 +46,9 @@ You need to:
 - create functions, applications and deployers to test:
   - `riff function create ${function_name} ...`
   - `riff ${runtime} deployer create ${deployer_name} --function-ref ${function_name}`
-  - invoke deployer
-    - `source ./macros/invoker-${runtime}-deployer.sh ${deployer_name} "${curl_opts}" ${expected_value}`
+  - invoke
+    - incluster `source ./macros/invoker-incluster.sh ${url} "${curl_opts}" ${expected_value}`
+    - ingress `source ./macros/invoker-contour.sh ${url} "${curl_opts}" ${expected_value}`
 - cleanup riff
 - cleanup FATS, typically:
   - `source ./cleanup.sh`

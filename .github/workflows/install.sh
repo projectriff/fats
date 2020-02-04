@@ -29,9 +29,9 @@ kapp deploy -n apps -a riff-builders -f https://storage.googleapis.com/projectri
 echo "Installing riff Core Runtime"
 kapp deploy -n apps -a riff-core-runtime -f https://storage.googleapis.com/projectriff/release/${riff_version}/riff-core-runtime.yaml -y
 
-echo "Installing Istio"
-ytt -f https://storage.googleapis.com/projectriff/release/${riff_version}/istio.yaml -f https://storage.googleapis.com/projectriff/charts/overlays/service-$(echo ${K8S_SERVICE_TYPE} | tr '[A-Z]' '[a-z]').yaml --file-mark istio.yaml:type=yaml-plain \
-  | kapp deploy -n apps -a istio -f - -y
+echo "Installing Contour"
+ytt -f https://storage.googleapis.com/projectriff/release/${riff_version}/contour.yaml -f https://storage.googleapis.com/projectriff/charts/overlays/service-$(echo ${K8S_SERVICE_TYPE} | tr '[A-Z]' '[a-z]').yaml --file-mark contour.yaml:type=yaml-plain \
+  | kapp deploy -n apps -a contour -f - -y
 
 echo "Installing Knative Serving"
 kapp deploy -n apps -a knative -f https://storage.googleapis.com/projectriff/release/${riff_version}/knative.yaml -y
