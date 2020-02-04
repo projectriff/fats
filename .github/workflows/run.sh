@@ -62,8 +62,8 @@ for mode in ${modes}; do
       --ingress-policy ClusterLocal \
       --namespace ${NAMESPACE} \
       --tail
-    source ${FATS_DIR}/macros/invoke_core_deployer.sh \
-      ${name} \
+    source ${FATS_DIR}/macros/invoke_incluster.sh \
+      "$(kubectl get deployers.core.projectriff.io --namespace $NAMESPACE ${name} -o jsonpath='{$.status.address.url}')" \
       "-H Content-Type:text/plain -H Accept:text/plain -d fats" \
       FATS
     riff core deployer delete ${name} --namespace ${NAMESPACE}
@@ -74,8 +74,8 @@ for mode in ${modes}; do
       --ingress-policy External \
       --namespace ${NAMESPACE} \
       --tail
-    source ${FATS_DIR}/macros/invoke_knative_deployer.sh \
-      ${name} \
+    source ${FATS_DIR}/macros/invoke_contour.sh \
+      "$(kubectl get deployers.knative.projectriff.io --namespace $NAMESPACE ${name} -o jsonpath='{$.status.url}')" \
       "-H Content-Type:text/plain -H Accept:text/plain -d fats" \
       FATS
     riff knative deployer delete ${name} --namespace ${NAMESPACE}
@@ -170,16 +170,22 @@ for mode in ${modes}; do
       --ingress-policy External \
       --namespace ${NAMESPACE} \
       --tail
-    source ${FATS_DIR}/macros/invoke_core_deployer.sh ${name} "--get --data-urlencode input=fats" FATS
+    source ${FATS_DIR}/macros/invoke_contour.sh \
+      "$(kubectl get deployers.core.projectriff.io --namespace $NAMESPACE ${name} -o jsonpath='{$.status.url}')" \
+      "--get --data-urlencode input=fats" \
+      FATS
     riff core deployer delete ${name} --namespace ${NAMESPACE}
 
     # knative runtime
     riff knative deployer create ${name} \
       --application-ref ${name} \
-      --ingress-policy External \
+      --ingress-policy ClusterLocal \
       --namespace ${NAMESPACE} \
       --tail
-    source ${FATS_DIR}/macros/invoke_knative_deployer.sh ${name} "--get --data-urlencode input=fats" FATS
+    source ${FATS_DIR}/macros/invoke_incluster.sh \
+      "$(kubectl get deployers.knative.projectriff.io --namespace $NAMESPACE ${name} -o jsonpath='{$.status.address.url}')" \
+      "--get --data-urlencode input=fats" \
+      FATS
     riff knative deployer delete ${name} --namespace ${NAMESPACE}
 
     # cleanup

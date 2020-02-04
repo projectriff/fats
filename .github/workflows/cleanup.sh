@@ -22,8 +22,8 @@ kapp delete -n apps -a riff-knative-runtime -y
 echo "Removing Knative Serving"
 kapp delete -n apps -a knative -y
 
-echo "Removing Istio"
-kapp delete -n apps -a istio -y
+echo "Removing Contour"
+kapp delete -n apps -a contour -y
 
 echo "Removing riff Core Runtime"
 kapp delete -n apps -a riff-core-runtime -y
