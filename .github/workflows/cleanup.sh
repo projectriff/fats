@@ -7,9 +7,6 @@ source ${FATS_DIR}/.util.sh
 source ${FATS_DIR}/macros/cleanup-user-resources.sh
 kubectl delete namespace ${NAMESPACE}
 
-echo "Removing Kafka"
-kapp delete -n apps -a kafka -y
-
 echo "Removing riff Streaming Runtime"
 kapp delete -n apps -a riff-streaming-runtime -y
 
