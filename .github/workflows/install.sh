@@ -4,7 +4,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-readonly riff_version=0.5.0-snapshot
+readonly riff_version=0.5.0
 
 source ${FATS_DIR}/.configure.sh
 

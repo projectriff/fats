@@ -1,6 +1,6 @@
 #!/bin/bash
 
-riff_version="${1:-latest}"
+riff_version="${1:-v0.5.0}"
 base_url="${2:-https://storage.googleapis.com/projectriff/riff-cli/releases}"
 
 if [ "$machine" == "MinGw" ]; then
