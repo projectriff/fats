@@ -44,6 +44,3 @@ kapp deploy -n apps -a keda -f https://storage.googleapis.com/projectriff/releas
 
 echo "Installing riff Streaming Runtime"
 kapp deploy -n apps -a riff-streaming-runtime -f https://storage.googleapis.com/projectriff/release/${riff_version}/riff-streaming-runtime.yaml -y
-
-echo "Installing Kafka"
-kapp deploy -n apps -a kafka -f https://storage.googleapis.com/projectriff/release/${riff_version}/kafka.yaml -y
