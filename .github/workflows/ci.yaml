@@ -31,22 +31,23 @@ jobs:
           qualifier: kind
           cluster: kind
           registry: docker-daemon
-        - os: ubuntu-latest
-          qualifier: dockerhub
-          cluster: kind
-          registry: dockerhub
-        - os: ubuntu-latest
-          qualifier: gke
-          cluster: gke
-          registry: gcr
-        - os: ubuntu-latest
-          qualifier: pks
-          cluster: pks-gcp
-          registry: gcr
-        - os: windows-latest
-          qualifier: windows
-          cluster: gke
-          registry: gcr
+        # TODO disabled to reduce load while testing a PR
+        # - os: ubuntu-latest
+        #   qualifier: dockerhub
+        #   cluster: kind
+        #   registry: dockerhub
+        # - os: ubuntu-latest
+        #   qualifier: gke
+        #   cluster: gke
+        #   registry: gcr
+        # - os: ubuntu-latest
+        #   qualifier: pks
+        #   cluster: pks-gcp
+        #   registry: gcr
+        # - os: windows-latest
+        #   qualifier: windows
+        #   cluster: gke
+        #   registry: gcr
       fail-fast: false
     runs-on: ${{ matrix.config.os }}
     steps:

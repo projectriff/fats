@@ -1,6 +1,6 @@
 #!/bin/bash
 
-kind_version="${1:-v0.5.1}"
+kind_version="${1:-v0.7.0}"
 base_url="${2:-https://github.com/kubernetes-sigs/kind/releases/download}"
 
 if [ "$machine" == "MinGw" ]; then

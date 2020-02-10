@@ -1,14 +1,30 @@
 #!/bin/bash
 
-CLUSTER_NAME=${CLUSTER_NAME-fats}
-kind create cluster --name ${CLUSTER_NAME} --wait 5m
+cat <<EOF > ${CLUSTER_NAME}.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+EOF
 
-flags=
-if grep -q docker /proc/1/cgroup; then
-    # running in a container
-    flags=--internal
+if [ "$REGISTRY" = "docker-daemon"] ; then
+  # patch cluster config for registry location
+  cat <<EOF >> ${CLUSTER_NAME}.yaml
+containerdConfigPatches:
+- |-
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."registry.kube-system.svc.cluster.local:5000"]
+    endpoint = ["http://$(docker inspect --format "{{.NetworkSettings.IPAddress }}" registry):5000"]
+EOF
 fi
+
+kind create cluster --name ${CLUSTER_NAME} \
+  --config ${CLUSTER_NAME}.yaml \
+  --image kindest/node:v1.15.7
+  --wait 5m
 
 # move kubeconfig to expected location
 mkdir -p ~/.kube
-cp <(kind get kubeconfig --name ${CLUSTER_NAME} $flags) ~/.kube/config
+if grep -q docker /proc/1/cgroup; then
+  # running in a container
+  cp <(kind get kubeconfig --name ${CLUSTER_NAME} --internal) ~/.kube/config
+else
+  cp <(kind get kubeconfig --name ${CLUSTER_NAME}) ~/.kube/config
+fi
