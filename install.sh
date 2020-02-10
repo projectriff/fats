@@ -5,8 +5,8 @@ set -o nounset
 set -o pipefail
 
 if [ -z "${CI:-}" ] && [ -z "${GITHUB_WORKSPACE:-}" ]; then
-  echo "Skipping $1 install for dev environment"
-  exit 0
+  echo "FATS install is only supported in CI environments"
+  exit 1
 fi
 
 if [ -f `dirname "${BASH_SOURCE[0]}"`/tools/$1.installed ]; then

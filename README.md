@@ -6,7 +6,7 @@ FATS is a suite of scripts that support testing riff against various Kubernetes 
 
 ## Running FATS
 
-FATS is expected to be driven by the repository being tested.
+FATS expects to be driven by CI for the repository being tested. For local development, functions, applications, and macros can be used with an existing cluster and registry.
 
 An example config is provided in the `.github/workflows/ci.yaml` file for this repo that doubles as a test suite for FATS itself. The configuration defines environment variables and scripts to invoke.
 

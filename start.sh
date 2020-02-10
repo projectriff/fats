@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ -z "${CI:-}" ] && [ -z "${GITHUB_WORKSPACE:-}" ]; then
+  echo "FATS start is only supported in CI environments"
+  exit 1
+fi
+
 source `dirname "${BASH_SOURCE[0]}"`/.configure.sh
 
 echo "##[group]Starting cluster $CLUSTER"
