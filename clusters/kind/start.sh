@@ -53,9 +53,4 @@ fi
 
 # move kubeconfig to expected location
 mkdir -p ~/.kube
-if grep -q docker /proc/1/cgroup; then
-  # running in a container
-  cp <(kind get kubeconfig --name ${CLUSTER_NAME} --internal) ~/.kube/config
-else
-  cp <(kind get kubeconfig --name ${CLUSTER_NAME}) ~/.kube/config
-fi
+cp <(kind get kubeconfig --name ${CLUSTER_NAME}) ~/.kube/config
