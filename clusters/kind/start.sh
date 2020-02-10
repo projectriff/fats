@@ -20,6 +20,10 @@ kind create cluster --name ${CLUSTER_NAME} \
   --image kindest/node:v1.15.7 \
   --wait 5m
 
+if [ "$REGISTRY" = "docker-daemon"] ; then
+  docker exec ${CLUSTER_NAME}-control-plane bash -c "echo \"$(docker inspect --format "{{.NetworkSettings.IPAddress }}" registry) registry.kube-system.svc.cluster.local\" >> /etc/hosts"
+fi
+
 # move kubeconfig to expected location
 mkdir -p ~/.kube
 if grep -q docker /proc/1/cgroup; then
