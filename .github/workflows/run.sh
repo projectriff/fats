@@ -54,28 +54,36 @@ for mode in ${modes}; do
     fi
 
     # core runtime
-    riff core deployer create ${name} \
-      --function-ref ${name} \
-      --ingress-policy ClusterLocal \
-      --namespace ${NAMESPACE} \
-      --tail
-    source ${FATS_DIR}/macros/invoke_incluster.sh \
-      "$(kubectl get deployers.core.projectriff.io --namespace $NAMESPACE ${name} -o jsonpath='{$.status.address.url}')" \
-      "-H Content-Type:text/plain -H Accept:text/plain -d fats" \
-      FATS
-    riff core deployer delete ${name} --namespace ${NAMESPACE}
-
-    # knative runtime
-    riff knative deployer create ${name} \
+    riff core deployer create ${name}-core \
       --function-ref ${name} \
       --ingress-policy External \
       --namespace ${NAMESPACE} \
       --tail
     source ${FATS_DIR}/macros/invoke_contour.sh \
-      "$(kubectl get deployers.knative.projectriff.io --namespace $NAMESPACE ${name} -o jsonpath='{$.status.url}')" \
+      "$(kubectl get deployers.core.projectriff.io --namespace $NAMESPACE ${name}-core -o jsonpath='{$.status.url}')" \
       "-H Content-Type:text/plain -H Accept:text/plain -d fats" \
       FATS
-    riff knative deployer delete ${name} --namespace ${NAMESPACE}
+    source ${FATS_DIR}/macros/invoke_incluster.sh \
+      "$(kubectl get deployers.core.projectriff.io --namespace $NAMESPACE ${name}-core -o jsonpath='{$.status.address.url}')" \
+      "-H Content-Type:text/plain -H Accept:text/plain -d fats" \
+      FATS
+    riff core deployer delete ${name}-core --namespace ${NAMESPACE}
+
+    # knative runtime
+    riff knative deployer create ${name}-knative \
+      --function-ref ${name} \
+      --ingress-policy External \
+      --namespace ${NAMESPACE} \
+      --tail
+    source ${FATS_DIR}/macros/invoke_contour.sh \
+      "$(kubectl get deployers.knative.projectriff.io --namespace $NAMESPACE ${name}-knative -o jsonpath='{$.status.url}')" \
+      "-H Content-Type:text/plain -H Accept:text/plain -d fats" \
+      FATS
+    source ${FATS_DIR}/macros/invoke_incluster.sh \
+      "$(kubectl get deployers.knative.projectriff.io --namespace $NAMESPACE ${name}-knative -o jsonpath='{$.status.address.url}')" \
+      "-H Content-Type:text/plain -H Accept:text/plain -d fats" \
+      FATS
+    riff knative deployer delete ${name}-knative --namespace ${NAMESPACE}
 
     # cleanup
     riff function delete ${name} --namespace ${NAMESPACE}
@@ -111,28 +119,36 @@ for mode in ${modes}; do
     fi
 
     # core runtime
-    riff core deployer create ${name} \
+    riff core deployer create ${name}-core \
       --application-ref ${name} \
       --ingress-policy External \
       --namespace ${NAMESPACE} \
       --tail
     source ${FATS_DIR}/macros/invoke_contour.sh \
-      "$(kubectl get deployers.core.projectriff.io --namespace $NAMESPACE ${name} -o jsonpath='{$.status.url}')" \
+      "$(kubectl get deployers.core.projectriff.io --namespace $NAMESPACE ${name}-core -o jsonpath='{$.status.url}')" \
       "--get --data-urlencode input=fats" \
       FATS
-    riff core deployer delete ${name} --namespace ${NAMESPACE}
+    source ${FATS_DIR}/macros/invoke_incluster.sh \
+      "$(kubectl get deployers.core.projectriff.io --namespace $NAMESPACE ${name}-core -o jsonpath='{$.status.address.url}')" \
+      "--get --data-urlencode input=fats" \
+      FATS
+    riff core deployer delete ${name}-core --namespace ${NAMESPACE}
 
     # knative runtime
-    riff knative deployer create ${name} \
+    riff knative deployer create ${name}-knative \
       --application-ref ${name} \
-      --ingress-policy ClusterLocal \
+      --ingress-policy External \
       --namespace ${NAMESPACE} \
       --tail
-    source ${FATS_DIR}/macros/invoke_incluster.sh \
-      "$(kubectl get deployers.knative.projectriff.io --namespace $NAMESPACE ${name} -o jsonpath='{$.status.address.url}')" \
+    source ${FATS_DIR}/macros/invoke_contour.sh \
+      "$(kubectl get deployers.knative.projectriff.io --namespace $NAMESPACE ${name}-knative -o jsonpath='{$.status.url}')" \
       "--get --data-urlencode input=fats" \
       FATS
-    riff knative deployer delete ${name} --namespace ${NAMESPACE}
+    source ${FATS_DIR}/macros/invoke_incluster.sh \
+      "$(kubectl get deployers.knative.projectriff.io --namespace $NAMESPACE ${name}-knative -o jsonpath='{$.status.address.url}')" \
+      "--get --data-urlencode input=fats" \
+      FATS
+    riff knative deployer delete ${name}-knative --namespace ${NAMESPACE}
 
     # cleanup
     riff application delete ${name} --namespace ${NAMESPACE}
