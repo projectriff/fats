@@ -17,7 +17,7 @@ fi
 
 kind create cluster --name ${CLUSTER_NAME} \
   --config ${CLUSTER_NAME}.yaml \
-  --image kindest/node:v1.15.7
+  --image kindest/node:v1.15.7 \
   --wait 5m
 
 # move kubeconfig to expected location
