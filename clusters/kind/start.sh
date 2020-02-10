@@ -5,7 +5,7 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 EOF
 
-if [ "$REGISTRY" = "docker-daemon"] ; then
+if [ "$REGISTRY" = "docker-daemon" ] ; then
   # patch cluster config for registry location
   cat <<EOF >> ${CLUSTER_NAME}.yaml
 containerdConfigPatches:
@@ -20,7 +20,7 @@ kind create cluster --name ${CLUSTER_NAME} \
   --image kindest/node:v1.15.7 \
   --wait 5m
 
-if [ "$REGISTRY" = "docker-daemon"] ; then
+if [ "$REGISTRY" = "docker-daemon" ] ; then
   docker exec ${CLUSTER_NAME}-control-plane bash -c "echo \"$(docker inspect --format "{{.NetworkSettings.IPAddress }}" registry) registry.kube-system.svc.cluster.local\" >> /etc/hosts"
 fi
 
