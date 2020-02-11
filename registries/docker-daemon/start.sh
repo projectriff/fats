@@ -7,4 +7,4 @@ sudo systemctl restart docker
 
 # Enable local registry
 echo "Installing a daemon registry"
-docker run -d -p 5000:5000 --name registry registry:2
+docker run -d -p 5000:5000 --name registry registry:2 || docker start registry
