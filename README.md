@@ -1,6 +1,6 @@
-[![Build Status](https://dev.azure.com/projectriff/projectriff/_apis/build/status/projectriff.fats?branchName=master)](https://dev.azure.com/projectriff/projectriff/_build/latest?definitionId=8&branchName=master)
-
 # FaaS Acceptance Test Suite (FATS) for riff
+
+![CI](https://github.com/projectriff/fats/workflows/CI/badge.svg)
 
 FATS is a suite of scripts that support testing riff against various Kubernetes clusters.
 
