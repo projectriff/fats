@@ -34,8 +34,16 @@ echo "##[group]describe riff"
 kubectl describe riff --all-namespaces
 echo "##[endgroup]"
 
+echo "##[group]describe kpack"
+kubectl describe kpack --all-namespaces
+echo "##[endgroup]"
+
 echo "##[group]describe knative"
 kubectl describe knative --all-namespaces
+echo "##[endgroup]"
+
+echo "##[group]describe pods"
+kubectl describe pods --all-namespaces
 echo "##[endgroup]"
 
 echo "##[group]riff Build logs"
