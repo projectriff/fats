@@ -10,16 +10,3 @@ fi
 `dirname "${BASH_SOURCE[0]}"`/../../install.sh pks
 
 export K8S_SERVICE_TYPE=LoadBalancer
-
-wait_for_ingress_ready() {
-  local name=$1
-  local namespace=$2
-
-  wait_for_service_ip $name $namespace
-}
-
-post_registry_start() {
-  local registry=$1
-
-  # nothing to do
-}
