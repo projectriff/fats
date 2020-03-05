@@ -1,0 +1,16 @@
+{
+  "name": "@projectriff/fats-uppercase-yarn",
+  "version": "1.0.0",
+  "description": "Typescript greeting sample",
+  "main": "dist/uppercase.js",
+  "scripts": {
+    "install": "yarn run build",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Florent Biville",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "typescript": "^3.1.6"
+  }
+}
