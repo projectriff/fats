@@ -1,0 +1,7 @@
+/*
+!.gitignore
+!/lib
+!package.json
+!yarn.lock
+!tsconfig.json
+!LICENSE
