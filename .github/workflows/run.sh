@@ -26,7 +26,7 @@ for mode in ${modes}; do
   if [ ${CLUSTER} = "pks-gcp" ]; then
     languages="command java java-boot"
   else
-    languages="command node npm java java-boot"
+    languages="command node npm yarn java java-boot"
   fi
   for test in ${languages}; do
     name=fats-${mode}-fn-uppercase-${test}
