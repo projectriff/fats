@@ -39,10 +39,10 @@ jobs:
           qualifier: gke
           cluster: gke
           registry: gcr
-        - os: ubuntu-latest
-          qualifier: pks
-          cluster: pks-gcp
-          registry: gcr
+        # - os: ubuntu-latest
+        #   qualifier: pks
+        #   cluster: pks-gcp
+        #   registry: gcr
         - os: windows-latest
           qualifier: windows
           cluster: gke
