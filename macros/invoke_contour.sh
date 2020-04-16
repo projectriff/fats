@@ -6,7 +6,7 @@ expected_data=$3
 
 echo "Invoke $url"
 
-ip=$(kubectl get service -n projectcontour envoy-external -o jsonpath='{$.status.loadBalancer.ingress[0].ip}')
+ip=$(kubectl get service -n contour-external envoy -o jsonpath='{$.status.loadBalancer.ingress[0].ip}')
 port="80"
 if [ -z "$ip" ]; then
   ip=$(kubectl get node -o jsonpath='{$.items[0].status.addresses[?(@.type=="ExternalIP")].address}')
@@ -16,7 +16,7 @@ if [ -z "$ip" ]; then
   if [ -z "$ip" ] ; then
     ip=localhost
   fi
-  port=$(kubectl get service -n projectcontour envoy-external -o jsonpath='{$.spec.ports[?(@.name=="http")].nodePort}')
+  port=$(kubectl get service -n contour-external envoy -o jsonpath='{$.spec.ports[?(@.name=="http")].nodePort}')
 fi
 
 hostname=$(echo "$url" | sed -e 's|http://||g')
