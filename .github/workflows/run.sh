@@ -47,6 +47,7 @@ for mode in ${modes}; do
         --image ${image} \
         --namespace ${NAMESPACE} \
         --local-path ${FATS_DIR}/functions/uppercase/${test} \
+        --docker-network host \
         --tail
     else
       echo "Unknown mode: ${mode}"
@@ -112,6 +113,7 @@ for mode in ${modes}; do
         --image ${image} \
         --namespace ${NAMESPACE} \
         --local-path ${FATS_DIR}/applications/uppercase/${test} \
+        --docker-network host \
         --tail
     else
       echo "Unknown mode: ${mode}"
