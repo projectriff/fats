@@ -19,15 +19,15 @@ gcloud dns record-sets transaction execute --zone=${TS_G_ENV}-zone
 
 pks create-cluster ${TS_G_ENV}-${CLUSTER_NAME} --external-hostname ${pks_hostname} --plan small --wait
 
-master_ip=`pks cluster ${TS_G_ENV}-${CLUSTER_NAME} --json | jq -r .kubernetes_master_ips[0]`
-master_vm=`gcloud compute instances list --filter "tags.items = pcf-${TS_G_ENV} AND tags.items = master AND networkInterfaces.networkIP = ${master_ip}" --format "table[no-heading](name, zone)"`
-master_name=`echo $master_vm | cut -d " " -f 1`
-master_zone=`echo $master_vm | cut -d " " -f 2`
+the_ip=`pks cluster ${TS_G_ENV}-${CLUSTER_NAME} --json | jq -r .kubernetes_master_ips[0]`
+the_vm=`gcloud compute instances list --filter "tags.items = pcf-${TS_G_ENV} AND tags.items = master AND networkInterfaces.networkIP = ${the_ip}" --format "table[no-heading](name, zone)"`
+the_name=`echo $the_vm | cut -d " " -f 1`
+the_zone=`echo $the_vm | cut -d " " -f 2`
 
 gcloud compute target-pools create ${TS_G_ENV}-${CLUSTER_NAME}-tp
 gcloud compute target-pools add-instances ${TS_G_ENV}-${CLUSTER_NAME}-tp \
-  --instances ${master_name} \
-  --instances-zone ${master_zone}
+  --instances ${the_name} \
+  --instances-zone ${the_zone}
 gcloud compute forwarding-rules create ${TS_G_ENV}-${CLUSTER_NAME}-fr \
   --target-pool ${TS_G_ENV}-${CLUSTER_NAME}-tp \
   --address ${lb_ip} \
