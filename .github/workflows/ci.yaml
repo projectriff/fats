@@ -50,7 +50,7 @@ jobs:
       fail-fast: false
     runs-on: ${{ matrix.config.os }}
     steps:
-    - uses: actions/checkout@v2.3.1
+    - uses: actions/checkout@v2.3.2
     - name: Setup env
       run: |
         job=$(date +%s) # TODO use something that is assigned by CI to guarantee uniqueness
