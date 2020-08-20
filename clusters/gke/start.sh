@@ -1,7 +1,7 @@
 #!/bin/bash
 
 gcloud container clusters create $CLUSTER_NAME \
-  --cluster-version=1.15 \
+  --cluster-version=latest \
   --machine-type=n1-standard-2 \
   --enable-autoscaling --min-nodes=1 --max-nodes=3 \
   --enable-autorepair \
