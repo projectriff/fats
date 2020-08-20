@@ -159,3 +159,9 @@ fats_assert() {
     exit 1
   fi
 }
+
+sudo()
+{
+    [[ $EUID = 0 ]] || set -- command sudo "$@"
+    "$@"
+}
