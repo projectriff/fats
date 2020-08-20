@@ -34,7 +34,9 @@ EOF
   fi
 fi
 
-gcloud config set project cf-spring-pfs-eng
+GCP_PROJ_NAME="${GCP_PROJECT:-cf-spring-pfs-eng}"
+
+gcloud config set project ${GCP_PROJ_NAME}
 gcloud config set compute/region us-central1
 gcloud config set compute/zone us-central1-a
 gcloud config set disable_prompts True
