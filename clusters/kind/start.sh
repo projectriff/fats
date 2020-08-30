@@ -18,7 +18,7 @@ fi
 
 kind create cluster --name ${CLUSTER_NAME} \
   --config ${CLUSTER_NAME}.yaml \
-  --image kindest/node:v1.15.7 \
+  --image kindest/node:v1.16.9 \
   --wait 5m
 
 if [ "$REGISTRY" = "docker-daemon" ] ; then
